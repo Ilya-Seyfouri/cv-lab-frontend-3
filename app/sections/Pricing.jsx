@@ -18,7 +18,7 @@ export default function Pricing() {
     <>
       <section id="pricing">
         <div className="container">
-          <div className="pt-20 flex flex-col items-center">
+          <div className="pt-20 flex flex-col justify-center items-center">
             <div className="flex items-center py-5 max-w-xl  text-center mx-auto">
               <h2 className="text-5xl">
                 A Better Economic Calender For Traders

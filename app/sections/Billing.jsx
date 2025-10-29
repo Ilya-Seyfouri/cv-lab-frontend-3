@@ -103,7 +103,7 @@ export default function Billing() {
       <>
         <section id="pricing">
           <div className="container">
-            <div className="pt-25 flex flex-col items-center">
+            <div className="pt-25 flex flex-col justify-center items-center">
               <div className="flex items-center py-5 max-w-4xl  text-center mx-auto">
                 <h2 className="text-4xl font-semibold">
                   a better economic calendar for traders

@@ -149,7 +149,7 @@ export default function Details() {
     <>
       <section>
         <div className="container">
-          <div className="pt-40">
+          <div className="pt-40 flex justify-center items-center">
             <div>
               <h2 className="text-center text-white/40 text-2xl mb-8">
                 Your Profile

@@ -49,7 +49,7 @@ export default function FAQ() {
     <>
       <section id="faq">
         <div className="container">
-          <div className="pt-60 flex flex-col items-center">
+          <div className="pt-60 flex flex-col justify-center items-center">
             <div className="">
               <h2 className="text-6xl">We've got the answers</h2>
             </div>
