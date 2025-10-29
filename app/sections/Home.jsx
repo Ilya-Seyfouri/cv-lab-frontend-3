@@ -18,8 +18,6 @@ export default function Home() {
   const [cvProgress, setCvProgress] = useState(0);
   const [coverLetterProgress, setCoverLetterProgress] = useState(0);
 
-
-
   // CV States
   const [generatedCV, setGeneratedCV] = useState("");
   const [isGeneratingCV, setIsGeneratingCV] = useState(false);
@@ -92,26 +90,26 @@ export default function Home() {
     return timer;
   };
 
+  const simulateProgress2 = (setProgress, duration = 8000) => {
+    setProgress(1);
+    const interval = 100; // Update every 100ms
+    const steps = duration / interval;
+    const increment = 98 / steps; // Go from 1% to 99%
 
-    const simulateProgress2 = (setProgress, duration = 8000) => {
-      setProgress(1);
-      const interval = 100; // Update every 100ms
-      const steps = duration / interval;
-      const increment = 98 / steps; // Go from 1% to 99%
+    let currentProgress = 1;
+    const timer = setInterval(() => {
+      currentProgress += increment;
+      if (currentProgress >= 99) {
+        setProgress(99);
+        clearInterval(timer);
+      } else {
+        setProgress(Math.floor(currentProgress));
+      }
+    }, interval);
 
-      let currentProgress = 1;
-      const timer = setInterval(() => {
-        currentProgress += increment;
-        if (currentProgress >= 99) {
-          setProgress(99);
-          clearInterval(timer);
-        } else {
-          setProgress(Math.floor(currentProgress));
-        }
-      }, interval);
-
-      return timer;
-    };2
+    return timer;
+  };
+  2;
 
   // CV Upload Handlers
   const handleFileUpload = (e) => {
@@ -153,10 +151,13 @@ export default function Home() {
     formData.append("file", file);
 
     try {
-      const response = await fetch("http://localhost:8000/upload-cv", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/upload-cv`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       const data = await response.json();
       setUserCV(data.extracted_text);
@@ -175,16 +176,19 @@ export default function Home() {
     setMissingSkills([]);
 
     try {
-      const response = await fetch("http://localhost:8000/analyze-skills", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          job_description: jobDescription,
-          user_cv: userCV,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/analyze-skills`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            job_description: jobDescription,
+            user_cv: userCV,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -220,22 +224,24 @@ export default function Home() {
     setIsGeneratingCV(true);
     const progressTimer = simulateProgress(setCvProgress);
 
-
     await analyzeSkills();
 
     setCvPdfData(null);
 
     try {
-      const response = await fetch("http://localhost:8000/generate-cv", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          job_description: jobDescription,
-          user_cv: userCV,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/generate-cv`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            job_description: jobDescription,
+            user_cv: userCV,
+          }),
+        }
+      );
 
       const text = await response.text();
       let data;
@@ -245,7 +251,6 @@ export default function Home() {
         console.error("Non-JSON response from /generate-cv:", text);
         setError1(
           "Unexpected response from server. Check browser console for details."
-          
         );
         return;
       }
@@ -307,15 +312,18 @@ export default function Home() {
     setError1("");
 
     try {
-      const response = await fetch("http://localhost:8000/compile-latex", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          latex_code: latexCode,
-        }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/compile-latex`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            latex_code: latexCode,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -373,15 +381,15 @@ export default function Home() {
     }
     setError1("");
 
-
     setIsGeneratingCoverLetter(true);
     const progressTimer = simulateProgress2(setCoverLetterProgress);
 
     setCoverLetterPdfData(null); // Clear previous PDF
 
     try {
+      generate - cover - letter;
       const response = await fetch(
-        "http://localhost:8000/generate-cover-letter",
+        `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter`,
         {
           method: "POST",
           headers: {
@@ -428,7 +436,7 @@ export default function Home() {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/generate-cover-letter-pdf",
+        `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter-pdf`,
         {
           method: "POST",
           headers: {
