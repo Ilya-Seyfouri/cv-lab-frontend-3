@@ -44,11 +44,6 @@ export default function Pricing() {
                 </div>
                 <div className="pt-5 mx-auto max-w-[400px]">
                   <div className=" bg-gradient-to-b  from-blue-800 to-cyan-600 rounded-3xl relative overflow-hidden">
-                    <div
-                      className={
-                        "absolute top-0 left-0 w-24 h-24 bg-blue-50 rounded-full blur-2xl opacity-80 z-50"
-                      }
-                    ></div>
                     <div className="pt-8 px-5 relative z-10">
                       <div className="text-3xl font-semibold overflow-hidden inline-block">
                         <h3>$12/Month</h3>
@@ -82,39 +77,39 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
 
-                        <p className="">🚀 AI-Tailored CVs</p>
+                        <p className="">AI-Tailored CVs</p>
                       </div>
-                      <p className="text-white/40">
-                        ------------------------------------------------------
+                      <p className="text-white/40 text-xs opacity-50">
+                        ------------------------------------------------------------------------
                       </p>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
 
-                        <p className="">✨ Keyword Optimization</p>
+                        <p className=""> Keyword Optimization</p>
                       </div>
-                      <p className="text-white/40">
-                        ------------------------------------------------------
+                      <p className="text-white/40 text-xs opacity-50">
+                        ------------------------------------------------------------------------
                       </p>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
 
-                        <p className="">📊 ATS Compatibility Report</p>
+                        <p className=""> ATS Compatibility Report</p>
                       </div>
-                      <p className="text-white/40">
-                        ------------------------------------------------------
+                      <p className="text-white/40 text-xs opacity-50">
+                        ------------------------------------------------------------------------
                       </p>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
 
-                        <p className="">📨 AI Cover Letter Generator</p>
+                        <p className=""> AI Cover Letter Generator</p>
                       </div>
-                      <p className="text-white/40">
-                        ------------------------------------------------------
+                      <p className="text-white/40 text-xs opacity-50">
+                        ------------------------------------------------------------------------
                       </p>
                       <div className="flex items-center gap-2 px-6 pb-4">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
 
-                        <p className="">🧠 Job Match Analysis</p>
+                        <p className="">Job Match Analysis</p>
                       </div>
                     </div>
                   </div>
@@ -132,11 +127,6 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                 </div>
                 <div className="pt-5 mx-auto max-w-[400px]">
                   <div className=" bg-gradient-to-b from-purple-500 to-pink-300 rounded-3xl relative overflow-hidden">
-                    <div
-                      className={
-                        "absolute top-0 left-0 w-24 h-24 bg-blue-50 rounded-full blur-2xl opacity-80 z-50"
-                      }
-                    ></div>
                     <div className="pt-8 px-5 relative z-10">
                       <div className="text-3xl font-semibold overflow-hidden inline-block">
                         <h3>$80/Year</h3>
@@ -170,39 +160,39 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
 
-                        <p className="">🚀 AI-Tailored CVs</p>
+                        <p className="">AI-Tailored CVs</p>
                       </div>
-                      <p className="text-white/40">
-                        ------------------------------------------------------
+                      <p className="text-white/40 text-xs opacity-50">
+                        ------------------------------------------------------------------------
                       </p>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
 
-                        <p className="">✨ Keyword Optimization</p>
+                        <p className="">Keyword Optimization</p>
                       </div>
-                      <p className="text-white/40">
-                        ------------------------------------------------------
+                      <p className="text-white/40 text-xs opacity-50">
+                        ------------------------------------------------------------------------
                       </p>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
 
-                        <p className="">📊 ATS Compatibility Report</p>
+                        <p className="">ATS Compatibility Report</p>
                       </div>
-                      <p className="text-white/40">
-                        ------------------------------------------------------
+                      <p className="text-white/40 text-xs opacity-50">
+                        ------------------------------------------------------------------------
                       </p>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
 
-                        <p className="">📨 AI Cover Letter Generator</p>
+                        <p className="">AI Cover Letter Generator</p>
                       </div>
-                      <p className="text-white/40">
-                        ------------------------------------------------------
+                      <p className="text-white/40 text-xs opacity-50">
+                        ------------------------------------------------------------------------
                       </p>
                       <div className="flex items-center gap-2 px-6 pb-4">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
 
-                        <p className="">🧠 Job Match Analysis</p>
+                        <p className="">Job Match Analysis</p>
                       </div>
                     </div>
                   </div>

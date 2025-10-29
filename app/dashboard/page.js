@@ -9,11 +9,11 @@ export default function Dashboard() {
   return (
     <>
       <Sidebar />
+      <Billing />
       <Home />
       <CV />
       <CoverLetter />
       <Details />
-      <Billing />
     </>
   );
 }

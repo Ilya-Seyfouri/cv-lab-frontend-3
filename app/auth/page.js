@@ -8,7 +8,7 @@ import CVLOGO from "@/images/logo_text.png";
 import photo from "@/images/avatar-owen-garcia.jpg";
 import Link from "next/link";
 import EyeClosed from "@/images/hide-pass.png"; // adjust path to your icon
-import EyeOpen from "@/images/show-pass.png"; // adjust path to your icon
+import EyeOpen from "@/images/show-pass1.png"; // adjust path to your icon
 
 
 
@@ -58,7 +58,7 @@ export default function Auth() {
     }
   }
 
-  /**async function signInWithGoogle() {
+  async function signInWithGoogle() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
@@ -68,7 +68,7 @@ export default function Auth() {
     if (error) {
       setError1(error.message);
     }
-  }//* */
+  }
 
   return (
     <>
@@ -127,7 +127,7 @@ export default function Auth() {
                         <Image
                           src={EyeOpen}
                           alt="logo"
-                          className="w-auto h-4"
+                          className="w-auto h-2"
                         />
                       )}
                     </button>
@@ -145,7 +145,7 @@ export default function Auth() {
               {/* NEW: Google Sign-in Button */}
               <div className="px-4 py-3">
                 <button
-                  //onClick={signInWithGoogle}
+                  onClick={signInWithGoogle}
                   className="w-full flex items-center justify-center gap-3 border border-white/30 rounded-lg py-3 px-4 hover:bg-white/5 transition"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">

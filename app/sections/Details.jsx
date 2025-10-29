@@ -147,7 +147,7 @@ export default function Details() {
 
   return (
     <>
-      <section>
+      <section id="billing">
         <div className="container">
           <div className="pt-40 flex justify-center items-center">
             <div>

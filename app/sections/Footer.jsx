@@ -10,7 +10,7 @@ export default function Footer() {
   return (
     <>
       <section id="contact">
-        <div className="container pt-40 flex flex-col justify-center items-center">
+        <div className="container flex flex-col justify-center items-center">
           <div>
             <h2 className="text-5xl">Ready to get those interviews?</h2>
           </div>
@@ -40,7 +40,7 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
             <p className="text-white/60">contact us @ i.seyfouri@gmail.com</p>
           </div>
 
-          <div className="pt-30"></div>
+          <div className="pt-10"></div>
         </div>
       </section>
     </>

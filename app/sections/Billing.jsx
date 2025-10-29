@@ -101,9 +101,9 @@ export default function Billing() {
   return (
     <>
       <>
-        <section id="pricing">
+        <section id="plan">
           <div className="container">
-            <div className="pt-25 flex flex-col justify-center items-center">
+            <div className="pt-35 flex flex-col justify-center items-center">
               <div className="flex items-center py-5 max-w-4xl  text-center mx-auto">
                 <h2 className="text-4xl font-semibold">
                   a better economic calendar for traders
@@ -160,7 +160,10 @@ export default function Billing() {
 
               <div className="pt-10 py-4 border-1 border-white/30 mx-auto max-w-[460px] bg-white/10 rounded-3xl">
                 <div className="px-10 text-2xl">
-                  <p className="font-semibold"> {monthly ? "Pro Monthly" : "Pro Yearly"}</p>
+                  <p className="font-semibold">
+                    {" "}
+                    {monthly ? "Pro Monthly" : "Pro Yearly"}
+                  </p>
                 </div>
                 <div className="px-10 py-2">
                   <p className="text-white/50 text-sm">
@@ -170,12 +173,6 @@ export default function Billing() {
                 </div>
                 <div className="pt-5 mx-auto max-w-[420px]">
                   <div className="">
-                    <div
-                      className={twMerge(
-                        "absolute top-0 left-0 w-24 h-24 bg-blue-50 rounded-full blur-2xl opacity-80 z-50",
-                        !monthly && "w-28 h-28"
-                      )}
-                    ></div>
                     <div className="pt- px-5 relative z-10">
                       <motion.h3
                         className="text-3xl font-semibold overflow-hidden inline-block"
@@ -206,35 +203,35 @@ export default function Billing() {
                       </motion.h3>
                     </div>
                     <div className="">
-                      <p className="text-white/40 pt-4 flex items-center">
-                        ---------------------------------------------------------
+                      <p className="text-white/40 pt-4 text-xs opacity-50 flex items-center">
+                        ----------------------------------------------------------------------------
                       </p>
 
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center py-1 gap-2">
                         <p className="">🚀 AI-Tailored CVs</p>
                       </div>
-                      <p className="text-white/40">
-                        ---------------------------------------------------------
+                      <p className="text-white/40 text-xs opacity-50">
+                        ----------------------------------------------------------------------------
                       </p>
-                      <div className="flex items-center gap-2 ">
+                      <div className="flex items-center gap-2 py-1 ">
                         <p className="">✨ Keyword Optimization</p>
                       </div>
-                      <p className="text-white/40">
-                        ---------------------------------------------------------
+                      <p className="text-white/40 text-xs opacity-50">
+                        ----------------------------------------------------------------------------
                       </p>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 py-1">
                         <p className="">📊 ATS Compatibility Report</p>
                       </div>
-                      <p className="text-white/40">
-                        ---------------------------------------------------------
+                      <p className="text-white/40 text-xs opacity-50">
+                        ----------------------------------------------------------------------------
                       </p>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 py-1">
                         <p className="">📨 AI Cover Letter Generator</p>
                       </div>
-                      <p className="text-white/40">
-                        ---------------------------------------------------------
+                      <p className="text-white/40 text-xs opacity-50">
+                        ----------------------------------------------------------------------------
                       </p>
-                      <div className="flex items-center gap-2  ">
+                      <div className="flex items-center gap-2 py-1 ">
                         <p className="">🧠 Job Match Analysis</p>
                       </div>
                     </div>
@@ -245,7 +242,7 @@ export default function Billing() {
                         <button
                           onClick={checkoutbruh}
                           disabled={loading || !user1}
-                          className="flex items-center gap-2 bg-white/90 font-semibold rounded-2xl px-20 py-2.5
+                          className="flex items-center gap-2 bg-white/100 font-semibold rounded-2xl px-20 py-2.5
                                       cursor-pointer text-black bg-gradient-to-r from-white
                                        via-gray-100 to-gray-200
   hover:from-gray-100 hover:via-gray-200 hover:to-gray-300

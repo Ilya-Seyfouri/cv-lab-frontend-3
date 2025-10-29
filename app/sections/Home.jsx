@@ -496,43 +496,59 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-4xl mx-auto px-4">
-        {/* Header */}
+    <section id="cv">
+      <div className="min-h-screen">
+        <div className="max-w-4xl mx-auto px-4">
+          {/* Header */}
 
-        <div>
-          {error1 ? (
-            <div className="py-5">
-              <div className="flex justify-center">
-                <div className="border-0 py-4 lg:py-4 text-md px-25 lg:px-20 rounded-xl text-center bg-red-500/20 text-red-400">
-                  {error1}
+          <div>
+            {error1 ? (
+              <div className="py-5">
+                <div className="flex justify-center">
+                  <div className="border-0 py-4 lg:py-4 text-md px-25 lg:px-20 rounded-xl text-center bg-red-500/20 text-red-400">
+                    {error1}
+                  </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="py-12"></div>
-          )}
-        </div>
-        <div className="pt-2">
-          <div className="bg-gray-300 border-0 border-white rounded-lg shadow p-6 mb-6">
-            <h2 className="text-xl text-black font-semibold mb-4">
-              Upload Your CV
-            </h2>
-            <div
-              onDrop={handleFileDrop}
-              onDragOver={handleDragOver}
-              className="border-2 border-dashed border-gray-500 rounded-lg p-8 text-center hover:border-blue-500 transition-colors"
-            >
-              {cvFile ? (
-                <div className="flex flex-col items-center relative">
-                  {/* X button to delete CV */}
-                  <button
-                    onClick={deleteCV}
-                    className="absolute top-0 right-0 text-gray-800 hover:text-red-500 rounded-full p-1 transition-colors"
-                    aria-label="Delete CV"
-                  >
+            ) : (
+              <div className="py-12"></div>
+            )}
+          </div>
+          <div className="pt-2">
+            <div className="bg-gray-300 border-0 border-white rounded-lg shadow p-6 mb-6">
+              <h2 className="text-xl text-black font-semibold mb-4">
+                Upload Your CV
+              </h2>
+              <div
+                onDrop={handleFileDrop}
+                onDragOver={handleDragOver}
+                className="border-2 border-dashed border-gray-500 rounded-lg p-8 text-center hover:border-blue-500 transition-colors"
+              >
+                {cvFile ? (
+                  <div className="flex flex-col items-center relative">
+                    {/* X button to delete CV */}
+                    <button
+                      onClick={deleteCV}
+                      className="absolute top-0 right-0 text-gray-800 hover:text-red-500 rounded-full p-1 transition-colors"
+                      aria-label="Delete CV"
+                    >
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+
                     <svg
-                      className="w-6 h-6"
+                      className="w-16 h-16 text-green-500 mb-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -541,261 +557,247 @@ export default function Home() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                  </button>
-
-                  <svg
-                    className="w-16 h-16 text-green-500 mb-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    <p className="text-black font-medium">{cvFile.name}</p>
+                    <p className="text-black text-sm mt-2">
+                      CV uploaded successfully
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-black mb-2">
+                      Drag and drop your CV (PDF) here
+                    </p>
+                    <p className="text-gray-800 text-sm mb-4">or</p>
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                      id="cv-upload"
                     />
-                  </svg>
-                  <p className="text-black font-medium">{cvFile.name}</p>
-                  <p className="text-black text-sm mt-2">
-                    CV uploaded successfully
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <p className="text-black mb-2">
-                    Drag and drop your CV (PDF) here
-                  </p>
-                  <p className="text-gray-800 text-sm mb-4">or</p>
-                  <input
-                    type="file"
-                    accept=".pdf"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                    id="cv-upload"
-                  />
-                  <label
-                    htmlFor="cv-upload"
-                    className="inline-block px-4 py-2 border-gray-500 border text-black rounded-md hover:bg-gray-100 cursor-pointer"
-                  >
-                    Browse Files
-                  </label>
-                </>
-              )}
+                    <label
+                      htmlFor="cv-upload"
+                      className="inline-block px-4 py-2 border-gray-500 border text-black rounded-md hover:bg-gray-100 cursor-pointer"
+                    >
+                      Browse Files
+                    </label>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Job Description Section */}
-          <div className="bg-gray-200 rounded-lg shadow p-6 mb-6">
-            <label className="block text-lg text-black font-semibold mb-2">
-              Job Description
-            </label>
-            <textarea
-              value={jobDescription}
-              onChange={(e) => setJobDescription(e.target.value)}
-              placeholder="Paste the job description here..."
-              className="w-full text-black h-60 p-3 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
+            {/* Job Description Section */}
+            <div className="bg-gray-200 rounded-lg shadow p-6 mb-6">
+              <label className="block text-lg text-black font-semibold mb-2">
+                Job Description
+              </label>
+              <textarea
+                value={jobDescription}
+                onChange={(e) => setJobDescription(e.target.value)}
+                placeholder="Paste the job description here..."
+                className="w-full text-black h-60 p-3 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
 
-          {/* Generate Buttons */}
-          <div className="flex gap-4 mb-6">
-            <button
-              onClick={generateCV}
-              disabled={isGeneratingCV || isCompilingCV}
-              className="flex-1 px-6 py-3 bg-blue-600  hover:bg-blue-700 disabled:bg-gray-400 
+            {/* Generate Buttons */}
+            <div className="flex gap-4 mb-6">
+              <button
+                onClick={generateCV}
+                disabled={isGeneratingCV || isCompilingCV}
+                className="flex-1 px-6 py-3 bg-blue-600  hover:bg-blue-700 disabled:bg-gray-400 
             disabled:cursor-not-allowed flex items-center justify-center gap-2
             text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br
               focus:outline-none shadow-lg
              shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 text-md rounded-lg 
                text-center me-2 mb-2 font-semibold active:scale-95 transition-transform"
-            >
-              {isGeneratingCV ? (
-                <>
-                  <svg
-                    className="animate-spin h-5 w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Generating CV...
-                </>
-              ) : isCompilingCV ? (
-                <>
-                  <svg
-                    className="animate-spin h-5 w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Compiling PDF...
-                </>
-              ) : (
-                "Generate CV"
-              )}
-            </button>
+              >
+                {isGeneratingCV ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Generating CV...
+                  </>
+                ) : isCompilingCV ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Compiling PDF...
+                  </>
+                ) : (
+                  "Generate CV"
+                )}
+              </button>
 
-            <button
-              onClick={generateCoverLetter}
-              disabled={isGeneratingCoverLetter}
-              className="flex-1 px-6 py-3 bg-purple-600  hover:bg-purple-700
+              <button
+                onClick={generateCoverLetter}
+                disabled={isGeneratingCoverLetter}
+                className="flex-1 px-6 py-3 bg-purple-600  hover:bg-purple-700
              disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2
              text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 
              hover:bg-gradient-to-br focus:outline-none shadow-lg shadow-purple-500/50 dark:shadow-lg
                dark:shadow-purple-800/80 font-semibold rounded-lg text-md text-center me-2 mb-2
                active:scale-95 transition-transform"
-            >
-              {isGeneratingCoverLetter ? (
-                <>
-                  <svg
-                    className="animate-spin h-5 w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Generating...
-                </>
-              ) : (
-                "Generate Cover Letter"
-              )}
-            </button>
-          </div>
-
-          {/* NEW: Progress Bar for CV Generation */}
-          {isGeneratingCV && cvProgress > 0 && (
-            <div className="mb-6">
-              <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
-                <div
-                  className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 h-full transition-all duration-300 ease-out"
-                  style={{ width: `${cvProgress}%` }}
-                ></div>
-              </div>
-              <p className="text-sm text-gray-600 mt-2 text-center">
-                Generating your tailored CV... {cvProgress}%
-              </p>
+              >
+                {isGeneratingCoverLetter ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Generating...
+                  </>
+                ) : (
+                  "Generate Cover Letter"
+                )}
+              </button>
             </div>
-          )}
 
-          {/* NEW: Progress Bar for Cover Letter Generation */}
-          {isGeneratingCoverLetter && coverLetterProgress > 0 && (
-            <div className="mb-6">
-              <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
-                <div
-                  className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 h-full transition-all duration-300 ease-out"
-                  style={{ width: `${coverLetterProgress}%` }}
-                ></div>
-              </div>
-              <p className="text-sm text-gray-600 mt-2 text-center">
-                Generating your cover letter... {coverLetterProgress}%
-              </p>
-            </div>
-          )}
-
-          {/* Missing Skills Warning */}
-          {missingSkills.length > 0 && (
-            <div className="bg-yellow-50 border-l-4 py-4 px-4 mt-20 rounded-lg">
-              <div className="flex items-start">
-                <div className="flex-shrink-0">
-                  <svg
-                    className="h-5 w-5 text-yellow-400"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+            {/* NEW: Progress Bar for CV Generation */}
+            {isGeneratingCV && cvProgress > 0 && (
+              <div className="mb-6">
+                <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
+                  <div
+                    className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 h-full transition-all duration-300 ease-out"
+                    style={{ width: `${cvProgress}%` }}
+                  ></div>
                 </div>
-                <div className="ml-3 flex-1">
-                  <p className="text-sm font-medium text-yellow-800">
-                    Missing Skills Detected
-                  </p>
-                  <div className="mt-2 text-sm text-yellow-700">
-                    <p className="mb-2">
-                      The following skills from the job description were not
-                      found in your CV:
+                <p className="text-sm text-gray-600 mt-2 text-center">
+                  Generating your tailored CV... {cvProgress}%
+                </p>
+              </div>
+            )}
+
+            {/* NEW: Progress Bar for Cover Letter Generation */}
+            {isGeneratingCoverLetter && coverLetterProgress > 0 && (
+              <div className="mb-6">
+                <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
+                  <div
+                    className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 h-full transition-all duration-300 ease-out"
+                    style={{ width: `${coverLetterProgress}%` }}
+                  ></div>
+                </div>
+                <p className="text-sm text-gray-600 mt-2 text-center">
+                  Generating your cover letter... {coverLetterProgress}%
+                </p>
+              </div>
+            )}
+
+            {/* Missing Skills Warning */}
+            {missingSkills.length > 0 && (
+              <div className="bg-yellow-50 border-l-4 py-4 px-4 mt-20 rounded-lg">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0">
+                    <svg
+                      className="h-5 w-5 text-yellow-400"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-3 flex-1">
+                    <p className="text-sm font-medium text-yellow-800">
+                      Missing Skills Detected
                     </p>
-                    <div className="flex flex-wrap gap-2">
-                      {missingSkills.map((skill, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-400 text-white"
-                        >
-                          {skill}
-                        </span>
-                      ))}
+                    <div className="mt-2 text-sm text-yellow-700">
+                      <p className="mb-2">
+                        The following skills from the job description were not
+                        found in your CV:
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {missingSkills.map((skill, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-400 text-white"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="mt-3 text-xs italic">
+                        💡 Consider highlighting relevant experience with these
+                        skills if applicable.
+                      </p>
                     </div>
-                    <p className="mt-3 text-xs italic">
-                      💡 Consider highlighting relevant experience with these
-                      skills if applicable.
-                    </p>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* CV Component - Only shows PDF preview */}
-          <CV pdfData={cvPdfData} onDownload={downloadCVPDF} />
+            {/* CV Component - Only shows PDF preview */}
+            <CV pdfData={cvPdfData} onDownload={downloadCVPDF} />
 
-          {/* Cover Letter Component - Only shows generated letter and PDF */}
-          <CoverLetter
-            generatedCoverLetter={generatedCoverLetter}
-            setGeneratedCoverLetter={setGeneratedCoverLetter}
-            coverLetterPdfData={coverLetterPdfData}
-            onCompileToPDF={compileCoverLetterToPDF}
-            onDownload={downloadCoverLetterPDF}
-            isCompiling={isCompilingCoverLetter}
-          />
+            {/* Cover Letter Component - Only shows generated letter and PDF */}
+            <CoverLetter
+              generatedCoverLetter={generatedCoverLetter}
+              setGeneratedCoverLetter={setGeneratedCoverLetter}
+              coverLetterPdfData={coverLetterPdfData}
+              onCompileToPDF={compileCoverLetterToPDF}
+              onDownload={downloadCoverLetterPDF}
+              isCompiling={isCompilingCoverLetter}
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
