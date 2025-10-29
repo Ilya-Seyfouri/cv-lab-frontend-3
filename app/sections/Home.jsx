@@ -387,7 +387,6 @@ export default function Home() {
     setCoverLetterPdfData(null); // Clear previous PDF
 
     try {
-      generate - cover - letter;
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter`,
         {
