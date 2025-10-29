@@ -6,6 +6,7 @@ export default function Sidebar() {
     { label: "Account", href: "#billing" },
     { label: "Generate", href: "#cv" },
   ];
+  //
 
   return (
     <>
