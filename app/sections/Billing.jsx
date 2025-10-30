@@ -106,13 +106,13 @@ export default function Billing() {
             <div className="pt-35 flex flex-col justify-center items-center">
               <div className="flex items-center py-5 max-w-4xl  text-center mx-auto">
                 <h2 className="text-4xl font-semibold">
-                  a better economic calendar for traders
+                  ai that turns applications into interviews
                 </h2>
               </div>
-              <div className="pt-2 flex justify-center max-w-2xl">
-                <p className="text-white/60 text-xl">
-                  Unlock AI Insight, Event Notifications and more with GoMoon.ai
-                  Pro
+              <div className="pt-2 flex justify-center max-w-xl">
+                <p className="text-white/60 text-xl text-center">
+                  Highlight what hiring managers want to see and boost your
+                  interview rate.
                 </p>
               </div>
 

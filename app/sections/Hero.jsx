@@ -19,7 +19,6 @@ export default function Hero() {
                 Your Resume, Perfectly Matched to Every Job.
               </h2>
             </div>
-
             <div className="pt-10 justify-center flex">
               <div className="inline-flex items-center gap-2 border border-white/20 rounded-full">
                 <Image
@@ -27,19 +26,17 @@ export default function Hero() {
                   alt="logo"
                   className="h-9 w-auto border-3 border-black rounded-full"
                 ></Image>
-                <p className="text-base font-semibold text-white/80 pr-2">
-                  Used by 5,000+ Students
+                <p className="text-base font-semibold text-white/80 pr-2.5">
+                  500+ CV's generated
                 </p>
               </div>
             </div>
-
             <div className="flex justify-center pt-10 mx-auto max-w-2xl">
               <p className="text-center text-xl px-10 text-white/50 lg:text-2xl ">
                 Tailor your CV and generate a cover letter in one click. Built
                 to land you interviews.
               </p>
             </div>
-
             <div className="flex justify-center gap-10 py-10">
               <div className="flex items-center gap-3">
                 <button
@@ -69,11 +66,11 @@ me-2 mb-2"
                 </button>
               </div>
             </div>
-
-            <div>
+            
+            <div id="features">
               <div className="flex justify-center py-10">
                 <iframe
-                  src="https://www.youtube.com/embed/oIq08K9GZYk"
+                  src="https://www.youtube.com/embed/BjW-P1JNfc8"
                   title="YouTube video player"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -82,6 +79,7 @@ me-2 mb-2"
                 ></iframe>
               </div>
             </div>
+            
           </div>
         </div>
       </section>

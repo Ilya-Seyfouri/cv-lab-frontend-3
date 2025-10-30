@@ -515,7 +515,7 @@ export default function Home() {
             )}
           </div>
           <div className="pt-2">
-            <div className="bg-gray-300 border-0 border-white rounded-lg shadow p-6 mb-6">
+            <div className="bg-gray-200 border-0 border-white rounded-lg shadow p-6 mb-6">
               <h2 className="text-xl text-black font-semibold mb-4">
                 Upload Your CV
               </h2>

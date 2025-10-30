@@ -19,15 +19,14 @@ export default function Pricing() {
       <section id="pricing">
         <div className="container">
           <div className="pt-20 flex flex-col justify-center items-center">
-            <div className="flex items-center py-5 max-w-xl  text-center mx-auto">
+            <div className="flex items-center py-5 max-w-2xl  text-center mx-auto">
               <h2 className="text-5xl">
-                A Better Economic Calender For Traders
+                AI That Turns Applications Into Interviews
               </h2>
             </div>
             <div className="pt-2 flex justify-center">
               <p className="text-white/60 text-xl">
-                Unlock AI Insight, Event Notifications and more with GoMoon.ai
-                Pro
+                Highlight what hiring managers want to see and boost your interview rate.
               </p>
             </div>
 
