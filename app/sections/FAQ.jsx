@@ -9,7 +9,7 @@ export default function FAQ() {
     {
       question: "How does it work?",
       answer:
-        "Our AI analyzes your CV and the target job description using natural language processing. It identifies key skills, experience, and phrasing that match the employer’s expectations, then rewrites and optimizes your CV and cover letter for maximum alignment.",
+        "Our AI analyzes your CV and the target job description using natural language processing. It identifies key skills, experience, and phrasing that match the employer's expectations, then rewrites and optimizes your CV and cover letter for maximum alignment.",
     },
     {
       question: "How is it different from ChatGPT?",
@@ -24,7 +24,7 @@ export default function FAQ() {
     {
       question: "How does the Cover Letter feature work?",
       answer:
-        "The AI drafts a personalized cover letter based on your CV and the job description. It ensures your tone, achievements, and motivation match the company’s culture and role requirements. You can fine-tune the letter manually afterward.",
+        "The AI drafts a personalized cover letter based on your CV and the job description. It ensures your tone, achievements, and motivation match the company's culture and role requirements. You can fine-tune the letter manually afterward.",
     },
     {
       question: "How does the mock interview feature work?",
@@ -34,7 +34,7 @@ export default function FAQ() {
     {
       question: "What industries or job markets does it support?",
       answer:
-        "Our AI supports a wide range of industries — from tech, finance, and healthcare to creative roles and academia. It’s trained on thousands of job postings and adapts automatically to different sectors and seniority levels.",
+        "Our AI supports a wide range of industries — from tech, finance, and healthcare to creative roles and academia. It's trained on thousands of job postings and adapts automatically to different sectors and seniority levels.",
     },
     {
       question: "Is there a free version?",
@@ -49,32 +49,34 @@ export default function FAQ() {
     <>
       <section id="faq">
         <div className="container">
-          <div className="pt-60 pb-70 flex flex-col justify-center items-center">
-            <div className="">
-              <h2 className="text-6xl">We've got the answers</h2>
+          <div className="pt-30 lg:pt-60 pb-30 lg:pb-70 flex flex-col justify-center items-center px-4 lg:px-0">
+            <div className="text-center">
+              <h2 className="text-4xl lg:text-6xl">We've got the answers</h2>
             </div>
-            <div className="pt-8">
-              <p className="text-2xl text-white/50">
+            <div className="pt-4 lg:pt-8 text-center">
+              <p className="text-lg lg:text-2xl text-white/50 px-4">
                 Discover everything you need to know about GoMoon.ai
               </p>
             </div>
-            <div className="mt-12 flex flex-col gap-6 px-65 w-full ">
+            <div className="mt-8 lg:mt-12 flex flex-col gap-4 lg:gap-6 w-full max-w-4xl px-4 lg:px-0">
               {faqs.map((faq, index) => (
                 <div
                   key={faq.question}
-                  className="border-b border-white/10 pb-6 py-5 "
+                  className="border-b border-white/10 pb-4 lg:pb-6 py-3 lg:py-5"
                 >
                   <div
-                    className="flex justify-between items-center cursor-pointer"
+                    className="flex justify-between items-start lg:items-center gap-4 cursor-pointer"
                     onClick={() =>
                       setSelectedIndex(selectedIndex === index ? null : index)
                     }
                   >
-                    <h3 className=" font-semibold">{faq.question}</h3>
+                    <h3 className="font-semibold text-base lg:text-lg text-left pr-2">
+                      {faq.question}
+                    </h3>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
+                      width="20"
+                      height="20"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -82,7 +84,7 @@ export default function FAQ() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       className={twMerge(
-                        "feather feather-plus text-lime-400 flex-shrink-0 transition duration-300",
+                        "feather feather-plus text-lime-400 flex-shrink-0 transition duration-300 lg:w-6 lg:h-6",
                         selectedIndex == index && "rotate-45"
                       )}
                     >
@@ -96,7 +98,7 @@ export default function FAQ() {
                         initial={{ height: 0, marginTop: 0 }}
                         animate={{
                           height: "auto",
-                          marginTop: 24,
+                          marginTop: 16,
                         }}
                         exit={{
                           height: 0,
@@ -104,7 +106,9 @@ export default function FAQ() {
                         }}
                         className={twMerge("overflow-hidden")}
                       >
-                        <p className="text-white/50">{faq.answer}</p>
+                        <p className="text-white/50 text-sm lg:text-base leading-relaxed">
+                          {faq.answer}
+                        </p>
                       </motion.div>
                     )}
                   </AnimatePresence>
