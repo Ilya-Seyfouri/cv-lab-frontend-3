@@ -100,8 +100,8 @@ export default function Billing() {
 
   if (user1?.is_subscribed || user1?.subscription_status === "Pro") {
     return (
-      <div>
-        <h2 className="text-5xl font-bold mb-4">✨ You're a Pro Member!</h2>
+      <div className="pt-35 flex justify-center items-center">
+        <h2 className="text-3xl font-bold">✨ You're a Pro Member!</h2>
       </div>
     );
   }
