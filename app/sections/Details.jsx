@@ -160,7 +160,7 @@ export default function Details() {
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white/60"></div>
                   </div>
                 ) : user1 ? (
-                  <div className=" mx-auto w-[720px]">
+                  <div className=" mx-auto md:w-[720px] w-[440px]">
                     {/* Profile Card */}
                     <div className="bg-white/5 backdrop-blur-sm rounded-lg p-6 border border-white/10">
                       <div className="flex justify-end">

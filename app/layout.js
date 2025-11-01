@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Your App Name",
+  title: "CV Lab",
   description: "Your description",
 };
 

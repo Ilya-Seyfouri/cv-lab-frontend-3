@@ -113,12 +113,12 @@ export default function Billing() {
           <div className="container">
             <div className="pt-35 flex flex-col justify-center items-center">
               <div className="flex items-center py-5 max-w-4xl  text-center mx-auto">
-                <h2 className="text-4xl font-semibold">
+                <h2 className="md:text-4xl text-3xl font-semibold">
                   ai that turns applications into interviews
                 </h2>
               </div>
               <div className="pt-2 flex justify-center max-w-xl">
-                <p className="text-white/60 text-xl text-center">
+                <p className="text-white/60 md:text-xl text-lg text-center">
                   Highlight what hiring managers want to see and boost your
                   interview rate.
                 </p>
@@ -166,7 +166,7 @@ export default function Billing() {
                 </motion.p>
               </div>
 
-              <div className="pt-10 py-4 border-1 border-white/30 mx-auto max-w-[460px] bg-white/10 rounded-3xl">
+              <div className="pt-10 py-4 border-1 border-white/30 mx-auto md:max-w-[460px] max-w-[400px] bg-white/10 rounded-3xl">
                 <div className="px-10 text-2xl">
                   <p className="font-semibold">
                     {" "}
@@ -211,32 +211,32 @@ export default function Billing() {
                       </motion.h3>
                     </div>
                     <div className="">
-                      <p className="text-white/40 pt-4 text-xs opacity-50 flex items-center">
+                      <p className="text-white/40 pt-4 text-xs opacity-50 flex items-center overflow-hidden whitespace-nowrap">
                         ----------------------------------------------------------------------------
                       </p>
 
                       <div className="flex items-center py-1 gap-2">
                         <p className="">🚀 AI-Tailored CVs</p>
                       </div>
-                      <p className="text-white/40 text-xs opacity-50">
+                      <p className="text-white/40 pt-4 text-xs opacity-50 flex items-center overflow-hidden whitespace-nowrap">
                         ----------------------------------------------------------------------------
                       </p>
                       <div className="flex items-center gap-2 py-1 ">
                         <p className="">✨ Keyword Optimization</p>
                       </div>
-                      <p className="text-white/40 text-xs opacity-50">
+                      <p className="text-white/40 pt-4 text-xs opacity-50 flex items-center overflow-hidden whitespace-nowrap">
                         ----------------------------------------------------------------------------
                       </p>
                       <div className="flex items-center gap-2 py-1">
                         <p className="">📊 ATS Compatibility Report</p>
                       </div>
-                      <p className="text-white/40 text-xs opacity-50">
+                      <p className="text-white/40 pt-4 text-xs opacity-50 flex items-center overflow-hidden whitespace-nowrap">
                         ----------------------------------------------------------------------------
                       </p>
                       <div className="flex items-center gap-2 py-1">
                         <p className="">📨 AI Cover Letter Generator</p>
                       </div>
-                      <p className="text-white/40 text-xs opacity-50">
+                      <p className="text-white/40 pt-4 text-xs opacity-50 flex items-center overflow-hidden whitespace-nowrap">
                         ----------------------------------------------------------------------------
                       </p>
                       <div className="flex items-center gap-2 py-1 ">

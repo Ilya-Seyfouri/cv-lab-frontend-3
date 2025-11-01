@@ -14,8 +14,6 @@ export default function Sidebar() {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  //
-
   return (
     <>
       <section className="fixed w-full top-0 z-50">
@@ -27,7 +25,7 @@ export default function Sidebar() {
         >
           <div className="container">
             <div className="py-4 px-5">
-              <div className=" border-0 rounded-lg  flex items-center justify-between ">
+              <div className="border-0 rounded-lg flex items-center justify-between">
                 <div className="flex-shrink-0">
                   <Image
                     src={CVLOGO}
@@ -37,20 +35,64 @@ export default function Sidebar() {
                   />
                 </div>
 
-                <div className="absolute left-1/2 transform -translate-x-1/2 flex gap-1">
-                  <nav className="gap-12 flex">
-                    {navLinks.map((link) => (
-                      <a
-                        key={link.label}
-                        href={link.href}
-                        className="text-white/50 text-md"
-                      >
-                        {link.label}
-                      </a>
-                    ))}
-                  </nav>
-                </div>
+                <button
+                  className="md:hidden text-white p-2"
+                  onClick={() => setIsOpen(!isOpen)}
+                  aria-label="Toggle menu"
+                >
+                  <svg
+                    className="w-auto h-8"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    {isOpen ? (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    ) : (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 6h16M4 12h16M4 18h16"
+                      />
+                    )}
+                  </svg>
+                </button>
+
+                <nav className="hidden md:flex gap-12 absolute left-1/2 transform -translate-x-1/2">
+                  {navLinks.map((link) => (
+                    <a
+                    
+                      key={link.label}
+                      href={link.href}
+                      className="text-white/50 text-md hover:text-white transition-colors"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </nav>
               </div>
+
+              {isOpen && (
+                <nav className="md:hidden flex flex-col gap-4 mt-4 pb-4">
+                  {navLinks.map((link) => (
+                    <a
+                    
+                      key={link.label}
+                      href={link.href}
+                      className="text-white/50 text-md hover:text-white transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </nav>
+              )}
             </div>
           </div>
         </div>
