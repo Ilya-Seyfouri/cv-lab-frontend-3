@@ -98,6 +98,14 @@ export default function Billing() {
     }
   };
 
+  if (user1?.is_subscribed || user1?.subscription_status === "Pro") {
+    return (
+      <div>
+        <h2 className="text-5xl font-bold mb-4">✨ You're a Pro Member!</h2>
+      </div>
+    );
+  }
+
   return (
     <>
       <>
