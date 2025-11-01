@@ -135,6 +135,15 @@ export default function Auth() {
                 </div>
               </div>
 
+              <div className="py-2 px-4 text-right">
+                <Link
+                  href="/forgot-password"
+                  className="text-sm text-white/50 hover:text-white/70"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
               {/* Divider */}
               <div className="flex items-center px-4 pb-2">
                 <div className="flex-1 border-t border-white/30"></div>
