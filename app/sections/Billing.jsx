@@ -18,7 +18,7 @@ export default function Billing() {
   const [annual, setAnnual] = useState(false);
   const router = useRouter();
 
-  const priceID = "price_1SLiliGXyzkhNsjncv7RnLad";
+  const priceID = "price_1SOg9CGTsfq9NWHAMsljLVdi";
 
   useEffect(() => {
     getUser();
