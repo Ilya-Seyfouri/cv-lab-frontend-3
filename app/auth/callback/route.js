@@ -23,7 +23,9 @@ export async function GET(request) {
 
     if (authError) {
       console.error("AUTH ERROR:", authError);
-      return NextResponse.redirect(`${requestUrl.origin}/?error=auth_failed`);
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_HOST_NAME}/?error=auth_failed`
+      );
     }
 
     const user = data?.user;
@@ -66,7 +68,7 @@ export async function GET(request) {
           console.error("PROFILE INSERT ERROR:", insertError);
           // Still redirect but with error param
           return NextResponse.redirect(
-            `${requestUrl.origin}/dashboard?error=profile_create_failed`
+            `${process.env.NEXT_PUBLIC_HOST_NAME}/dashboard?error=profile_create_failed`
           );
         } else {
           console.log("✅ Profile created successfully!");
@@ -81,5 +83,7 @@ export async function GET(request) {
 
   console.log("=== AUTH CALLBACK END - Redirecting to dashboard ===");
   // Redirect to dashboard after successful auth
-  return NextResponse.redirect(`${requestUrl.origin}/dashboard`);
+  return NextResponse.redirect(
+    `${process.env.NEXT_PUBLIC_HOST_NAME}/dashboard`
+  );
 }

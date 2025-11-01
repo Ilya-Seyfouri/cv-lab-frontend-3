@@ -10,5 +10,7 @@ export async function GET(request) {
     await supabase.auth.exchangeCodeForSession(code);
   }
 
-  return NextResponse.redirect(`${requestUrl.origin}/auth/reset-password`);
+  return NextResponse.redirect(
+    `${process.env.NEXT_PUBLIC_HOST_NAME}/auth/reset-password`
+  );
 }
