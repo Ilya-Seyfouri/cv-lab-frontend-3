@@ -12,6 +12,7 @@ export default function Home() {
   const [userCV, setUserCV] = useState("");
   const [cvFile, setCvFile] = useState(null);
   const [error1, setError1] = useState("");
+  const [token, setToken] = useState("");
   // Missing Skills State
   const [missingSkills, setMissingSkills] = useState([]);
   const [isAnalyzingSkills, setIsAnalyzingSkills] = useState(false);
@@ -203,7 +204,6 @@ export default function Home() {
     }
   };
 
-  // Generate CV
   const generateCV = async () => {
     if (!jobDescription.trim()) {
       setError1("Please enter a job description");
@@ -224,17 +224,32 @@ export default function Home() {
     setIsGeneratingCV(true);
     const progressTimer = simulateProgress(setCvProgress);
 
-    await analyzeSkills();
-
     setCvPdfData(null);
 
     try {
+      // Get JWT token from Supabase
+      const supabase = createClient(); // browser client
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      if (!token) {
+        setError1("You must be logged in to generate a CV.");
+        setIsGeneratingCV(false);
+        clearInterval(progressTimer);
+        return;
+      }
+
+      await analyzeSkills();
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/generate-cv`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // send token to FastAPI
           },
           body: JSON.stringify({
             job_description: jobDescription,
@@ -247,16 +262,15 @@ export default function Home() {
       let data;
       try {
         data = JSON.parse(text);
-      } catch (err) {
+      } catch {
         console.error("Non-JSON response from /generate-cv:", text);
         setError1(
-          "Unexpected response from server. Check browser console for details."
+          "Unexpected response from server. Check console for details."
         );
         return;
       }
 
       if (data && data.error) {
-        console.warn("Server returned an error object:", data);
         const missing = data.missing_fields
           ? ` Missing: ${data.missing_fields.join(", ")}`
           : "";
@@ -266,19 +280,18 @@ export default function Home() {
       }
 
       if (data && data.cv) {
-        setError1("");
-
         setGeneratedCV(data.cv);
-        console.log(data.cv);
         clearInterval(progressTimer);
         setCvProgress(100);
+
         await compileCVToPDF(data.cv);
+
+        // Deduct credit
         await supabase
           .from("profiles")
           .update({ credits_remaining: user1.credits_remaining - 1 })
           .eq("id", user1.id);
       } else {
-        console.error("Unexpected JSON shape from /generate-cv:", data);
         setError1(
           "Server returned unexpected data. Check console for details."
         );
@@ -288,7 +301,7 @@ export default function Home() {
       }
     } catch (error) {
       console.error("Error generating CV:", error);
-      alert("Error generating CV. Please try again.");
+      setError1("Error generating CV. Please try again.");
     } finally {
       setIsGeneratingCV(false);
       clearInterval(progressTimer);
@@ -364,6 +377,7 @@ export default function Home() {
   };
 
   // Generate Cover Letter
+
   const generateCoverLetter = async () => {
     if (!jobDescription.trim()) {
       setError1("Please enter a job description");
@@ -376,23 +390,37 @@ export default function Home() {
     }
 
     if (!user1 || user1.credits_remaining <= 0) {
-      setError1("You don't have enough credits to generate a CV");
+      setError1("You don't have enough credits to generate a cover letter");
       return;
     }
-    setError1("");
 
+    setError1("");
     setIsGeneratingCoverLetter(true);
     const progressTimer = simulateProgress2(setCoverLetterProgress);
-
-    setCoverLetterPdfData(null); // Clear previous PDF
+    setCoverLetterPdfData(null);
 
     try {
+      // Get JWT token from Supabase
+      const supabase = createClient(); // browser client
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      const token = session?.access_token;
+
+      if (!token) {
+        setError1("You must be logged in to generate a cover letter.");
+        setIsGeneratingCoverLetter(false);
+        clearInterval(progressTimer);
+        return;
+      }
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // send token to FastAPI
           },
           body: JSON.stringify({
             job_description: jobDescription,
@@ -404,11 +432,11 @@ export default function Home() {
       const data = await response.json();
 
       if (data && data.cover_letter) {
-        setError1("");
-
         setGeneratedCoverLetter(data.cover_letter);
         clearInterval(progressTimer);
         setCoverLetterProgress(100);
+
+        // Deduct credit
         await supabase
           .from("profiles")
           .update({ credits_remaining: user1.credits_remaining - 1 })
@@ -421,8 +449,11 @@ export default function Home() {
       setError1("Error generating cover letter. Please try again.");
     } finally {
       setIsGeneratingCoverLetter(false);
+      clearInterval(progressTimer);
+      setCoverLetterProgress(0);
     }
   };
+
 
   const compileCoverLetterToPDF = async () => {
     if (!generatedCoverLetter) {

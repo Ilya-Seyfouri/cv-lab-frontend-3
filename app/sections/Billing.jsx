@@ -19,6 +19,7 @@ export default function Billing() {
   const router = useRouter();
 
   const priceID = "price_1SOg9CGTsfq9NWHAMsljLVdi";
+  const year_priceId = "price_1SOozGGTsfq9NWHAvfnhBrlD";
 
   useEffect(() => {
     getUser();
@@ -68,12 +69,16 @@ export default function Billing() {
 
     setLoading(true);
 
+
+    const selectedPriceID = monthly ? priceID : year_priceId
+
+
     try {
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          priceID: priceID,
+          priceID: selectedPriceID,
           email: user1.email,
           userId: user1.id,
         }),
