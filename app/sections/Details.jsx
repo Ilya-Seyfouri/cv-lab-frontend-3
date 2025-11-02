@@ -8,8 +8,8 @@ export default function Details() {
   const [userdetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
-  const [error, setError1] = useState("")
-  const router = useRouter()
+  const [error, setError1] = useState("");
+  const router = useRouter();
   const [isResetMode, setIsResetMode] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
 
@@ -77,7 +77,6 @@ export default function Details() {
       setError1(error.message);
     } else {
       // Clear any error messages
-      ;
       // Redirect to auth page (or home page)
       router.push("/auth");
     }
@@ -105,7 +104,7 @@ export default function Details() {
 
   const handleManageSubscription = async () => {
     if (!user1?.stripe_customer_id) {
-      alert("No subscription found. Please subscribe first.");
+      ("No subscription found. Please subscribe first.");
       return;
     }
 
@@ -125,11 +124,11 @@ export default function Details() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert("Error opening subscription portal");
+        setError1("Error opening subscription portal");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Failed to open subscription portal");
+      setError1("Failed to open subscription portal");
     }
   };
 
@@ -164,8 +163,12 @@ export default function Details() {
                     {/* Profile Card */}
                     <div className="bg-white/5 backdrop-blur-sm rounded-lg p-6 border border-white/10">
                       <div className="flex justify-end">
-                        <button className="border-1 px-2 py-1 rounded-md border-white/40 text-white/40 hover:text-red-400"
-                        onClick={signOutFunc}>Sign Out</button>
+                        <button
+                          className="border-1 px-2 py-1 rounded-md border-white/40 text-white/40 hover:text-red-400"
+                          onClick={signOutFunc}
+                        >
+                          Sign Out
+                        </button>
                       </div>
                       {/* Email Section */}
                       <div className="mb-6">

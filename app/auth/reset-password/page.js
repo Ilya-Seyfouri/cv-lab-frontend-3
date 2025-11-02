@@ -15,7 +15,7 @@ export default function ResetPassword() {
     if (error) {
       setError(error.message);
     } else {
-      alert("Password updated!");
+      setError("Password updated!");
       router.push("/auth");
     }
   }
