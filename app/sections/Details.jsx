@@ -148,7 +148,7 @@ export default function Details() {
     <>
       <section id="billing">
         <div className="container">
-          <div className="pt-40 flex justify-center items-center">
+          <div className="flex pt-36 justify-center mr-20 items-center">
             <div>
               <h2 className="text-center text-white/40 text-2xl mb-8">
                 Your Profile

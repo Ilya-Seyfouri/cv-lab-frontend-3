@@ -116,17 +116,12 @@ export default function Billing() {
       <>
         <section id="plan">
           <div className="container">
-            <div className="pt-35 flex flex-col justify-center items-center">
+            <div className="pt-8 flex flex-col justify-center items-center">
               <div className="flex items-center py-5 max-w-4xl  text-center mx-auto">
-                <h2 className="md:text-4xl text-3xl font-semibold">
-                  ai that turns applications into interviews
-                </h2>
+                
               </div>
               <div className="pt-2 flex justify-center max-w-xl">
-                <p className="text-white/60 md:text-xl text-lg text-center">
-                  Highlight what hiring managers want to see and boost your
-                  interview rate.
-                </p>
+                
               </div>
 
               <div className="pt-15 pb-10 flex items-center gap-4">
