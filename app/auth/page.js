@@ -74,7 +74,7 @@ export default function Auth() {
     <>
       <section>
         <div className="container">
-          <div className="flex justify-center lg:gap-6 items-center">
+          <div className="flex justify-start lg:gap-6 items-center">
             <div className="pt-4 mr-5">
               <Image src={CVLOGO} className="w-auto" alt="logo" height={60} />
             </div>

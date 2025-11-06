@@ -536,7 +536,7 @@ export default function Home() {
 
           <div>
             {error1 ? (
-              <div className="py-5">
+              <div className="py-5 pt-20">
                 <div className="flex justify-center">
                   <div className="border-0 py-4 lg:py-4 text-md px-25 lg:px-20 rounded-xl text-center bg-red-500/20 text-red-400">
                     {error1}

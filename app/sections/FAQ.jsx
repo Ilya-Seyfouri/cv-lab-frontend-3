@@ -49,13 +49,13 @@ export default function FAQ() {
     <>
       <section id="faq">
         <div className="container">
-          <div className="pt-30 lg:pt-60 pb-30 lg:pb-70 flex flex-col justify-center items-center px-4 lg:px-0">
+          <div className="pt-30 lg:pt-60 pb-30 lg:pb-30 flex flex-col justify-center items-center px-4 lg:px-0">
             <div className="text-center">
               <h2 className="text-4xl lg:text-6xl">We've got the answers</h2>
             </div>
             <div className="pt-4 lg:pt-8 text-center">
               <p className="text-lg lg:text-2xl text-white/50 px-4">
-                Discover everything you need to know about GoMoon.ai
+                Discover everything you need to know about CV Lab
               </p>
             </div>
             <div className="mt-8 lg:mt-12 flex flex-col gap-4 lg:gap-6 w-full max-w-4xl px-4 lg:px-0">
