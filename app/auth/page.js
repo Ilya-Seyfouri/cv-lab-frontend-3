@@ -79,7 +79,7 @@ export default function Auth() {
                 src={CVLOGO}
                 className="w-auto cursor-pointer"
                 alt="logo"
-                height={60}
+                height={50}
                 onClick={() => router.push("/")}
               />
             </div>
@@ -188,7 +188,7 @@ export default function Auth() {
                 <div className="flex justify-center gap-10">
                   <div>
                     <button
-                      className="border-none lg:px-15 lg:py-2 px-15 py-2 rounded-lg text-xl
+                      className="border-none lg:px-15 lg:py-2 px-10 py-1 rounded-lg text-xl
 cursor-pointer text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600
 hover:bg-gradient-to-br focus:outline-none active:scale-95 transition-transform 
 shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 font-semibold 
@@ -200,7 +200,7 @@ text-center me-2 mb-2"
                   </div>
                   <div>
                     <button
-                      className="border-none lg:px-15 lg:py-2 px-15 py-2 rounded-lg text-xl font-semibold
+                      className="border-none lg:px-15 lg:py-2 px-10 py-1 rounded-lg text-xl font-semibold
 cursor-pointer text-white active:scale-95 
 transition-transform  bg-gradient-to-r
  from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br 

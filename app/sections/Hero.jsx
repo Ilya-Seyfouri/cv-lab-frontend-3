@@ -45,7 +45,7 @@ export default function Hero() {
 from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br 
 focus:outline-none active:scale-95 transition-transform shadow-lg 
 shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 rounded-lg 
-text-sm px-5 py-2.5 text-center me-2 mb-2 font-semibold"
+text-sm md:px-5 md:py-2.5 px-3 py-1.5 text-center me-2 mb-2 font-semibold"
                 >
                   <p className="text-lg">Get Started</p>
                   <Image src={button} alt="logo" className="h-8 w-auto" />
@@ -58,7 +58,7 @@ text-sm px-5 py-2.5 text-center me-2 mb-2 font-semibold"
 bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 
 hover:bg-gradient-to-br focus:outline-none active:scale-95 
 transition-transform shadow-lg shadow-gray-500/50 dark:shadow-lg 
-dark:shadow-gray-800/80 rounded-lg text-sm px-5 py-2.5 text-center 
+dark:shadow-gray-800/80 rounded-lg text-sm md:px-5 md:py-2.5 px-3 py-1.5 text-center 
 me-2 mb-2"
                   onClick={() => router.push("https://x.com/zenifi99")}
                 >
