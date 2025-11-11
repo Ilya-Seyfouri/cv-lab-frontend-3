@@ -8,9 +8,9 @@ import { useRouter } from "next/navigation"
 
 export default function Sidebar() {
   const navLinks = [
-    { label: "Account", href: "#billing" },
+    { label: "Account", href: "#plan" },
+
     { label: "Generate", href: "#cv" },
-    { label: "Manage Plan", href: "#plan" },
   ];
 
   const [isOpen, setIsOpen] = useState(false);
