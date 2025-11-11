@@ -18,8 +18,8 @@ export default function Billing() {
   const [annual, setAnnual] = useState(false);
   const router = useRouter();
 
-  const priceID = "price_1SOg9CGTsfq9NWHAMsljLVdi";
-  const year_priceId = "price_1SOozGGTsfq9NWHAvfnhBrlD";
+  const priceID = "price_1SS6QYGTsfq9NWHAu8N1d03y";
+  const year_priceId = "price_1SS6QCGTsfq9NWHAXW7MTcmE";
 
   useEffect(() => {
     getUser();
@@ -105,9 +105,9 @@ export default function Billing() {
 
   if (user1?.is_subscribed || user1?.subscription_status === "Pro") {
     return (
-      <div className="pt-35 flex justify-center items-center">
-        <h2 className="text-3xl font-bold">✨ You're a Pro Member!</h2>
-      </div>
+      
+     <>
+     </>
     );
   }
 
@@ -201,7 +201,7 @@ export default function Billing() {
                             className="inline-block"
                           >
                             <span className="text-7xl">
-                              {monthly ? "$12" : "$8"}
+                              {monthly ? "£6" : "£5" }
                             </span>
                             <span className="text-xl">
                               {monthly ? " /month" : "/month"}

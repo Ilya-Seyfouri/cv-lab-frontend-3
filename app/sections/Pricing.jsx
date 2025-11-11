@@ -46,7 +46,7 @@ export default function Pricing() {
                   <div className=" bg-gradient-to-b  from-blue-800 to-cyan-600 rounded-3xl relative overflow-hidden">
                     <div className="pt-8 px-5 relative z-10">
                       <div className="text-3xl font-semibold overflow-hidden inline-block">
-                        <h3>$12/Month</h3>
+                        <h3>£6/Month</h3>
                       </div>
                     </div>
                     <div className="pt-6 flex flex-row justify-center py-2 items-center relative z-10">
@@ -129,7 +129,7 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                   <div className=" bg-gradient-to-b from-purple-500 to-pink-300 rounded-3xl relative overflow-hidden">
                     <div className="pt-8 px-5 relative z-10">
                       <div className="text-3xl font-semibold overflow-hidden inline-block">
-                        <h3>$80/Year</h3>
+                        <h3>£66/Year</h3>
                       </div>
                     </div>
                     <div className="pt-6 flex flex-row justify-center py-2 items-center relative z-10">
@@ -155,7 +155,7 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                     </div>
                     <div className="relative z-10">
                       <div className="py-5">
-                        <p className="text-xl px-6">Whats Included</p>
+                        <p className="text-xl px-6">Whats Included<span> + 3 months free.</span></p>
                       </div>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
@@ -216,7 +216,7 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                   <div className=" bg-gradient-to-b from-purple-500 to-pink-300 rounded-3xl relative overflow-hidden">
                     <div className="pt-8 px-5 relative z-10">
                       <div className="text-3xl font-semibold overflow-hidden inline-block">
-                        <h3>$12/Month</h3>
+                        <h3>£6/Month</h3>
                       </div>
                     </div>
                     <div className="pt-6 flex flex-row justify-center py-2 items-center relative z-10">

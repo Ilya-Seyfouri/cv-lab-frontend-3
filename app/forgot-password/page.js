@@ -21,8 +21,8 @@ export default function ForgotPassword() {
   }
 
   return (
-    <div className="container py-20">
-      <h3 className="text-center text-2xl font-bold">Reset Password</h3>
+    <div className="container py-20 pt-20">
+      <h3 className="text-center text-2xl pt-20 font-bold">Reset Password</h3>
       <div className="max-w-md mx-auto mt-8">
         <input
           value={email}

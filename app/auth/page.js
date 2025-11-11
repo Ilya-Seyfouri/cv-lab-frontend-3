@@ -10,8 +10,6 @@ import Link from "next/link";
 import EyeClosed from "@/images/hide-pass.png"; // adjust path to your icon
 import EyeOpen from "@/images/show-pass1.png"; // adjust path to your icon
 
-
-
 export default function Auth() {
   const router = useRouter();
   const supabase = createClient();
@@ -20,7 +18,6 @@ export default function Auth() {
   const [error1, setError1] = useState("");
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
 
   const handleEmail = (e) => {
     setEmail(e.target.value);
@@ -35,10 +32,11 @@ export default function Auth() {
       email: email,
       password: password,
       //options: {
-       // emailRedirectTo: `${windows.location.origin}/auth/callback`,
+      // emailRedirectTo: `${windows.location.origin}/auth/callback`,
       //},
     });
     if (error) {
+      setMessage("")
       setError1(error.message);
     } else {
       setError1("");
@@ -52,6 +50,7 @@ export default function Auth() {
       password: password,
     });
     if (error) {
+      setMessage("")
       setError1(error.message);
     } else {
       router.push("/dashboard");
@@ -76,7 +75,13 @@ export default function Auth() {
         <div className="container">
           <div className="flex justify-start lg:gap-6 items-center">
             <div className="pt-4 mr-5">
-              <Image src={CVLOGO} className="w-auto" alt="logo" height={60} />
+              <Image
+                src={CVLOGO}
+                className="w-auto cursor-pointer"
+                alt="logo"
+                height={60}
+                onClick={() => router.push("/")}
+              />
             </div>
           </div>
 

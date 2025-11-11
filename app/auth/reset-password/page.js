@@ -22,7 +22,7 @@ export default function ResetPassword() {
 
   return (
     <div className="container py-20">
-      <h3 className="text-center text-2xl font-bold">New Password</h3>
+      <h3 className="text-center text-2xl font-bold pt-20">New Password</h3>
       <div className="max-w-md mx-auto mt-8">
         <input
           value={password}

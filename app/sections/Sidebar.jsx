@@ -4,6 +4,7 @@ import CVLOGO from "@/images/logo_text.png";
 import Image from "next/image";
 import { twMerge } from "tailwind-merge";
 import { useState } from "react";
+import { useRouter } from "next/navigation"
 
 export default function Sidebar() {
   const navLinks = [
@@ -13,6 +14,7 @@ export default function Sidebar() {
   ];
 
   const [isOpen, setIsOpen] = useState(false);
+  const router = useRouter()
 
   return (
     <>
@@ -30,8 +32,9 @@ export default function Sidebar() {
                   <Image
                     src={CVLOGO}
                     alt="logo"
-                    className="w-auto"
+                    className="w-auto, cursor-pointer"
                     height={40}
+                    onClick={() => {router.push("/auth")}}
                   />
                 </div>
 

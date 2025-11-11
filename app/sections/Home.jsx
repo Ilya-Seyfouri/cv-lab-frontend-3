@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "../lib/supabase/client";
 import CV from "./CV";
 import CoverLetter from "./CoverLetter";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
   const [user1, setUser1] = useState(null);
@@ -12,8 +13,17 @@ export default function Home() {
   const [userCV, setUserCV] = useState("");
   const [cvFile, setCvFile] = useState(null);
   const [error1, setError1] = useState("");
-  // Missing Skills State
+  const [roleAlignment, setRoleAlignment] = useState(null);
+  const [matchScore, setMatchScore] = useState(0);
+  const [matchReason, setMatchReason] = useState("");
+  const [evidenceMap, setEvidenceMap] = useState({});
   const [missingSkills, setMissingSkills] = useState([]);
+  const [gapBridges, setGapBridges] = useState({});
+  const [responsibilitiesMap, setResponsibilitiesMap] = useState({});
+  const [showAnalysis, setShowAnalysis] = useState(false);
+  const [isCoverLetterOpen, setIsCoverLetterOpen] = useState(false);
+
+  // Missing Skills State
   const [isAnalyzingSkills, setIsAnalyzingSkills] = useState(false);
   const [cvProgress, setCvProgress] = useState(0);
   const [coverLetterProgress, setCoverLetterProgress] = useState(0);
@@ -29,6 +39,7 @@ export default function Home() {
   const [isGeneratingCoverLetter, setIsGeneratingCoverLetter] = useState(false);
   const [coverLetterPdfData, setCoverLetterPdfData] = useState(null);
   const [isCompilingCoverLetter, setIsCompilingCoverLetter] = useState(false);
+  const [isCVAnalysisOpen, setIsCVAnalysisOpen] = useState(false);
 
   const supabase = createClient();
 
@@ -70,7 +81,7 @@ export default function Home() {
   };
 
   // NEW: Progress simulation function
-  const simulateProgress = (setProgress, duration = 30000) => {
+  const simulateProgress = (setProgress, duration = 100000) => {
     setProgress(1);
     const interval = 100; // Update every 100ms
     const steps = duration / interval;
@@ -90,7 +101,7 @@ export default function Home() {
     return timer;
   };
 
-  const simulateProgress2 = (setProgress, duration = 8000) => {
+  const simulateProgress2 = (setProgress, duration = 100000) => {
     setProgress(1);
     const interval = 100; // Update every 100ms
     const steps = duration / interval;
@@ -109,7 +120,6 @@ export default function Home() {
 
     return timer;
   };
-  2;
 
   // CV Upload Handlers
   const handleFileUpload = (e) => {
@@ -214,11 +224,14 @@ export default function Home() {
 
   // Generate CV
   const generateCV = async () => {
+    setShowAnalysis(false);
+
     console.log("=== DEBUG INFO ===");
     console.log("user1:", user1);
     console.log("userCV exists:", !!userCV);
     console.log("userCV length:", userCV?.length);
     console.log("jobDescription length:", jobDescription?.length);
+
     if (!jobDescription.trim()) {
       setError1("Please enter a job description");
       return;
@@ -232,8 +245,6 @@ export default function Home() {
     setError1("");
     setIsGeneratingCV(true);
     const progressTimer = simulateProgress(setCvProgress);
-
-    await analyzeSkills();
 
     setCvPdfData(null);
 
@@ -284,6 +295,23 @@ export default function Home() {
         return;
       }
 
+      if (data && data.skills_report) {
+        data.skills_report = JSON.parse(data.skills_report);
+
+        setMissingSkills(data.skills_report.missing_skills);
+        setMatchScore(
+          parseFloat(data.skills_report.role_alignment.match_score) * 100
+        );
+        setMatchReason(data.skills_report.role_alignment.reason);
+        setEvidenceMap(data.skills_report.evidence_map);
+        setMissingSkills(data.skills_report.missing_skills);
+        setGapBridges(data.skills_report.gap_bridges);
+        setResponsibilitiesMap(data.skills_report.responsibilities_map);
+        setShowAnalysis(true);
+      } else {
+        console.log("error w skills rerpot");
+      }
+
       if (data && data.cv) {
         setError1("");
 
@@ -291,6 +319,8 @@ export default function Home() {
         console.log(data.cv);
         clearInterval(progressTimer);
         setCvProgress(100);
+        // Extract and display skills analysis
+
         await compileCVToPDF(data.cv);
       } else {
         console.error("Unexpected JSON shape from /generate-cv:", data);
@@ -444,10 +474,11 @@ export default function Home() {
         setError1("");
 
         setGeneratedCoverLetter(data.cover_letter);
+
         clearInterval(progressTimer);
         setCoverLetterProgress(100);
       } else {
-        setError1("Error generating cover letter");
+        setError1("Your out of credits. Subscribe for unlimited!");
       }
     } catch (error) {
       console.error("Error generating cover letter:", error);
@@ -527,6 +558,22 @@ export default function Home() {
       </div>
     );
   }
+
+  const getEvidenceBadgeColor = (status) => {
+    const colors = {
+      explicit: "bg-gradient-to-r from-green-500 via-green-600 to-green-700",
+      implicit_strong: "bg-gradient-to-r from-lime-400 to-lime-500",
+      implicit_weak:
+        "bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600",
+      transferable:
+        "bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600",
+      absent: "bg-gradient-to-r from-red-400 via-red-500 to-red-600",
+    };
+    return (
+      colors[status] ||
+      "bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600"
+    );
+  };
 
   return (
     <section id="cv">
@@ -621,7 +668,6 @@ export default function Home() {
                 )}
               </div>
             </div>
-
             {/* Job Description Section */}
             <div className="bg-gray-200 rounded-lg shadow p-6 mb-6">
               <label className="block text-lg text-black font-semibold mb-2">
@@ -634,7 +680,6 @@ export default function Home() {
                 className="w-full text-black h-60 p-3 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
-
             {/* Generate Buttons */}
             <div className="flex gap-4 mb-6">
               <button
@@ -739,7 +784,6 @@ export default function Home() {
                 )}
               </button>
             </div>
-
             {/* NEW: Progress Bar for CV Generation */}
             {isGeneratingCV && cvProgress > 0 && (
               <div className="mb-6">
@@ -754,7 +798,6 @@ export default function Home() {
                 </p>
               </div>
             )}
-
             {/* NEW: Progress Bar for Cover Letter Generation */}
             {isGeneratingCoverLetter && coverLetterProgress > 0 && (
               <div className="mb-6">
@@ -770,54 +813,159 @@ export default function Home() {
               </div>
             )}
 
-            {/* Missing Skills Warning */}
-            {missingSkills.length > 0 && (
-              <div className="bg-yellow-50 border-l-4 py-4 px-4 mt-20 rounded-lg">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <svg
-                      className="h-5 w-5 text-yellow-400"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <div className="ml-3 flex-1">
-                    <p className="text-sm font-medium text-yellow-800">
-                      Missing Skills Detected
-                    </p>
-                    <div className="mt-2 text-sm text-yellow-700">
-                      <p className="mb-2">
-                        The following skills from the job description were not
-                        found in your CV:
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {missingSkills.map((skill, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-400 text-white"
-                          >
-                            {skill}
-                          </span>
-                        ))}
+            <CV pdfData={cvPdfData} onDownload={downloadCVPDF} />
+            {/* Analysis Box Section - Only show when showAnalysis is true */}
+            {showAnalysis && (
+              <div className="mb-6 pt-15">
+                {/* Header */}
+                <div className="bg-gray-200 rounded-lg shadow p-6 mb-6">
+                  <h2 className="text-2xl font-semibold text-center text-black mb-4">
+                    Skill Match Analysis
+                  </h2>
+
+                  {/* Match Score Section */}
+                  <div className="flex justify-center mb-6">
+                    <div className="inline-flex flex-col items-center gap-3 border border-gray-400 rounded-2xl p-6 bg-white shadow-md w-full">
+                      <div className="text-center">
+                        <div className="text-5xl font-bold bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 bg-clip-text text-transparent">
+                          {Math.round(matchScore)}%
+                        </div>
+                        <div className="text-sm font-semibold text-gray-600 pt-1">
+                          Match Score
+                        </div>
                       </div>
-                      <p className="mt-3 text-xs italic">
-                        💡 Consider highlighting relevant experience with these
-                        skills if applicable.
+                      <p className="text-center text-sm text-gray-700 max-w-2xl">
+                        {matchReason}
                       </p>
                     </div>
                   </div>
+                </div>
+
+                {/* CV Analysis Section - Dropdown */}
+                <div className="bg-gray-200 rounded-lg shadow p-6 mb-6">
+                  <button
+                    onClick={() => setIsCVAnalysisOpen(!isCVAnalysisOpen)}
+                    className="w-full flex items-center justify-between text-left hover:opacity-80 transition-opacity"
+                  >
+                    <h3 className="text-xl font-semibold text-black">
+                      CV Analysis
+                    </h3>
+                    <svg
+                      className={`w-6 h-6 text-black transition-transform duration-300 ${
+                        isCVAnalysisOpen ? "rotate-180" : ""
+                      }`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {/* Collapsible Content with Animation */}
+                  <AnimatePresence>
+                    {isCVAnalysisOpen && (
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: "auto" }}
+                        exit={{ height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="mt-4 pt-5">
+                          {missingSkills.length > 0 && (
+                            <div className="border border-yellow-400 rounded-lg p-4 bg-yellow-50 shadow-sm">
+                              <h4 className="text-lg font-semibold mb-3 text-yellow-900">
+                                missing skills:
+                              </h4>
+                              <ul className="space-y-3">
+                                {missingSkills.map((skill, idx) => (
+                                  <li
+                                    key={idx}
+                                    className="flex items-start gap-2"
+                                  >
+                                    <span className="text-yellow-600 mt-0.5">
+                                      ●
+                                    </span>
+                                    <div className="flex-1">
+                                      <p className="font-semibold text-gray-900 text-sm">
+                                        {skill}
+                                      </p>
+                                      {gapBridges[skill] && (
+                                        <p className="text-xs text-gray-700 mt-1">
+                                          {gapBridges[skill].bridge_text}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                          {/* Your Qualifications */}
+                          <div className="mb-6 pt-8">
+                            <h4 className="text-lg font-semibold text-black pt-5 mb-3">
+                              CV vs Job Requirements
+                            </h4>
+                            <div className="space-y-3">
+                              {Object.entries(evidenceMap).map(
+                                ([skill, details]) => (
+                                  <div
+                                    key={skill}
+                                    className="border border-gray-400 rounded-lg p-4 bg-white hover:shadow-md transition-all"
+                                  >
+                                    <div className="flex items-start justify-between mb-2 flex-wrap gap-2">
+                                      <h5 className="font-semibold text-gray-900 text-sm flex-1">
+                                        {skill}
+                                      </h5>
+                                      <span
+                                        className={`${getEvidenceBadgeColor(
+                                          details.status
+                                        )} px-3 py-1 rounded-full text-xs font-semibold text-white shadow-sm`}
+                                      >
+                                        {details.status
+                                          .replace("_", " ")
+                                          .toUpperCase()}
+                                      </span>
+                                    </div>
+                                    {details.evidence.length > 0 ? (
+                                      <div className="mt-2 space-y-2">
+                                        {details.evidence.map((item, idx) => (
+                                          <div
+                                            key={idx}
+                                            className="text-xs text-gray-700 pl-3 border-l-2 border-cyan-400"
+                                          >
+                                            <span className="font-semibold text-cyan-600">
+                                              {item.section}:
+                                            </span>{" "}
+                                            {item.bullet}
+                                          </div>
+                                        ))}
+                                      </div>
+                                    ) : (
+                                      <p className="text-xs text-gray-500 italic mt-2">
+                                        No direct evidence found
+                                      </p>
+                                    )}
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
             )}
 
             {/* CV Component - Only shows PDF preview */}
-            <CV pdfData={cvPdfData} onDownload={downloadCVPDF} />
 
             {/* Cover Letter Component - Only shows generated letter and PDF */}
             <CoverLetter

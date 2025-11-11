@@ -16,8 +16,8 @@ export default function CoverLetter({
       <div className="border-transparent rounded-2xl shadow p-6 mb-6">
         <div className="flex justify-between items-center mb-4 pt-10 pb-2 ">
 
- <p className="text-red-400 text-sm mb-4">
-    You can edit your cover letter then press 'convert' to convert it to pdf
+ <p className="text-red-400 text-sm mb-4 pl-2 font-Inter">
+    Edit your cover letter then convert it to pdf
   </p>        
           <button
             onClick={onCompileToPDF}
@@ -56,7 +56,7 @@ export default function CoverLetter({
                 Compiling...
               </>
             ) : (
-              "Download"
+              "Convert"
             )}
           </button>
         </div>
