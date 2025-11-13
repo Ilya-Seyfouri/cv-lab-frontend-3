@@ -819,9 +819,7 @@ export default function Home() {
               <div className="mb-6 pt-15">
                 {/* Header */}
                 <div className="bg-gray-200 rounded-lg shadow p-6 mb-6">
-                  <h2 className="text-2xl font-semibold text-center text-black mb-4">
-                    Skill Match Analysis
-                  </h2>
+                  
 
                   {/* Match Score Section */}
                   <div className="flex justify-center mb-6">

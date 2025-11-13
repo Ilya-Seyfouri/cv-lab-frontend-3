@@ -41,7 +41,7 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
           <div className="pt-6 lg:pt-10 flex flex-col lg:flex-row items-center justify-between w-full max-w-5xl gap-4 lg:gap-0 px-4">
             <Image src={CVLOGO} alt="Logo" className="h-10 lg:h-12 w-auto" />
             <p className="text-white/60 text-sm lg:text-base text-center lg:text-left">
-              contact us @ i.seyfouri@gmail.com
+              contact us @ cvlabhelp@gmail.com
             </p>
           </div>
 
