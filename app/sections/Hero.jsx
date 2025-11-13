@@ -15,7 +15,7 @@ export default function Hero() {
 
           <div className="lg:px-45">
             <div className="flex justify-center py px-15">
-              <h2 className="text-3xl md:text-5xl lg:text-6xl text-center mx-auto max-w-4xl ">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl text-center mx-auto max-w-4xl ">
                 Your Resume, Perfectly Matched to Every Job.
               </h2>
             </div>
@@ -27,7 +27,7 @@ export default function Hero() {
                   className="h-9 w-auto border-3 border-black rounded-full"
                 ></Image>
                 <p className="text-base font-semibold text-white/80 pr-2.5">
-                  500+ CV's generated
+                  4500+ CV's generated
                 </p>
               </div>
             </div>
@@ -62,14 +62,14 @@ dark:shadow-gray-800/80 rounded-lg text-sm md:px-5 md:py-2.5 px-3 py-1.5 text-ce
 me-2 mb-2"
                   onClick={() => router.push("https://x.com/zenifi99")}
                 >
-                  <p className="text-lg">Join us on</p>
+                  <p className="text-lg">Contact us</p>
                   <Image src={xxx} alt="logo" className="h-8 w-auto" />
                 </button>
               </div>
             </div>
 
-            <div id="features">
-              <div className="flex justify-center py-10">
+            <div>
+              <div className="flex justify-center pt-10">
                 <iframe
                   src="https://www.youtube.com/embed/BjW-P1JNfc8"
                   title="YouTube video player"

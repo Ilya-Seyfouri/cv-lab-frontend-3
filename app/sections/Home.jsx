@@ -818,7 +818,7 @@ export default function Home() {
             {showAnalysis && (
               <div className="mb-6 pt-15">
                 {/* Header */}
-                <div className="bg-gray-200 rounded-lg shadow p-6 mb-6">
+                <div className="rounded-lg shadow p-6 px-1 mb-6">
                   
 
                   {/* Match Score Section */}
@@ -840,7 +840,7 @@ export default function Home() {
                 </div>
 
                 {/* CV Analysis Section - Dropdown */}
-                <div className="bg-gray-200 rounded-lg shadow p-6 mb-6">
+                <div className="bg-white rounded-lg shadow p-6 mb-6">
                   <button
                     onClick={() => setIsCVAnalysisOpen(!isCVAnalysisOpen)}
                     className="w-full flex items-center justify-between text-left hover:opacity-80 transition-opacity"

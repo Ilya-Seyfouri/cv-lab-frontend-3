@@ -16,43 +16,45 @@ export default function Pricing() {
 
   return (
     <>
-      <section id="pricing">
+      <section id="pricing" className="scroll-mt-28">
         <div className="container">
-          <div className="lg:pt-20  flex flex-col justify-center items-center">
-            <div className="flex items-center py-5 max-w-2xl  text-center mx-auto">
+          <div className=" flex flex-col justify-center items-center">
+            <div className="flex items-center pb-5 max-w-4xl  text-center mx-auto">
               <h2 className="text-5xl">
-                AI That Turns Applications Into Interviews
+                We transform your CV for each job and spotlight the skills
+                hiring managers want.
               </h2>
             </div>
-            <div className="pt-2 flex justify-center items-center">
-              <p className="text-white/60 lg:text-xl text-lg text-center">
-                Highlight what hiring managers want to see and boost your interview rate.
+            <div className="pt-4 flex justify-center items-center">
+              <p className="text-white/60 lg:text-2xl text-lg text-center max-w-3xl">
+                AI That Turns Your Applications Into Job Interviews.
               </p>
             </div>
 
             {/* Desktop: Show both cards */}
             <div className="pt-20 hidden lg:flex flex-row items-center gap-10">
-              <div className="pt-10 py-4 border-0 mx-auto max-w-[440px] bg-gradient-to-br from-gray-900 via-gray-700 to-gray-500 rounded-3xl">
+              {/* Pro Monthly */}
+              <div className="pt-8 py-4 border-0 mx-auto max-w-[440px] bg-gradient-to-br from-gray-900 via-gray-700 to-gray-500 rounded-3xl">
                 <div className="px-10 text-2xl">
-                  <p className=""> {"Pro Monthly"}</p>
+                  <p className="font-semibold">{"🔷 Pro Monthly"}</p>
                 </div>
-                <div className="px-10">
-                  <p className="text-white/50">
-                    Get Those Interviews — stand out with AI-optimized CVs
-                    tailored to every job
+                <div className="px-10 pt-2">
+                  <p className="text-white/60 font-mono">
+                    Transform your CV in seconds and make every application a
+                    perfect match.
                   </p>
                 </div>
-                <div className="pt-5 mx-auto max-w-[400px]">
-                  <div className=" bg-gradient-to-b  from-blue-800 to-cyan-600 rounded-3xl relative overflow-hidden">
-                    <div className="pt-8 px-5 relative z-10">
-                      <div className="text-3xl font-semibold overflow-hidden inline-block">
+                <div className="pt-8 mx-auto max-w-[410px]">
+                  <div className="bg-gradient-to-b from-blue-800 to-cyan-600 py-6 rounded-3xl relative overflow-hidden">
+                    <div className="pt-2 px-5 relative z-10">
+                      <div className="text-4xl font-semibold overflow-hidden inline-block">
                         <h3>£6/Month</h3>
                       </div>
                     </div>
                     <div className="pt-6 flex flex-row justify-center py-2 items-center relative z-10">
                       <div>
                         <button
-                          className="flex items-center gap-2 font-semibold rounded-2xl px-6 py-1.5
+                          className="flex items-center gap-2 font-semibold rounded-2xl px-30 py-2.5
 cursor-pointer text-black bg-gradient-to-r from-white via-gray-100 
 to-gray-200 hover:from-gray-100 hover:via-gray-200 hover:to-gray-300
 focus:outline-none active:scale-95 shadow-lg shadow-gray-300/50 
@@ -60,7 +62,7 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                           onClick={() => router.push("/auth")}
                         >
                           <p className="text-black text-lg font-semibold">
-                            Try for free
+                            Free Trial
                           </p>
                           <Image
                             src={button}
@@ -76,7 +78,6 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                       </div>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
-
                         <p className="">AI-Tailored CVs</p>
                       </div>
                       <p className="text-white/40 text-xs opacity-50">
@@ -84,7 +85,6 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                       </p>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
-
                         <p className=""> Keyword Optimization</p>
                       </div>
                       <p className="text-white/40 text-xs opacity-50">
@@ -92,7 +92,6 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                       </p>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
-
                         <p className=""> ATS Compatibility Report</p>
                       </div>
                       <p className="text-white/40 text-xs opacity-50">
@@ -100,7 +99,6 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                       </p>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
-
                         <p className=""> AI Cover Letter Generator</p>
                       </div>
                       <p className="text-white/40 text-xs opacity-50">
@@ -108,34 +106,35 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                       </p>
                       <div className="flex items-center gap-2 px-6 pb-4">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
-
                         <p className="">Job Match Analysis</p>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div className="pt-10 py-4 border-0 mx-auto max-w-[440px] bg-gradient-to-br from-gray-900 via-gray-700 to-gray-500 rounded-3xl">
+
+              {/* Pro Yearly – now visually matching Monthly */}
+              <div className="pt-8 py-4 border-0 mx-auto max-w-[440px] bg-gradient-to-br from-gray-900 via-gray-700 to-gray-500 rounded-3xl">
                 <div className="px-10 text-2xl">
-                  <p className=""> {"Pro Yearly"}</p>
+                  <p className="font-semibold">{"♦️ Pro Yearly"}</p>
                 </div>
-                <div className="px-10">
-                  <p className="text-white/50">
+                <div className="px-10 pt-2">
+                  <p className="text-white/60 font-mono">
                     Get Those Interviews — stand out with AI-optimized CVs
-                    tailored to every job
+                    tailored to every job.
                   </p>
                 </div>
-                <div className="pt-5 mx-auto max-w-[400px]">
-                  <div className=" bg-gradient-to-b from-purple-500 to-pink-300 rounded-3xl relative overflow-hidden">
-                    <div className="pt-8 px-5 relative z-10">
-                      <div className="text-3xl font-semibold overflow-hidden inline-block">
+                <div className="pt-8 mx-auto max-w-[410px]">
+                  <div className="bg-gradient-to-b from-red-400 to-pink-500 py-6 rounded-3xl relative overflow-hidden">
+                    <div className="pt-2 px-5 relative z-10">
+                      <div className="text-4xl font-semibold overflow-hidden inline-block">
                         <h3>£66/Year</h3>
                       </div>
                     </div>
                     <div className="pt-6 flex flex-row justify-center py-2 items-center relative z-10">
                       <div>
                         <button
-                          className="flex items-center gap-2 font-semibold rounded-2xl px-6 py-1.5
+                          className="flex items-center gap-2 font-semibold rounded-2xl px-30 py-2.5
 cursor-pointer text-black bg-gradient-to-r from-white via-gray-100 
 to-gray-200 hover:from-gray-100 hover:via-gray-200 hover:to-gray-300
 focus:outline-none active:scale-95 shadow-lg shadow-gray-300/50 
@@ -143,7 +142,7 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                           onClick={() => router.push("/auth")}
                         >
                           <p className="text-black text-lg font-semibold">
-                            Try for free
+                            Free Trial
                           </p>
                           <Image
                             src={button}
@@ -155,11 +154,12 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                     </div>
                     <div className="relative z-10">
                       <div className="py-5">
-                        <p className="text-xl px-6">Whats Included<span> + 3 months free.</span></p>
+                        <p className="text-xl px-6">
+                          Whats Included<span> + 3 months free.</span>
+                        </p>
                       </div>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
-
                         <p className="">AI-Tailored CVs</p>
                       </div>
                       <p className="text-white/40 text-xs opacity-50">
@@ -167,7 +167,6 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                       </p>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
-
                         <p className="">Keyword Optimization</p>
                       </div>
                       <p className="text-white/40 text-xs opacity-50">
@@ -175,7 +174,6 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                       </p>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
-
                         <p className="">ATS Compatibility Report</p>
                       </div>
                       <p className="text-white/40 text-xs opacity-50">
@@ -183,7 +181,6 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                       </p>
                       <div className="flex items-center gap-2 px-6">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
-
                         <p className="">AI Cover Letter Generator</p>
                       </div>
                       <p className="text-white/40 text-xs opacity-50">
@@ -191,7 +188,6 @@ text-sm text-center me-2 mb-2 transition-all duration-200"
                       </p>
                       <div className="flex items-center gap-2 px-6 pb-4">
                         <Image src={tick} alt="Logo" className="h-5 w-auto" />
-
                         <p className="">Job Match Analysis</p>
                       </div>
                     </div>
