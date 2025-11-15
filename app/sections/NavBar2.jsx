@@ -55,7 +55,7 @@ export default function Navbar2() {
             {/* Desktop "Login" — ghost style */}
             <button
               onClick={() => router.push("/auth")}
-              className="hidden rounded-md px-3 py-2 text-md font-medium text-muted-foreground transition-colors hover:text-foreground md:inline-flex focus:outline-none focus:ring-2 focus:ring-cyan-500/60"
+              className="hidden rounded-md px-3 py-2 cursor-pointer text-md font-medium text-muted-foreground transition-colors hover:text-foreground md:inline-flex focus:outline-none focus:ring-2 focus:ring-cyan-500/60"
             >
               Login
             </button>
@@ -69,7 +69,7 @@ px-4 py-2 text-md font-semibold text-white
 shadow-lg shadow-cyan-500/30 transition 
 hover:from-cyan-500 hover:via-cyan-600 hover:to-cyan-700 
 md:inline-flex 
-focus:outline-none focus:ring-2 focus:ring-cyan-500/70"
+focus:outline-none focus:ring-2 focus:ring-cyan-500/70 cursor-pointer"
             >
               <span>Get Started</span>
               <Image src={buttonImg} alt="CTA icon" className="h-6 w-auto" />

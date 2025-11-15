@@ -135,7 +135,7 @@ export default function Pricing2() {
                 <div className="mt-8">
                   <button
                     onClick={() => router.push("/auth")}
-                    className={`flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-2.5 text-sm font-semibold 
+                    className={`flex w-full cursor-pointer items-center justify-center gap-2 rounded-2xl px-6 py-2.5 text-sm font-semibold 
                     transition-all duration-200 active:scale-95 
                     ${
                       plan.popular
