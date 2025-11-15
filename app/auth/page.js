@@ -63,8 +63,9 @@ export default function Auth() {
     <section className="min-h-screen bg-[#020617] flex items-center justify-center px-4 relative overflow-hidden">
       {/* Background blobs like your inspiration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[120px]" />
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-cyan-500/15 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-500/15 rounded-full blur-3xl" />
+        
       </div>
 
       <div className="w-full max-w-md relative z-10">

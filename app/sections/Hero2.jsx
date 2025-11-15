@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 
 import photo from "../../images/avatar-lula-meyers.jpg";
 import button from "../../images/BUTTON_1.png";
-import xxx from "../../images/x.png";
+import xxx from "../../images/x1.png";
 import { Sparkles } from "lucide-react";
 
 export default function Hero2() {
@@ -41,13 +41,11 @@ export default function Hero2() {
           </div>
 
           {/* Subheading */}
-          <p className="mx-auto pt-10 mb-8 max-w-4xl text-md md:text-2xl text-white/60">
-            Drop your CV and enter a job description to get a perfectly tailored
-            resume and cover letter in seconds. Beat ATS filters and stand out
+          <p className="mx-auto pt-10 mb-8 max-w-5xl text-md md:text-2xl text-white/60">
+            Drop your CV and enter a Job Description to get a perfectly tailored
+            Resume and Cover Letter in seconds. Beat ATS filters and stand out
             from the crowd.
           </p>
-
-          
 
           {/* CTA buttons – your original buttons, unchanged */}
           <div className="flex flex-row items-center justify-center gap-4 sm:flex-row sm:gap-6 py-2">
@@ -80,8 +78,6 @@ me-2 mb-2"
               </button>
             </div>
           </div>
-
-       
 
           {/* Video */}
           <div className="mt-12 flex justify-center">

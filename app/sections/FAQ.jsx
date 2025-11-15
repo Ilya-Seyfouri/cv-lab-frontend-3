@@ -55,7 +55,7 @@ export default function FAQ() {
             </div>
             <div className="pt-4 lg:pt-8 text-center">
               <p className="text-lg lg:text-2xl text-white/50 px-4 lg:pb-5">
-                Discover everything you need to know about CV Lab
+                Discover everything you need to know about CV Lab.
               </p>
             </div>
             <div className="mt-8 lg:mt-12 flex flex-col gap-4 lg:gap-6 w-full max-w-4xl px-4 lg:px-0">
