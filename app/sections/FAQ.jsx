@@ -47,9 +47,9 @@ export default function FAQ() {
 
   return (
     <>
-      <section id="faq">
+      <section id="faq" className="scroll-mt-15">
         <div className="container">
-          <div className="pt-30 lg:pt-30 pb-30 lg:pb-30 flex flex-col justify-center items-center px-4 lg:px-0">
+          <div className="pt-30 lg:pt-15 pb-30 lg:pb-30 flex flex-col justify-center items-center px-4 lg:px-0">
             <div className="text-center">
               <h2 className="text-4xl lg:text-6xl">We've got the answers</h2>
             </div>
@@ -84,7 +84,7 @@ export default function FAQ() {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       className={twMerge(
-                        "feather feather-plus text-lime-400 flex-shrink-0 transition duration-300 lg:w-6 lg:h-6",
+                        "feather feather-plus text-cyan-400 flex-shrink-0 transition duration-300 lg:w-6 lg:h-6",
                         selectedIndex == index && "rotate-45"
                       )}
                     >

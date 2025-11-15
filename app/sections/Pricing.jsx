@@ -1,8 +1,8 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import circle from "@/images/white-circle.png";
-import button from "@/images/BUTTON_1.png";
-import tick from "@/images/tick.png";
+import circle from "../../images/white-circle.png";
+import button from "../../images/BUTTON_1.png";
+import tick from "../../images/tick.png";
 
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";

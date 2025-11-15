@@ -3,12 +3,12 @@ import { createClient } from "../lib/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Logo from "@/images/logo.svg";
-import CVLOGO from "@/images/logo_text.png";
-import photo from "@/images/avatar-owen-garcia.jpg";
+import Logo from "../../images/logo.svg";
+import CVLOGO from "../../images/logo_text.png";
+import photo from "../../images/avatar-owen-garcia.jpg";
 import Link from "next/link";
-import EyeClosed from "@/images/hide-pass.png"; // adjust path to your icon
-import EyeOpen from "@/images/show-pass1.png"; // adjust path to your icon
+import EyeClosed from "../../images/hide-pass.png"; // adjust path to your icon
+import EyeOpen from "../../images/show-pass1.png"; // adjust path to your icon
 
 export default function Auth() {
   const router = useRouter();

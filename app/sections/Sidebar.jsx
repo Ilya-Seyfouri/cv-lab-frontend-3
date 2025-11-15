@@ -1,6 +1,6 @@
 "use client"
 
-import CVLOGO from "@/images/logo_text.png";
+import CVLOGO from "../../images/logo_text.png";
 import Image from "next/image";
 import { twMerge } from "tailwind-merge";
 import { useState } from "react";

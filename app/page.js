@@ -1,21 +1,26 @@
 import Image from "next/image";
 import Navbar from "./sections/Navbar";
+import Hero2 from "./sections/Hero2";
 import Hero from "./sections/Hero";
-import Pricing from "./sections/Pricing";
+import Testimonials from "./sections/Test";
+
+import Pricing2 from "./sections/Pricing2";
 import Features from "./sections/Features";
 import FAQ from "./sections/FAQ";
-import Footer from "./sections/Footer";
-
+import HowItWorks from "./sections/HowItWorks";
+import Footer2 from "./sections/Footer2";
+import Navbar2 from "./sections/NavBar2";
 
 export default function Home() {
   return (
     <>
-      <Navbar />
-      <Hero />
-      <Features />
-      <Pricing />
+      <Navbar2 />
+      <Hero2 />
+      <HowItWorks/>
+      <Pricing2 />
+      <Testimonials/>
       <FAQ />
-      <Footer />
+      <Footer2 />
     </>
   );
 }

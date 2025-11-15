@@ -1,15 +1,15 @@
 "use client";
 
 import Image from "next/image";
-import Logo from "@/images/logo.svg";
-import Menu from "@/images/menu.svg";
-import Mouse from "@/images/mouse-pointer.svg";
+import Logo from "../../images/logo.svg";
+import Menu from "../../images/menu.svg";
+import Mouse from "../../images/mouse-pointer.svg";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import CVLOGO from "@/images/logo_text.png";
-import button from "@/images/BUTTON_1.png";
+import CVLOGO from "../../images/logo_text.png";
+import button from "../../images/BUTTON_1.png";
 
 export default function Navbar() {
   const router = useRouter()

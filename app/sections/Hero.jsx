@@ -1,9 +1,9 @@
 "use client";
 import Image from "next/image";
-import photo from "@/images/avatar-lula-meyers.jpg";
+import photo from "../../images/avatar-lula-meyers.jpg";
 import { useRouter } from "next/navigation";
-import button from "@/images/BUTTON_1.png";
-import xxx from "@/images/x.png";
+import button from "../../images/BUTTON_1.png";
+import xxx from "../../images/x.png";
 
 export default function Hero() {
   const router = useRouter();
