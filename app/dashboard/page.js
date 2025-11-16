@@ -1,36 +1,39 @@
+"use client";
+
+import { useState } from "react";
+
 import CV from "../sections/CV";
 import Sidebar from "../sections/Sidebar";
-import Details from "../sections/Details";
+import Details from "../sections/Details"; // safe to delete if unused
 import CoverLetter from "../sections/CoverLetter";
 import Home from "../sections/Home";
-import Billing from "../sections/Billing";
+import Billing from "../sections/Billing"; // safe to delete if unused
+import Account from "../sections/Account";
 
 export default function Dashboard() {
+  // "optimize" shows Home, CV, CoverLetter by default
+  const [selectedTab, setSelectedTab] = useState("optimize");
+
   return (
-    // Layout: sidebar + main content area
-    <div className="flex min-h-screen">
-      <Sidebar />
+    <>
+      <Sidebar selectedTab={selectedTab} onSelect={setSelectedTab} />
 
-      {/* Main content (scrollable) */}
-      <main className="flex-1 p-6">
-        {/* Top sections */}
-        <div className="space-y-10">
-          <Home />
-          <CV />
-          <CoverLetter />
-        </div>
+      {/* Padding so content isn't hidden behind fixed navbar */}
+      <main className="pt-24">
+        {selectedTab === "account" && (
+          <>
+            <Account />
+          </>
+        )}
 
-        {/* Billing + Details below */}
-        <div className="mt-10 flex flex-col md:flex-row gap-6 items-stretch">
-          <div className="w-full md:w-1/2">
-            <Billing />
-          </div>
-
-          <div className="w-full md:w-1/2">
-            <Details />
-          </div>
-        </div>
+        {selectedTab === "optimize" && (
+          <>
+            <Home />
+            <CV />
+            <CoverLetter />
+          </>
+        )}
       </main>
-    </div>
+    </>
   );
 }

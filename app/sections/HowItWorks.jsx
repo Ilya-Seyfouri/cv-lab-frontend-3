@@ -5,21 +5,21 @@ import { Upload, Sparkles, Download } from "lucide-react";
 const steps = [
   {
     icon: Upload,
-    step: "01",
+    step: "#1",
     title: "Upload Your CV & Job Description",
     description:
       "Drag and drop your existing CV and paste the job description you're applying for. We support PDF, DOCX, and TXT formats.",
   },
   {
     icon: Sparkles,
-    step: "02",
+    step: "#2",
     title: "AI Analyzes & Optimizes",
     description:
       "Our AI matches your experience to the role, surfaces the right achievements, and injects the keywords that matter for ATS.",
   },
   {
     icon: Download,
-    step: "03",
+    step: "#3",
     title: "Download & Apply",
     description:
       "Get your optimized CV and tailored cover letter in seconds. Download and apply with confidence.",

@@ -1,45 +1,39 @@
 "use client";
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "../lib/supabase/client";
-import CV from "./CV";
-import CoverLetter from "./CoverLetter";
-import { motion, AnimatePresence } from "framer-motion";
 
 export default function Home() {
   const [user1, setUser1] = useState(null);
   const [userdetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const [jobDescription, setJobDescription] = useState("");
   const [userCV, setUserCV] = useState("");
   const [cvFile, setCvFile] = useState(null);
   const [error1, setError1] = useState("");
-  const [roleAlignment, setRoleAlignment] = useState(null);
+
   const [matchScore, setMatchScore] = useState(0);
   const [matchReason, setMatchReason] = useState("");
   const [evidenceMap, setEvidenceMap] = useState({});
   const [missingSkills, setMissingSkills] = useState([]);
   const [gapBridges, setGapBridges] = useState({});
-  const [responsibilitiesMap, setResponsibilitiesMap] = useState({});
   const [showAnalysis, setShowAnalysis] = useState(false);
-  const [isCoverLetterOpen, setIsCoverLetterOpen] = useState(false);
 
-  // Missing Skills State
-  const [isAnalyzingSkills, setIsAnalyzingSkills] = useState(false);
-  const [cvProgress, setCvProgress] = useState(0);
-  const [coverLetterProgress, setCoverLetterProgress] = useState(0);
-
-  // CV States
   const [generatedCV, setGeneratedCV] = useState("");
   const [isGeneratingCV, setIsGeneratingCV] = useState(false);
   const [cvPdfData, setCvPdfData] = useState(null);
   const [isCompilingCV, setIsCompilingCV] = useState(false);
 
-  // Cover Letter States
   const [generatedCoverLetter, setGeneratedCoverLetter] = useState("");
   const [isGeneratingCoverLetter, setIsGeneratingCoverLetter] = useState(false);
   const [coverLetterPdfData, setCoverLetterPdfData] = useState(null);
   const [isCompilingCoverLetter, setIsCompilingCoverLetter] = useState(false);
-  const [isCVAnalysisOpen, setIsCVAnalysisOpen] = useState(false);
+
+  const [isDragging, setIsDragging] = useState(false);
+  const [cvProgress, setCvProgress] = useState(0);
+  const [coverLetterProgress, setCoverLetterProgress] = useState(0);
+  const [processingStep, setProcessingStep] = useState("idle");
 
   const supabase = createClient();
 
@@ -80,74 +74,40 @@ export default function Home() {
     }
   };
 
-  // NEW: Progress simulation function
-  const simulateProgress = (setProgress, duration = 100000) => {
-    setProgress(1);
-    const interval = 100; // Update every 100ms
-    const steps = duration / interval;
-    const increment = 98 / steps; // Go from 1% to 99%
-
-    let currentProgress = 1;
-    const timer = setInterval(() => {
-      currentProgress += increment;
-      if (currentProgress >= 99) {
-        setProgress(99);
-        clearInterval(timer);
-      } else {
-        setProgress(Math.floor(currentProgress));
-      }
-    }, interval);
-
-    return timer;
-  };
-
-  const simulateProgress2 = (setProgress, duration = 100000) => {
-    setProgress(1);
-    const interval = 100; // Update every 100ms
-    const steps = duration / interval;
-    const increment = 98 / steps; // Go from 1% to 99%
-
-    let currentProgress = 1;
-    const timer = setInterval(() => {
-      currentProgress += increment;
-      if (currentProgress >= 99) {
-        setProgress(99);
-        clearInterval(timer);
-      } else {
-        setProgress(Math.floor(currentProgress));
-      }
-    }, interval);
-
-    return timer;
-  };
-
-  // CV Upload Handlers
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file && file.type === "application/pdf") {
-      setCvFile(file);
-      uploadCV(file);
-      setError1("");
-    } else {
-      setError1("Please upload a PDF file");
-    }
-  };
-
-  const handleFileDrop = (e) => {
+  const handleDragOver = useCallback((e) => {
     e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
+
+  const handleDrop = useCallback((e) => {
+    e.preventDefault();
+    setIsDragging(false);
+
     const file = e.dataTransfer.files[0];
-    if (file && file.type === "application/pdf") {
+    if (
+      file &&
+      (file.type === "application/pdf" ||
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+        file.type === "text/plain")
+    ) {
       setCvFile(file);
       uploadCV(file);
-      setError1("");
-    } else {
-      setError1("Please upload a PDF file");
     }
-  };
+  }, []);
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+  const handleFileSelect = useCallback((e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCvFile(file);
+      uploadCV(file);
+    }
+  }, []);
 
   const uploadCV = async (file) => {
     if (!file) {
@@ -155,11 +115,7 @@ export default function Home() {
       return;
     }
 
-    console.log("=== UPLOADING CV ===");
-    console.log("File:", file.name, file.size, "bytes");
-
     setError1("");
-
     const formData = new FormData();
     formData.append("file", file);
 
@@ -172,99 +128,44 @@ export default function Home() {
         }
       );
 
-      console.log("Upload response status:", response.status);
-
       const data = await response.json();
-      console.log("Upload response data:", data);
-      console.log("Extracted text length:", data.extracted_text?.length);
-
       setUserCV(data.extracted_text);
-      console.log("✅ userCV state set, length:", data.extracted_text?.length);
     } catch (error) {
-      console.error("❌ Error uploading CV:", error);
+      console.error("Error uploading CV:", error);
       setError1("Error uploading CV. Please try again.");
     }
   };
 
-  const analyzeSkills = async () => {
-    if (!jobDescription.trim() || !userCV) {
-      return; // Silently skip if inputs aren't ready
-    }
+  const handleOptimize = async () => {
+    if (!cvFile || !jobDescription) return;
 
-    setIsAnalyzingSkills(true);
-    setMissingSkills([]);
+    setProcessingStep("uploading");
+    setCvProgress(0);
 
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    setCvProgress(25);
+    setProcessingStep("analyzing");
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    setCvProgress(50);
+    setProcessingStep("optimizing");
+
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    setCvProgress(75);
+
+    // Call your actual API
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_KEY}/analyze-skills`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            job_description: jobDescription,
-            user_cv: userCV,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.missing_skills && data.missing_skills.length > 0) {
-        setMissingSkills(data.missing_skills);
-      }
-    } catch (error) {
-      console.error("Error analyzing skills:", error);
-      // Fail silently - don't block CV generation
-    } finally {
-      setIsAnalyzingSkills(false);
-    }
-  };
-
-  // Generate CV
-  const generateCV = async () => {
-    setShowAnalysis(false);
-
-    console.log("=== DEBUG INFO ===");
-    console.log("user1:", user1);
-    console.log("userCV exists:", !!userCV);
-    console.log("userCV length:", userCV?.length);
-    console.log("jobDescription length:", jobDescription?.length);
-
-    if (!jobDescription.trim()) {
-      setError1("Please enter a job description");
-      return;
-    }
-
-    if (!userCV) {
-      setError1("Please upload your CV first");
-      return;
-    }
-
-    setError1("");
-    setIsGeneratingCV(true);
-    const progressTimer = simulateProgress(setCvProgress);
-
-    setCvPdfData(null);
-
-    try {
-      // ✅ GET THE SESSION TOKEN
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
-      if (!session) {
-        setError1("Please log in to continue");
-        return;
-      }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/generate-cv`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`, // ✅ ADD THIS
+            Authorization: `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({
             job_description: jobDescription,
@@ -273,113 +174,51 @@ export default function Home() {
         }
       );
 
-      const text = await response.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (err) {
-        console.error("Non-JSON response from /generate-cv:", text);
-        setError1(
-          "Unexpected response from server. Check browser console for details."
-        );
-        return;
-      }
-
-      if (data && data.error) {
-        console.warn("Server returned an error object:", data);
-        const missing = data.missing_fields
-          ? ` Missing: ${data.missing_fields.join(", ")}`
-          : "";
-        setError1(`Could not generate CV: ${data.error}.${missing}`);
-        setGeneratedCV("");
-        return;
-      }
+      const data = await response.json();
 
       if (data && data.skills_report) {
-        data.skills_report = JSON.parse(data.skills_report);
-
-        setMissingSkills(data.skills_report.missing_skills);
-        setMatchScore(
-          parseFloat(data.skills_report.role_alignment.match_score) * 100
-        );
-        setMatchReason(data.skills_report.role_alignment.reason);
-        setEvidenceMap(data.skills_report.evidence_map);
-        setMissingSkills(data.skills_report.missing_skills);
-        setGapBridges(data.skills_report.gap_bridges);
-        setResponsibilitiesMap(data.skills_report.responsibilities_map);
+        const report = JSON.parse(data.skills_report);
+        setMissingSkills(report.missing_skills);
+        setMatchScore(parseFloat(report.role_alignment.match_score) * 100);
+        setMatchReason(report.role_alignment.reason);
+        setEvidenceMap(report.evidence_map);
+        setGapBridges(report.gap_bridges);
         setShowAnalysis(true);
-      } else {
-        console.log("error w skills rerpot");
       }
 
       if (data && data.cv) {
-        setError1("");
-
         setGeneratedCV(data.cv);
-        console.log(data.cv);
-        clearInterval(progressTimer);
         setCvProgress(100);
-        // Extract and display skills analysis
-
+        setProcessingStep("complete");
         await compileCVToPDF(data.cv);
-      } else {
-        console.error("Unexpected JSON shape from /generate-cv:", data);
-        setError1(
-          "You dont have enough credits! subscribe to Pro for unlimited"
-        );
-        setGeneratedCV("");
-        clearInterval(progressTimer);
-        setCvProgress(0);
       }
     } catch (error) {
-      console.error("Error generating CV:", error);
-      setError1("Your going too fast! Try again in 5 minutes.");
-    } finally {
-      setIsGeneratingCV(false);
-      clearInterval(progressTimer);
-      setCvProgress(0);
+      console.error("Error:", error);
+      setError1("Error generating CV. Please try again.");
+      setProcessingStep("idle");
     }
-  };
-
-  const deleteCV = () => {
-    setCvFile(null);
-    setUserCV("");
-    setError1("");
   };
 
   const compileCVToPDF = async (latexCode) => {
-    if (!latexCode) {
-      setError1("No CV content to compile");
-      return;
-    }
+    if (!latexCode) return;
 
     setIsCompilingCV(true);
-    setError1("");
-
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/compile-latex`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            latex_code: latexCode,
-          }),
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ latex_code: latexCode }),
         }
       );
 
       const data = await response.json();
-
       if (data.success) {
         setCvPdfData(data.pdf);
-      } else {
-        setError1("Error compiling PDF: " + data.detail);
       }
     } catch (error) {
       console.error("Error compiling PDF:", error);
-      setError1("Error compiling PDF. Please try again.");
     } finally {
       setIsCompilingCV(false);
     }
@@ -387,8 +226,6 @@ export default function Home() {
 
   const downloadCVPDF = () => {
     if (!cvPdfData) return;
-
-    setError1("");
 
     const byteCharacters = atob(cvPdfData);
     const byteNumbers = new Array(byteCharacters.length);
@@ -408,156 +245,285 @@ export default function Home() {
     window.URL.revokeObjectURL(url);
   };
 
-  // Generate Cover Letter
-  const generateCoverLetter = async () => {
-    if (!jobDescription.trim()) {
-      setError1("Please enter a job description");
-      return;
-    }
-
-    if (!userCV) {
-      setError1("Please upload your CV first");
-      return;
-    }
-
-    setError1("");
-
-    setIsGeneratingCoverLetter(true);
-    const progressTimer = simulateProgress2(setCoverLetterProgress);
-
-    setCoverLetterPdfData(null); // Clear previous PDF
-
-    try {
-      console.log("Getting session...");
-
-      // ✅ GET THE SESSION TOKEN
-      const {
-        data: { session, error },
-      } = await supabase.auth.getSession();
-
-      if (error) {
-        console.error("Session error:", error.message);
-        return;
-      }
-
-      if (!session) {
-        setError1("Please log in to continue");
-        return;
-      }
-
-      console.log("✅ Session found:", {
-        user: session.user.email,
-        tokenLength: session.access_token.length,
-      });
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`, // ✅ ADD THIS
-          },
-          body: JSON.stringify({
-            job_description: jobDescription,
-            user_cv: userCV,
-          }),
-        }
-      );
-
-      console.log("Response status:", response.status);
-      console.log("Response ok:", response.ok);
-
-      const data = await response.json();
-
-      if (data && data.cover_letter) {
-        setError1("");
-
-        setGeneratedCoverLetter(data.cover_letter);
-
-        clearInterval(progressTimer);
-        setCoverLetterProgress(100);
-      } else {
-        setError1("Your out of credits. Subscribe for unlimited!");
-      }
-    } catch (error) {
-      console.error("Error generating cover letter:", error);
-      setError1("Your going too fast!. Please try again in 5 minutes.");
-    } finally {
-      setIsGeneratingCoverLetter(false);
-    }
+  const resetForm = () => {
+    setCvFile(null);
+    setJobDescription("");
+    setProcessingStep("idle");
+    setCvProgress(0);
+    setGeneratedCV("");
+    setCvPdfData(null);
   };
 
-  const compileCoverLetterToPDF = async () => {
-    if (!generatedCoverLetter) {
-      setError1("Please generate a cover letter first");
-      return;
-    }
-
-    setIsCompilingCoverLetter(true);
-    setError1("");
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter-pdf`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            cover_letter: generatedCoverLetter,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data.success) {
-        setError1("");
-
-        setCoverLetterPdfData(data.pdf);
-      } else {
-        setError1("Error creating PDF: " + (data.error || data.detail));
-      }
-    } catch (error) {
-      console.error("Error creating cover letter PDF:", error);
-      setError1("Error creating PDF. Please try again.");
-    } finally {
-      setIsCompilingCoverLetter(false);
-    }
-  };
-
-  const downloadCoverLetterPDF = () => {
-    if (!coverLetterPdfData) return;
-
-    setError1("");
-
-    const byteCharacters = atob(coverLetterPdfData);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: "application/pdf" });
-
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "cover-letter.pdf";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-  };
+  const canOptimize = cvFile && jobDescription.length > 50;
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500" />
       </div>
     );
   }
+
+  return (
+    <div className="min-h-screen">
+      <div className="container mx-auto px-4">
+        {processingStep === "idle" ||
+        processingStep === "uploading" ||
+        processingStep === "analyzing" ||
+        processingStep === "optimizing" ? (
+          <div className="mx-auto max-w-5xl">
+            {/* Header */}
+            <div className="mb-12 text-center">
+              <h1 className="mb-4 bg-gradient-to-r from-cyan-300 via-cyan-400 to-cyan-500  bg-clip-text text-4xl md:text-5xl text-transparent">
+                Transform Your Application
+              </h1>
+              <p className="text-lg text-muted-foreground text-white/50">
+                Upload your CV and job description to get optimized documents in
+                seconds.
+              </p>
+            </div>
+
+            {/* Upload and Input Section */}
+            <div className="grid gap-8 lg:grid-cols-2">
+              {/* CV Upload */}
+              <div className="border border-cyan-400 bg-card/50 backdrop-blur-sm rounded-xl">
+                <div className="px-6 pt-6 pb-4">
+                  <h3 className="flex items-center gap-2 text-foreground font-semibold">
+                    <svg
+                      className="h-5 w-5 text-cyan-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      />
+                    </svg>
+                    Upload Your CV
+                  </h3>
+                </div>
+                <div className="p-6">
+                  <div
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    className={`relative flex min-h-[300px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all ${
+                      isDragging
+                        ? "border-cyan-500 bg-cyan-500/10"
+                        : cvFile
+                        ? "border-green-500/50 bg-green-500/5"
+                        : "border-white/10 bg-white/5 hover:border-cyan-500/50 hover:bg-cyan-500/5"
+                    }`}
+                  >
+                    <input
+                      type="file"
+                      accept=".pdf,.docx,.txt"
+                      onChange={handleFileSelect}
+                      className="absolute inset-0 cursor-pointer opacity-0"
+                    />
+
+                    {cvFile ? (
+                      <div className="text-center">
+                        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
+                          <svg
+                            className="h-8 w-8 text-green-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                            />
+                          </svg>
+                        </div>
+                        <p className="mb-2 text-foreground">{cvFile.name}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {(cvFile.size / 1024).toFixed(2)} KB
+                        </p>
+                        <button
+                          type="button"
+                          className="mt-4 px-4 py-2 text-sm text-muted-foreground hover:text-foreground"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setCvFile(null);
+                            setUserCV("");
+                          }}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-cyan-500/20">
+                          <svg
+                            className="h-8 w-8 text-cyan-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                            />
+                          </svg>
+                        </div>
+                        <p className="mb-2 text-foreground">
+                          Drag & drop your CV here
+                        </p>
+                        <p className="mb-4 text-sm text-muted-foreground">
+                          or click to browse
+                        </p>
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs bg-white/5 border border-white/10 text-muted-foreground">
+                          PDF, DOCX, TXT
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Job Description */}
+              <div className="border border-cyan-500 bg-card/50 backdrop-blur-sm rounded-xl">
+                <div className="px-6 pt-6 pb-4">
+                  <h3 className="flex items-center gap-2 text-foreground font-semibold">
+                    <svg
+                      className="h-5 w-5 text-cyan-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    Job Description
+                  </h3>
+                </div>
+                <div className="p-6">
+                  <textarea
+                    placeholder="Paste the job description here..."
+                    onChange={(e) => setJobDescription(e.target.value)}
+                    className="min-h-[300px] w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
+                  />
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {jobDescription.length} characters
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Processing Status */}
+            {processingStep !== "idle" && (
+              <div className="mt-8 border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-sm rounded-xl">
+                <div className="p-6">
+                  <div className="mb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500/20">
+                        <svg
+                          className="h-5 w-5 animate-pulse text-cyan-400"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-foreground">
+                          {processingStep === "uploading" &&
+                            "Uploading your CV..."}
+                          {processingStep === "analyzing" &&
+                            "Analyzing job requirements..."}
+                          {processingStep === "optimizing" &&
+                            "Optimizing your application..."}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          This won't take long
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-2xl text-cyan-400">
+                      {cvProgress}%
+                    </span>
+                  </div>
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
+                    <div
+                      className="h-full bg-gradient-to-r from-cyan-600 to-cyan-700 transition-all duration-300"
+                      style={{ width: `${cvProgress}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Action Button */}
+            <div className="mt-8 flex justify-center">
+              <button
+                disabled={
+                  !canOptimize ||
+                  (processingStep !== "idle" && processingStep !== "complete")
+                }
+                onClick={handleOptimize}
+  type="button"
+  className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 
+             hover:bg-gradient-to-br focus:ring-4 focus:outline-none 
+             focus:ring-cyan-300 dark:focus:ring-cyan-800 
+             shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 
+             font-medium rounded-base text-sm px-6 py-3 text-center leading-5 rounded-xl"
+>
+  Optimize My Application
+</button>
+
+            </div>
+
+            {!canOptimize && (
+              <p className="mt-4 text-center text-sm text-muted-foreground">
+                {!cvFile && "Upload Your CV "}
+                {!cvFile && !jobDescription && "and "}
+                {!jobDescription && "Paste a Job Description."}
+              </p>
+            )}
+          </div>
+        ) : (
+          <ResultsView
+            onReset={resetForm}
+            cvFileName={cvFile?.name || "CV"}
+            cvPdfData={cvPdfData}
+            downloadCVPDF={downloadCVPDF}
+            matchScore={matchScore}
+            matchReason={matchReason}
+            evidenceMap={evidenceMap}
+            missingSkills={missingSkills}
+            gapBridges={gapBridges}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ResultsView({
+  onReset,
+  cvFileName,
+  cvPdfData,
+  downloadCVPDF,
+  matchScore,
+  matchReason,
+  evidenceMap,
+  missingSkills,
+  gapBridges,
+}) {
+  const [activeTab, setActiveTab] = useState("cv");
 
   const getEvidenceBadgeColor = (status) => {
     const colors = {
@@ -576,59 +542,277 @@ export default function Home() {
   };
 
   return (
-    <section id="cv">
-      <div className="min-h-screen">
-        <div className="max-w-4xl mx-auto px-4">
-          {/* Header */}
+    <div className="mx-auto max-w-6xl">
+      {/* Success Header */}
+      <div className="mb-12 text-center">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
+          <svg
+            className="h-8 w-8 text-green-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+        </div>
+        <h1 className="mb-4 bg-gradient-to-b from-white to-white/60 bg-clip-text text-4xl text-transparent font-bold">
+          Optimization Complete!
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          Your documents are ready to download
+        </p>
+      </div>
 
-          <div>
-            {error1 ? (
-              <div className="py-5 pt-20">
-                <div className="flex justify-center">
-                  <div className="border-0 py-4 lg:py-4 text-md px-25 lg:px-20 rounded-xl text-center bg-red-500/20 text-red-400">
-                    {error1}
+      {/* Quick Stats */}
+      <div className="mb-8 grid gap-4 md:grid-cols-3">
+        <div className="border border-green-500/20 bg-green-500/5 backdrop-blur-sm rounded-xl p-6 text-center">
+          <div className="mb-2 text-3xl font-bold text-green-400">92</div>
+          <p className="text-sm text-muted-foreground">ATS Score</p>
+        </div>
+        <div className="border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-sm rounded-xl p-6 text-center">
+          <div className="mb-2 text-3xl font-bold text-cyan-400">
+            {Math.round(matchScore)}%
+          </div>
+          <p className="text-sm text-muted-foreground">Match Rate</p>
+        </div>
+        <div className="border border-blue-500/20 bg-blue-500/5 backdrop-blur-sm rounded-xl p-6 text-center">
+          <div className="mb-2 text-3xl font-bold text-blue-400">+45%</div>
+          <p className="text-sm text-muted-foreground">Improvement</p>
+        </div>
+      </div>
+
+      {/* Results Tabs */}
+      <div className="space-y-8">
+        <div className="grid w-full grid-cols-3 gap-1 rounded-lg bg-card/50 p-1">
+          <button
+            onClick={() => setActiveTab("cv")}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
+              activeTab === "cv"
+                ? "bg-white/10 text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Optimized CV
+          </button>
+          <button
+            onClick={() => setActiveTab("cover")}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
+              activeTab === "cover"
+                ? "bg-white/10 text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Cover Letter
+          </button>
+          <button
+            onClick={() => setActiveTab("analysis")}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
+              activeTab === "analysis"
+                ? "bg-white/10 text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Analysis
+          </button>
+        </div>
+
+        {/* Optimized CV Tab */}
+        {activeTab === "cv" && (
+          <div className="border border-white/5 bg-card/50 backdrop-blur-sm rounded-xl">
+            <div className="flex flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-white/5">
+              <h3 className="font-semibold text-foreground">
+                Your Optimized CV
+              </h3>
+              <button
+                onClick={downloadCVPDF}
+                className="gap-2 inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white"
+              >
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
+                </svg>
+                Download CV
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
+              {cvPdfData ? (
+                <div className="rounded-lg border border-white/5 bg-white/5 p-6">
+                  <p className="text-center text-muted-foreground">
+                    Your optimized CV is ready for download!
+                  </p>
+                </div>
+              ) : (
+                <div className="rounded-lg border border-white/5 bg-white/5 p-6">
+                  <p className="text-center text-muted-foreground">
+                    Generating your CV PDF...
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Cover Letter Tab */}
+        {activeTab === "cover" && (
+          <div className="border border-white/5 bg-card/50 backdrop-blur-sm rounded-xl">
+            <div className="flex flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-white/5">
+              <h3 className="font-semibold text-foreground">
+                Your Cover Letter
+              </h3>
+              <button className="gap-2 inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white">
+                <svg
+                  className="h-4 w-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
+                </svg>
+                Download Letter
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="rounded-lg border border-white/5 bg-white/5 p-8">
+                <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+                  <p>Dear Hiring Manager,</p>
+                  <p>
+                    I am writing to express my strong interest in the position
+                    at your company. With my experience and skills, I am excited
+                    about the opportunity to contribute to your team.
+                  </p>
+                  <p>
+                    In my current role, I have successfully delivered
+                    high-impact results that align perfectly with your
+                    requirements. I am confident that my technical expertise and
+                    passion make me an ideal candidate for this position.
+                  </p>
+                  <p>Thank you for your consideration.</p>
+                  <p>
+                    Best regards,
+                    <br />
+                    [Your Name]
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Analysis Tab */}
+        {activeTab === "analysis" && (
+          <div className="space-y-6">
+            {/* Overall Score */}
+            <div className="border border-white/5 bg-card/50 backdrop-blur-sm rounded-xl">
+              <div className="px-6 pt-6 pb-4 border-b border-white/5">
+                <h3 className="flex items-center gap-2 font-semibold text-foreground">
+                  <svg
+                    className="h-5 w-5 text-green-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                    />
+                  </svg>
+                  Overall Assessment
+                </h3>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">
+                    ATS Compatibility
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-32 h-2 rounded-full bg-white/10 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-green-500 to-green-600"
+                        style={{ width: "92%" }}
+                      />
+                    </div>
+                    <span className="w-12 text-right text-green-400">
+                      92/100
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Keyword Match</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-32 h-2 rounded-full bg-white/10 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-green-500 to-green-600"
+                        style={{ width: `${matchScore}%` }}
+                      />
+                    </div>
+                    <span className="w-12 text-right text-green-400">
+                      {Math.round(matchScore)}%
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Impact Score</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-32 h-2 rounded-full bg-white/10 overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-green-500 to-green-600"
+                        style={{ width: "89%" }}
+                      />
+                    </div>
+                    <span className="w-12 text-right text-green-400">
+                      89/100
+                    </span>
                   </div>
                 </div>
               </div>
-            ) : (
-              <div className="py-12"></div>
-            )}
-          </div>
-          <div className="pt-2">
-            <div className="bg-gray-200 border-0 border-white rounded-lg shadow p-6 mb-6">
-              <h2 className="text-xl text-black font-semibold mb-4">
-                Upload Your CV
-              </h2>
-              <div
-                onDrop={handleFileDrop}
-                onDragOver={handleDragOver}
-                className="border-2 border-dashed border-gray-500 rounded-lg p-8 text-center hover:border-blue-500 transition-colors"
-              >
-                {cvFile ? (
-                  <div className="flex flex-col items-center relative">
-                    {/* X button to delete CV */}
-                    <button
-                      onClick={deleteCV}
-                      className="absolute top-0 right-0 text-gray-800 hover:text-red-500 rounded-full p-1 transition-colors"
-                      aria-label="Delete CV"
-                    >
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
+            </div>
 
+            {/* Strengths */}
+            <div className="border border-green-500/20 bg-green-500/5 backdrop-blur-sm rounded-xl">
+              <div className="px-6 pt-6 pb-4 border-b border-green-500/20">
+                <h3 className="flex items-center gap-2 font-semibold text-foreground">
+                  <svg
+                    className="h-5 w-5 text-green-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  Strengths
+                </h3>
+              </div>
+              <div className="p-6">
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
                     <svg
-                      className="w-16 h-16 text-green-500 mb-4"
+                      className="h-5 w-5 shrink-0 text-green-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -640,218 +824,18 @@ export default function Home() {
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    <p className="text-black font-medium">{cvFile.name}</p>
-                    <p className="text-black text-sm mt-2">
-                      CV uploaded successfully
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-black mb-2">
-                      Drag and drop your CV (PDF) here
-                    </p>
-                    <p className="text-gray-800 text-sm mb-4">or</p>
-                    <input
-                      type="file"
-                      accept=".pdf"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                      id="cv-upload"
-                    />
-                    <label
-                      htmlFor="cv-upload"
-                      className="inline-block px-4 py-2 border-gray-500 border text-black rounded-md hover:bg-gray-100 cursor-pointer"
-                    >
-                      Browse Files
-                    </label>
-                  </>
-                )}
-              </div>
-            </div>
-            {/* Job Description Section */}
-            <div className="bg-gray-200 rounded-lg shadow p-6 mb-6">
-              <label className="block text-lg text-black font-semibold mb-2">
-                Job Description
-              </label>
-              <textarea
-                value={jobDescription}
-                onChange={(e) => setJobDescription(e.target.value)}
-                placeholder="Paste the job description here..."
-                className="w-full text-black h-60 p-3 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            {/* Generate Buttons */}
-            <div className="flex gap-4 mb-6">
-              <button
-                onClick={generateCV}
-                disabled={isGeneratingCV || isCompilingCV}
-                className="flex-1 px-6 py-3 bg-blue-600  hover:bg-blue-700 disabled:bg-gray-400 
-            disabled:cursor-not-allowed flex items-center justify-center gap-2
-            text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br
-              focus:outline-none shadow-lg
-             shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 text-md rounded-lg 
-               text-center me-2 mb-2 font-semibold active:scale-95 transition-transform"
-              >
-                {isGeneratingCV ? (
-                  <>
-                    <svg
-                      className="animate-spin h-5 w-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Generating CV...
-                  </>
-                ) : isCompilingCV ? (
-                  <>
-                    <svg
-                      className="animate-spin h-5 w-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Compiling PDF...
-                  </>
-                ) : (
-                  "Generate CV"
-                )}
-              </button>
-
-              <button
-                onClick={generateCoverLetter}
-                disabled={isGeneratingCoverLetter}
-                className="flex-1 px-6 py-3 bg-purple-600  hover:bg-purple-700
-             disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2
-             text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 
-             hover:bg-gradient-to-br focus:outline-none shadow-lg shadow-purple-500/50 dark:shadow-lg
-               dark:shadow-purple-800/80 font-semibold rounded-lg text-md text-center me-2 mb-2
-               active:scale-95 transition-transform"
-              >
-                {isGeneratingCoverLetter ? (
-                  <>
-                    <svg
-                      className="animate-spin h-5 w-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    Generating...
-                  </>
-                ) : (
-                  "Generate Cover Letter"
-                )}
-              </button>
-            </div>
-            {/* NEW: Progress Bar for CV Generation */}
-            {isGeneratingCV && cvProgress > 0 && (
-              <div className="mb-6">
-                <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
-                  <div
-                    className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 h-full transition-all duration-300 ease-out"
-                    style={{ width: `${cvProgress}%` }}
-                  ></div>
-                </div>
-                <p className="text-sm text-gray-600 mt-2 text-center">
-                  Generating your tailored CV... {cvProgress}%
-                </p>
-              </div>
-            )}
-            {/* NEW: Progress Bar for Cover Letter Generation */}
-            {isGeneratingCoverLetter && coverLetterProgress > 0 && (
-              <div className="mb-6">
-                <div className="bg-gray-200 rounded-full h-3 overflow-hidden">
-                  <div
-                    className="bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 h-full transition-all duration-300 ease-out"
-                    style={{ width: `${coverLetterProgress}%` }}
-                  ></div>
-                </div>
-                <p className="text-sm text-gray-600 mt-2 text-center">
-                  Generating your cover letter... {coverLetterProgress}%
-                </p>
-              </div>
-            )}
-
-            <CV pdfData={cvPdfData} onDownload={downloadCVPDF} />
-            {/* Analysis Box Section - Only show when showAnalysis is true */}
-            {showAnalysis && (
-              <div className="mb-6 pt-15">
-                {/* Header */}
-                <div className="rounded-lg shadow p-6 px-1 mb-6">
-                  
-
-                  {/* Match Score Section */}
-                  <div className="flex justify-center mb-6">
-                    <div className="inline-flex flex-col items-center gap-3 border border-gray-400 rounded-2xl p-6 bg-white shadow-md w-full">
-                      <div className="text-center">
-                        <div className="text-5xl font-bold bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 bg-clip-text text-transparent">
-                          {Math.round(matchScore)}%
-                        </div>
-                        <div className="text-sm font-semibold text-gray-600 pt-1">
-                          Match Score
-                        </div>
-                      </div>
-                      <p className="text-center text-sm text-gray-700 max-w-2xl">
-                        {matchReason}
+                    <div>
+                      <p className="text-foreground">
+                        Strong keyword alignment
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Your CV contains key terms from the job description
                       </p>
                     </div>
-                  </div>
-                </div>
-
-                {/* CV Analysis Section - Dropdown */}
-                <div className="bg-white rounded-lg shadow p-6 mb-6">
-                  <button
-                    onClick={() => setIsCVAnalysisOpen(!isCVAnalysisOpen)}
-                    className="w-full flex items-center justify-between text-left hover:opacity-80 transition-opacity"
-                  >
-                    <h3 className="text-xl font-semibold text-black">
-                      CV Analysis
-                    </h3>
+                  </li>
+                  <li className="flex items-start gap-3">
                     <svg
-                      className={`w-6 h-6 text-black transition-transform duration-300 ${
-                        isCVAnalysisOpen ? "rotate-180" : ""
-                      }`}
+                      className="h-5 w-5 shrink-0 text-green-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -860,123 +844,281 @@ export default function Home() {
                         strokeLinecap="round"
                         strokeLinejoin="round"
                         strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                  </button>
+                    <div>
+                      <p className="text-foreground">
+                        Quantifiable achievements
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Well-structured bullet points with measurable results
+                      </p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg
+                      className="h-5 w-5 shrink-0 text-green-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <div>
+                      <p className="text-foreground">ATS-friendly format</p>
+                      <p className="text-sm text-muted-foreground">
+                        Clean structure that will parse correctly in applicant
+                        tracking systems
+                      </p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
 
-                  {/* Collapsible Content with Animation */}
-                  <AnimatePresence>
-                    {isCVAnalysisOpen && (
-                      <motion.div
-                        initial={{ height: 0 }}
-                        animate={{ height: "auto" }}
-                        exit={{ height: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="mt-4 pt-5">
-                          {missingSkills.length > 0 && (
-                            <div className="border border-yellow-400 rounded-lg p-4 bg-yellow-50 shadow-sm">
-                              <h4 className="text-lg font-semibold mb-3 text-yellow-900">
-                                missing skills:
-                              </h4>
-                              <ul className="space-y-3">
-                                {missingSkills.map((skill, idx) => (
-                                  <li
-                                    key={idx}
-                                    className="flex items-start gap-2"
-                                  >
-                                    <span className="text-yellow-600 mt-0.5">
-                                      ●
-                                    </span>
-                                    <div className="flex-1">
-                                      <p className="font-semibold text-gray-900 text-sm">
-                                        {skill}
-                                      </p>
-                                      {gapBridges[skill] && (
-                                        <p className="text-xs text-gray-700 mt-1">
-                                          {gapBridges[skill].bridge_text}
-                                        </p>
-                                      )}
-                                    </div>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
+            {/* Missing Skills */}
+            {missingSkills && missingSkills.length > 0 && (
+              <div className="border border-yellow-500/20 bg-yellow-500/5 backdrop-blur-sm rounded-xl">
+                <div className="px-6 pt-6 pb-4 border-b border-yellow-500/20">
+                  <h3 className="flex items-center gap-2 font-semibold text-foreground">
+                    <svg
+                      className="h-5 w-5 text-yellow-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      />
+                    </svg>
+                    Missing Skills
+                  </h3>
+                </div>
+                <div className="p-6">
+                  <ul className="space-y-3">
+                    {missingSkills.map((skill, idx) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <svg
+                          className="h-5 w-5 shrink-0 text-yellow-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                          />
+                        </svg>
+                        <div className="flex-1">
+                          <p className="font-semibold text-foreground">
+                            {skill}
+                          </p>
+                          {gapBridges && gapBridges[skill] && (
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {gapBridges[skill].bridge_text}
+                            </p>
                           )}
-                          {/* Your Qualifications */}
-                          <div className="mb-6 pt-8">
-                            <h4 className="text-lg font-semibold text-black pt-5 mb-3">
-                              CV vs Job Requirements
-                            </h4>
-                            <div className="space-y-3">
-                              {Object.entries(evidenceMap).map(
-                                ([skill, details]) => (
-                                  <div
-                                    key={skill}
-                                    className="border border-gray-400 rounded-lg p-4 bg-white hover:shadow-md transition-all"
-                                  >
-                                    <div className="flex items-start justify-between mb-2 flex-wrap gap-2">
-                                      <h5 className="font-semibold text-gray-900 text-sm flex-1">
-                                        {skill}
-                                      </h5>
-                                      <span
-                                        className={`${getEvidenceBadgeColor(
-                                          details.status
-                                        )} px-3 py-1 rounded-full text-xs font-semibold text-white shadow-sm`}
-                                      >
-                                        {details.status
-                                          .replace("_", " ")
-                                          .toUpperCase()}
-                                      </span>
-                                    </div>
-                                    {details.evidence.length > 0 ? (
-                                      <div className="mt-2 space-y-2">
-                                        {details.evidence.map((item, idx) => (
-                                          <div
-                                            key={idx}
-                                            className="text-xs text-gray-700 pl-3 border-l-2 border-cyan-400"
-                                          >
-                                            <span className="font-semibold text-cyan-600">
-                                              {item.section}:
-                                            </span>{" "}
-                                            {item.bullet}
-                                          </div>
-                                        ))}
-                                      </div>
-                                    ) : (
-                                      <p className="text-xs text-gray-500 italic mt-2">
-                                        No direct evidence found
-                                      </p>
-                                    )}
-                                  </div>
-                                )
-                              )}
-                            </div>
-                          </div>
                         </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             )}
 
-            {/* CV Component - Only shows PDF preview */}
+            {/* Improvements Made */}
+            <div className="border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-sm rounded-xl">
+              <div className="px-6 pt-6 pb-4 border-b border-cyan-500/20">
+                <h3 className="flex items-center gap-2 font-semibold text-foreground">
+                  <svg
+                    className="h-5 w-5 text-cyan-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"
+                    />
+                  </svg>
+                  Key Improvements Made
+                </h3>
+              </div>
+              <div className="p-6">
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
+                    <svg
+                      className="h-5 w-5 shrink-0 text-cyan-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <div>
+                      <p className="text-foreground">
+                        Enhanced technical keywords
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Added relevant terms from the job posting
+                      </p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg
+                      className="h-5 w-5 shrink-0 text-cyan-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <div>
+                      <p className="text-foreground">Quantified achievements</p>
+                      <p className="text-sm text-muted-foreground">
+                        Added specific metrics and percentages
+                      </p>
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <svg
+                      className="h-5 w-5 shrink-0 text-cyan-400"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    <div>
+                      <p className="text-foreground">
+                        Tailored summary section
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Aligned professional summary with job requirements
+                      </p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
 
-            {/* Cover Letter Component - Only shows generated letter and PDF */}
-            <CoverLetter
-              generatedCoverLetter={generatedCoverLetter}
-              setGeneratedCoverLetter={setGeneratedCoverLetter}
-              coverLetterPdfData={coverLetterPdfData}
-              onCompileToPDF={compileCoverLetterToPDF}
-              onDownload={downloadCoverLetterPDF}
-              isCompiling={isCompilingCoverLetter}
-            />
+            {/* CV vs Job Requirements */}
+            {evidenceMap && Object.keys(evidenceMap).length > 0 && (
+              <div className="border border-white/5 bg-card/50 backdrop-blur-sm rounded-xl">
+                <div className="px-6 pt-6 pb-4 border-b border-white/5">
+                  <h3 className="flex items-center gap-2 font-semibold text-foreground">
+                    <svg
+                      className="h-5 w-5 text-blue-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+                      />
+                    </svg>
+                    CV vs Job Requirements
+                  </h3>
+                </div>
+                <div className="p-6 space-y-3">
+                  {Object.entries(evidenceMap).map(([skill, details]) => (
+                    <div
+                      key={skill}
+                      className="border border-white/5 rounded-xl p-4 bg-white/5 hover:bg-white/10 transition-all"
+                    >
+                      <div className="flex items-start justify-between mb-2 flex-wrap gap-2">
+                        <h5 className="font-semibold text-foreground text-sm flex-1">
+                          {skill}
+                        </h5>
+                        <span
+                          className={`${getEvidenceBadgeColor(
+                            details.status
+                          )} px-3 py-1 rounded-full text-xs font-semibold text-white shadow-sm`}
+                        >
+                          {details.status.replace("_", " ").toUpperCase()}
+                        </span>
+                      </div>
+                      {details.evidence && details.evidence.length > 0 ? (
+                        <div className="mt-2 space-y-2">
+                          {details.evidence.map((item, idx) => (
+                            <div
+                              key={idx}
+                              className="text-xs text-muted-foreground pl-3 border-l-2 border-cyan-400/80"
+                            >
+                              <span className="font-semibold text-cyan-300">
+                                {item.section}:
+                              </span>{" "}
+                              {item.bullet}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-xs text-muted-foreground italic mt-2">
+                          No direct evidence found
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        </div>
+        )}
       </div>
-    </section>
+
+      {/* Action Buttons */}
+      <div className="mt-8 flex justify-center gap-4">
+        <button
+          onClick={onReset}
+          className="px-6 py-3 text-base font-semibold rounded-lg border border-white/10 hover:bg-white/5 text-foreground transition-all"
+        >
+          Optimize Another CV
+        </button>
+        <button
+          onClick={downloadCVPDF}
+          className="gap-2 inline-flex items-center px-6 py-3 text-base font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white transition-all"
+        >
+          <svg
+            className="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+            />
+          </svg>
+          Download All Files
+        </button>
+      </div>
+    </div>
   );
 }
