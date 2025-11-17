@@ -59,6 +59,55 @@ export default function Home() {
   const [user1, setUser1] = useState(null);
   const [userdetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userCredits, setUserCredits] = useState(null);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [loadingCredits, setLoadingCredits] = useState(true);
+
+  const supabase = createClient();
+
+  useEffect(() => {
+    getUser();
+    fetchUserCredits(); // ✅ Add this
+  }, []);
+
+  useEffect(() => {
+    getUser();
+    fetchUserCredits(); // ✅ Add this
+  }, []);
+
+  // ✅ Add this function
+  const fetchUserCredits = async () => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) return;
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/credits`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.is_subscribed) {
+        setIsSubscribed(true);
+        setUserCredits("unlimited");
+      } else {
+        setIsSubscribed(false);
+        setUserCredits(data.remaining);
+      }
+    } catch (error) {
+      console.error("Error fetching credits:", error);
+    } finally {
+      setLoadingCredits(false);
+    }
+  };
 
   // Get generation state from context
   const { generationState, updateGenerationState, resetGenerationState } =
@@ -92,8 +141,6 @@ export default function Home() {
     showAnalysis,
     error1,
   } = generationState;
-
-  const supabase = createClient();
 
   useEffect(() => {
     getUser();
@@ -229,11 +276,20 @@ export default function Home() {
   const handleOptimize = async () => {
     if (!cvFile || !jobDescription) return;
 
+    if (!isSubscribed && userCredits <= 0) {
+      updateGenerationState({
+        error1:
+          "You're out of credits! Upgrade to Premium to continue."
+      });
+      return;
+    }
+
     updateGenerationState({
       isCompilingAll: true,
       processingStep: "uploading",
       cvProgress: 0,
-      coverLetterProgress: 0, // ✅ Reset cover letter progress
+      coverLetterProgress: 0,
+      error1: "", // ✅ Reset cover letter progress
     });
 
     const progressTimer = startOptimizeProgress(updateGenerationState);
@@ -260,6 +316,19 @@ export default function Home() {
       );
 
       const cvData = await cvResponse.json();
+
+      if (cvResponse.status === 403) {
+        clearInterval(progressTimer);
+        updateGenerationState({
+          error1:
+            cvData.detail?.message ||
+          "You're out of credits! Upgrade to Premium to continue.",
+          processingStep: "idle",
+          isCompilingAll: false,
+          cvProgress: 0,
+        });
+        return;
+      }
 
       // ✅ CV data only contains the CV itself now
       if (cvData && cvData.cv) {
@@ -344,6 +413,7 @@ export default function Home() {
           });
         }
       }
+      await fetchUserCredits();
 
       clearInterval(progressTimer);
       updateGenerationState({
@@ -477,7 +547,7 @@ export default function Home() {
     resetGenerationState();
   };
 
-  const canOptimize = cvFile && jobDescription.length > 50;
+  const canOptimize = cvFile && jobDescription.length >= 50;
 
   if (loading) {
     return (
@@ -629,7 +699,7 @@ export default function Home() {
                     className="min-h-[300px] w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
                   />
                   <p className="mt-2 text-sm text-muted-foreground">
-                    {jobDescription.length} characters
+                    {jobDescription.length}/50 characters
                   </p>
                 </div>
               </div>
@@ -704,6 +774,9 @@ export default function Home() {
                 {!jobDescription && "Paste a Job Description."}
               </p>
             )}
+            <div className="flex justify-center items-center pt-10 text-md text-red-400">
+              {error1}
+            </div>
           </div>
         ) : (
           <ResultsView
