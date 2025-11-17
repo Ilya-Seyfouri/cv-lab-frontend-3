@@ -2,11 +2,15 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "../lib/supabase/client";
+import CV from "./CV";
+import CoverLetter from "./CoverLetter";
 
 export default function Home() {
   const [user1, setUser1] = useState(null);
   const [userdetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const [isCompilingAll, setIsCompilingAll] = useState(false)
 
   const [jobDescription, setJobDescription] = useState("");
   const [userCV, setUserCV] = useState("");
@@ -139,6 +143,8 @@ export default function Home() {
   const handleOptimize = async () => {
     if (!cvFile || !jobDescription) return;
 
+    setIsCompilingAll(true)
+
     setProcessingStep("uploading");
     setCvProgress(0);
 
@@ -153,13 +159,13 @@ export default function Home() {
     await new Promise((resolve) => setTimeout(resolve, 1200));
     setCvProgress(75);
 
-    // Call your actual API
     try {
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
-      const response = await fetch(
+      // Generate CV
+      const cvResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/generate-cv`,
         {
           method: "POST",
@@ -174,10 +180,10 @@ export default function Home() {
         }
       );
 
-      const data = await response.json();
+      const cvData = await cvResponse.json();
 
-      if (data && data.skills_report) {
-        const report = JSON.parse(data.skills_report);
+      if (cvData && cvData.skills_report) {
+        const report = JSON.parse(cvData.skills_report);
         setMissingSkills(report.missing_skills);
         setMatchScore(parseFloat(report.role_alignment.match_score) * 100);
         setMatchReason(report.role_alignment.reason);
@@ -186,17 +192,42 @@ export default function Home() {
         setShowAnalysis(true);
       }
 
-      if (data && data.cv) {
-        setGeneratedCV(data.cv);
+      if (cvData && cvData.cv) {
+        setGeneratedCV(cvData.cv);
         setCvProgress(100);
         setProcessingStep("complete");
-        await compileCVToPDF(data.cv);
+        await compileCVToPDF(cvData.cv);
+      }
+
+      // Generate Cover Letter
+      const coverLetterResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            job_description: jobDescription,
+            user_cv: userCV,
+          }),
+        }
+      );
+
+      const coverLetterData = await coverLetterResponse.json();
+
+      if (coverLetterData && coverLetterData.cover_letter) {
+        setGeneratedCoverLetter(coverLetterData.cover_letter);
+        await compileCoverLetterToPDF();
       }
     } catch (error) {
       console.error("Error:", error);
-      setError1("Error generating CV. Please try again.");
+      setError1("Error generating documents. Please try again.");
       setProcessingStep("idle");
     }
+
+    setIsCompilingAll(false)
   };
 
   const compileCVToPDF = async (latexCode) => {
@@ -239,6 +270,130 @@ export default function Home() {
     const link = document.createElement("a");
     link.href = url;
     link.download = "tailored-cv.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const generateCoverLetter = async () => {
+    if (!jobDescription.trim()) {
+      setError1("Please enter a job description");
+      return;
+    }
+
+    if (!userCV) {
+      setError1("Please upload your CV first");
+      return;
+    }
+
+    setError1("");
+    setIsGeneratingCoverLetter(true);
+    const progressTimer = simulateProgress2(setCoverLetterProgress);
+
+    setCoverLetterPdfData(null);
+
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        setError1("Please log in to continue");
+        return;
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            job_description: jobDescription,
+            user_cv: userCV,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data && data.cover_letter) {
+        setError1("");
+        setGeneratedCoverLetter(data.cover_letter);
+        clearInterval(progressTimer);
+        setCoverLetterProgress(100);
+      } else {
+        setError1("Your out of credits. Subscribe for unlimited!");
+      }
+    } catch (error) {
+      console.error("Error generating cover letter:", error);
+      setError1("Your going too fast!. Please try again in 5 minutes.");
+    } finally {
+      setIsGeneratingCoverLetter(false);
+      clearInterval(progressTimer);
+      setCoverLetterProgress(0);
+    }
+  };
+
+  const compileCoverLetterToPDF = async () => {
+    if (!generatedCoverLetter) {
+      setError1("Please generate a cover letter first");
+      return;
+    }
+
+    setIsCompilingCoverLetter(true);
+    setError1("");
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter-pdf`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            cover_letter: generatedCoverLetter,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setError1("");
+        setCoverLetterPdfData(data.pdf);
+      } else {
+        setError1("Error creating PDF: " + (data.error || data.detail));
+      }
+    } catch (error) {
+      console.error("Error creating cover letter PDF:", error);
+      setError1("Error creating PDF. Please try again.");
+    } finally {
+      setIsCompilingCoverLetter(false);
+    }
+  };
+
+  const downloadCoverLetterPDF = () => {
+    if (!coverLetterPdfData) return;
+
+    setError1("");
+
+    const byteCharacters = atob(coverLetterPdfData);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: "application/pdf" });
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "cover-letter.pdf";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -474,16 +629,15 @@ export default function Home() {
                   (processingStep !== "idle" && processingStep !== "complete")
                 }
                 onClick={handleOptimize}
-  type="button"
-  className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 
+                type="button"
+                className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 
              hover:bg-gradient-to-br focus:ring-4 focus:outline-none 
              focus:ring-cyan-300 dark:focus:ring-cyan-800 
              shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 
              font-medium rounded-base text-sm px-6 py-3 text-center leading-5 rounded-xl"
->
-  Optimize My Application
-</button>
-
+              >
+                Generate CV & Cover Letter
+              </button>
             </div>
 
             {!canOptimize && (
@@ -505,6 +659,7 @@ export default function Home() {
             evidenceMap={evidenceMap}
             missingSkills={missingSkills}
             gapBridges={gapBridges}
+            generatedCoverLetter={generatedCoverLetter}
           />
         )}
       </div>
@@ -522,8 +677,66 @@ function ResultsView({
   evidenceMap,
   missingSkills,
   gapBridges,
+  generatedCoverLetter,
 }) {
   const [activeTab, setActiveTab] = useState("cv");
+  const [editableCoverLetter, setEditableCoverLetter] = useState("");
+  const [isDownloadingCoverLetter, setIsDownloadingCoverLetter] =
+    useState(false);
+
+  // Update editable content when cover letter is generated
+  useEffect(() => {
+    if (generatedCoverLetter) {
+      setEditableCoverLetter(generatedCoverLetter);
+    }
+  }, [generatedCoverLetter]);
+
+  // Compile and Download in one action
+  const handleDownloadCoverLetter = async () => {
+    if (!editableCoverLetter) return;
+
+    setIsDownloadingCoverLetter(true);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter-pdf`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            cover_letter: editableCoverLetter,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success && data.pdf) {
+        const byteCharacters = atob(data.pdf);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: "application/pdf" });
+
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "cover-letter.pdf";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error("Error downloading cover letter:", error);
+    } finally {
+      setIsDownloadingCoverLetter(false);
+    }
+  };
 
   const getEvidenceBadgeColor = (status) => {
     const colors = {
@@ -540,7 +753,6 @@ function ResultsView({
       "bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600"
     );
   };
-
   return (
     <div className="mx-auto max-w-6xl">
       {/* Success Header */}
@@ -650,10 +862,8 @@ function ResultsView({
             </div>
             <div className="p-6 space-y-6">
               {cvPdfData ? (
-                <div className="rounded-lg border border-white/5 bg-white/5 p-6">
-                  <p className="text-center text-muted-foreground">
-                    Your optimized CV is ready for download!
-                  </p>
+                <div className="rounded-lg border border-white/5 bg-white/5 ">
+                  <CV pdfData={cvPdfData} />
                 </div>
               ) : (
                 <div className="rounded-lg border border-white/5 bg-white/5 p-6">
@@ -670,49 +880,95 @@ function ResultsView({
         {activeTab === "cover" && (
           <div className="border border-white/5 bg-card/50 backdrop-blur-sm rounded-xl">
             <div className="flex flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-white/5">
-              <h3 className="font-semibold text-foreground">
-                Your Cover Letter
-              </h3>
-              <button className="gap-2 inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white">
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                  />
-                </svg>
-                Download Letter
+              <div>
+                <h3 className="font-semibold text-foreground mb-1">
+                  Your Cover Letter
+                </h3>
+                <p className="text-red-400 text-xs">
+                  Edit your cover letter then download as PDF
+                </p>
+              </div>
+              <button
+                onClick={handleDownloadCoverLetter}
+                disabled={!editableCoverLetter || isDownloadingCoverLetter}
+                className="gap-2 inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg 
+                  text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 
+                  hover:bg-gradient-to-br focus:outline-none shadow-lg shadow-lime-500/50 
+                  dark:shadow-lg dark:shadow-lime-800/80 disabled:opacity-50 
+                  disabled:cursor-not-allowed active:scale-95 transition-transform"
+              >
+                {isDownloadingCoverLetter ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Converting...
+                  </>
+                ) : (
+                  <>
+                    <span>⬇️</span>
+                    Download PDF
+                  </>
+                )}
               </button>
             </div>
             <div className="p-6">
-              <div className="rounded-lg border border-white/5 bg-white/5 p-8">
-                <div className="space-y-4 text-sm text-muted-foreground leading-relaxed">
-                  <p>Dear Hiring Manager,</p>
-                  <p>
-                    I am writing to express my strong interest in the position
-                    at your company. With my experience and skills, I am excited
-                    about the opportunity to contribute to your team.
-                  </p>
-                  <p>
-                    In my current role, I have successfully delivered
-                    high-impact results that align perfectly with your
-                    requirements. I am confident that my technical expertise and
-                    passion make me an ideal candidate for this position.
-                  </p>
-                  <p>Thank you for your consideration.</p>
-                  <p>
-                    Best regards,
-                    <br />
-                    [Your Name]
-                  </p>
+              {editableCoverLetter ? (
+                <textarea
+                  value={editableCoverLetter}
+                  onChange={(e) => setEditableCoverLetter(e.target.value)}
+                  className="w-full min-h-[600px] resize-y rounded-lg border-2 border-white/60 
+                    bg-white/15 px-4 py-4 text-foreground text-sm font-mono leading-relaxed 
+                    placeholder:text-muted-foreground focus:outline-none focus:ring-2 
+                    focus:ring-lime-500/50"
+                  placeholder="Your cover letter will appear here..."
+                />
+              ) : (
+                <div className="rounded-lg border border-white/5 bg-white/5 p-12">
+                  <div className="flex flex-col items-center justify-center">
+                    <svg
+                      className="animate-spin h-10 w-10 text-cyan-400 mb-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    <p className="text-center text-muted-foreground text-lg">
+                      Generating your cover letter...
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         )}
@@ -1092,7 +1348,7 @@ function ResultsView({
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-8 flex justify-center gap-4">
+      <div className="mt-8 flex justify-center gap-4 pb-10 ">
         <button
           onClick={onReset}
           className="px-6 py-3 text-base font-semibold rounded-lg border border-white/10 hover:bg-white/5 text-foreground transition-all"
@@ -1100,9 +1356,14 @@ function ResultsView({
           Optimize Another CV
         </button>
         <button
-          onClick={downloadCVPDF}
-          className="gap-2 inline-flex items-center px-6 py-3 text-base font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white transition-all"
-        >
+          onClick={() => {
+            downloadCVPDF();
+            handleDownloadCoverLetter();
+          }}
+        
+          className="gap-2 inline-flex items-center px-6 py-3 text-base
+          font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700
+          hover:from-cyan-700 hover:to-cyan-800 text-white transition-all" >
           <svg
             className="h-4 w-4"
             fill="none"

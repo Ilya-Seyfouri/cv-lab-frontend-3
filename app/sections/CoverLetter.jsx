@@ -13,8 +13,8 @@ export default function CoverLetter({
   return (
     <>
       {/* Generated Cover Letter Section */}
-      <div className="border-transparent rounded-2xl shadow p-6 mb-6">
-        <div className="flex justify-between items-center mb-4 pt-10 pb-2 ">
+      <div className="border-transparent rounded-2xl shadow">
+        <div className="flex justify-between items-center ">
 
  <p className="text-red-400 text-sm mb-4 pl-2 font-Inter">
     Edit your cover letter then convert it to pdf
@@ -72,17 +72,7 @@ export default function CoverLetter({
       {coverLetterPdfData && (
         <div className="bg-transparent border-0 rounded-lg shadow p-6 pt-5 mb-6">
           <div className="flex justify-end items-center mb-4 pb-2">
-            <button
-              onClick={onDownload}
-              className="px-4 py-2 bg-blue-600  hover:bg-blue-700 flex items-center gap-2
-          text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 
-          hover:bg-gradient-to-br active:scale-95 transition-transform focus:outline-none 
-           shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80 font-semibold
-           rounded-lg text-sm text-center"
-            >
-              <span>⬇️</span>
-              Download PDF
-            </button>
+           
           </div>
           <div className="border-2 border-gray-300 rounded-lg overflow-hidden">
             <iframe

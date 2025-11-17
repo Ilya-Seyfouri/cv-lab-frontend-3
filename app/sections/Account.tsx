@@ -11,6 +11,93 @@ export default function Account({ onNavigateToOptimizer }) {
   const supabase = createClient();
   const router = useRouter();
 
+  
+  const premium_priceID = "price_1SUSl4GTsfq9NWHAdMHCbsz5";
+  const career_max = "price_1SUSqmGTsfq9NWHAs88j0NDn";
+
+
+
+
+  const checkoutbruh_premium = async () => {
+    if (!user1) {
+      console.error("No user found");
+      return;
+    }
+
+
+    const selectedPriceID = premium_priceID
+
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          priceID: selectedPriceID,
+          email: user1.email,
+          userId: user1.id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.error) {
+        console.error("Error:", data.error);
+        return;
+      }
+
+      window.location.href = data.url;
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  const checkoutbruh_career_max = async () => {
+    if (!user1) {
+      console.error("No user found");
+      return;
+    }
+
+
+    const selectedPriceID = career_max;
+
+    try {
+      const response = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          priceID: selectedPriceID,
+          email: user1.email,
+          userId: user1.id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.error) {
+        console.error("Error:", data.error);
+        return;
+      }
+
+      window.location.href = data.url;
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   // Mock data for past generations
   const pastGenerations = [
     {
@@ -136,6 +223,7 @@ export default function Account({ onNavigateToOptimizer }) {
 
   const handleManageSubscription = async () => {
     if (!user1?.stripe_customer_id) {
+      console.log("No subscription found. Please subscribe first.");
       return;
     }
 
@@ -154,6 +242,7 @@ export default function Account({ onNavigateToOptimizer }) {
 
       if (data.url) {
         window.location.href = data.url;
+      } else {
       }
     } catch (error) {
       console.error("Error:", error);
@@ -161,9 +250,18 @@ export default function Account({ onNavigateToOptimizer }) {
   };
 
   const currentPlan =
-    user1?.subscription_status === "Pro" ? "pro-career" : "free";
+    user1?.subscription_status === "Premium"
+      ? "Premium"
+      : user1?.subscription_status === "Career Max"
+      ? "Career Max"
+      : "free";
   const creditsRemaining = user1?.credits_remaining || 1;
-  const totalCredits = currentPlan === "pro-career" ? "Unlimited" : 3;
+  const totalCredits =
+    currentPlan === "Premium"
+      ? 100
+      : currentPlan === "Career Max"
+      ? "Unlimited"
+      : 3;
 
   const userData = {
     name: userdetails?.email?.split("@")[0] || "John Doe",
@@ -177,8 +275,8 @@ export default function Account({ onNavigateToOptimizer }) {
 
   const planDetails = {
     free: { name: "Free Trial", credits: 3 },
-    "job-seeker": { name: "Job Seeker", credits: 30 },
-    "pro-career": { name: "Pro Career", credits: "Unlimited" },
+    "Premium": { name: "Premium", credits: 100 },
+    "Career Max": { name: "Career Max", credits: "Unlimited" },
   };
 
   const plan = planDetails[currentPlan];
@@ -323,10 +421,10 @@ export default function Account({ onNavigateToOptimizer }) {
 
                         <div className="flex shrink-0 flex-col gap-3">
                           <button
-                            onClick={() => (window.location.href = "/pricing")}
+                            onClick={checkoutbruh_premium}
                             className="gap-2 bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-6 py-3 rounded-lg text-white font-semibold inline-flex items-center justify-center"
                           >
-                            Upgrade to Job Seeker
+                            Upgrade to Premium
                             <svg
                               className="h-4 w-4"
                               fill="none"
@@ -343,7 +441,7 @@ export default function Account({ onNavigateToOptimizer }) {
                             </svg>
                           </button>
                           <p className="text-center text-xs text-muted-foreground">
-                            Starting at £4.99/month
+                            Starting at £7/month
                           </p>
                         </div>
                       </div>
@@ -357,10 +455,10 @@ export default function Account({ onNavigateToOptimizer }) {
                 <div className="border-white/5 bg-card/50 backdrop-blur-sm transition-all hover:border-cyan-500/30 rounded-lg border p-6">
                   <div className="mb-4 flex items-center justify-between">
                     <div>
-                      <h4 className="mb-1 text-foreground">Job Seeker</h4>
+                      <h4 className="mb-1 text-foreground">Premium</h4>
                       <p className="text-2xl">
                         <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                          £4.99
+                          £7.29
                         </span>
                         <span className="text-sm text-muted-foreground">
                           /month
@@ -442,7 +540,7 @@ export default function Account({ onNavigateToOptimizer }) {
                     </li>
                   </ul>
                   <button
-                    onClick={() => (window.location.href = "/pricing")}
+                    onClick={checkoutbruh_premium}
                     className="w-full bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-4 py-2 rounded-lg text-white"
                   >
                     Choose Plan
@@ -452,10 +550,10 @@ export default function Account({ onNavigateToOptimizer }) {
                 <div className="border-white/5 bg-card/50 backdrop-blur-sm transition-all hover:border-cyan-500/30 rounded-lg border p-6">
                   <div className="mb-4 flex items-center justify-between">
                     <div>
-                      <h4 className="mb-1 text-foreground">Pro Career</h4>
+                      <h4 className="mb-1 text-foreground">Career Max</h4>
                       <p className="text-2xl">
                         <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                          £14.99
+                          £18.99
                         </span>
                         <span className="text-sm text-muted-foreground">
                           /month
@@ -499,7 +597,7 @@ export default function Account({ onNavigateToOptimizer }) {
                           d="M5 13l4 4L19 7"
                         />
                       </svg>
-                      <span>Everything in Job Seeker</span>
+                      <span>Everything in Premium</span>
                     </li>
                     <li className="flex items-start gap-2 text-muted-foreground">
                       <svg
@@ -537,7 +635,7 @@ export default function Account({ onNavigateToOptimizer }) {
                     </li>
                   </ul>
                   <button
-                    onClick={() => (window.location.href = "/pricing")}
+                    onClick={checkoutbruh_career_max}
                     className="w-full border-white/10 hover:bg-white/5 border px-4 py-2 rounded-lg text-white"
                   >
                     Choose Plan
@@ -756,29 +854,35 @@ export default function Account({ onNavigateToOptimizer }) {
                     </div>
 
                     <div className="flex gap-3">
-                      <button className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-4 py-2 rounded-lg text-white inline-flex items-center gap-2">
-                        <svg
-                          className="h-4 w-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
-                        Manage Subscription
-                      </button>
+                      {(currentPlan === "Premium" ||
+                        currentPlan === "Career Max") && (
+                          <button
+                            className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-4 py-2 rounded-lg text-white inline-flex items-center gap-2"
+                            onClick={handleManageSubscription}
+                          >
+                            <svg
+                              className="h-4 w-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                            Manage Subscription
+                          </button>
+                        )}
                       <button
                         onClick={signOutFunc}
                         className="border-white/10 border px-4 py-2 rounded-lg hover:bg-white/5 transition-colors text-white inline-flex items-center gap-2"
@@ -1001,7 +1105,7 @@ export default function Account({ onNavigateToOptimizer }) {
                             {plan.name}
                           </h3>
                           <p className="text-sm text-muted-foreground">
-                            {plan.credits === "Unlimited"
+                            {plan.credits === 9999
                               ? "Unlimited"
                               : `${plan.credits} credits`}{" "}
                             per month
@@ -1061,7 +1165,8 @@ export default function Account({ onNavigateToOptimizer }) {
 
                     {/* Actions */}
                     <div className="flex gap-3">
-                      {currentPlan === "pro-career" ? (
+                      {currentPlan === "Premium" ||
+                      currentPlan === "Career Max" ? (
                         <>
                           <button
                             onClick={handleManageSubscription}
@@ -1075,10 +1180,10 @@ export default function Account({ onNavigateToOptimizer }) {
                         </>
                       ) : (
                         <button
-                          onClick={() => (window.location.href = "/pricing")}
+                          onClick={checkoutbruh_premium}
                           className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-4 py-2 rounded-lg text-white"
                         >
-                          Upgrade to Pro
+                          Upgrade to Premium
                         </button>
                       )}
                     </div>

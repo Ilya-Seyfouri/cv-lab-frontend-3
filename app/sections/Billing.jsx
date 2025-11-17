@@ -18,8 +18,8 @@ export default function Billing() {
   const [annual, setAnnual] = useState(false);
   const router = useRouter();
 
-  const priceID = "price_1SS6QYGTsfq9NWHAu8N1d03y";
-  const year_priceId = "price_1SS6QCGTsfq9NWHAXW7MTcmE";
+  const premium_priceID = "price_1SUSl4GTsfq9NWHAdMHCbsz5";
+  const career_max = "price_1SUSqmGTsfq9NWHAs88j0NDn";
 
   useEffect(() => {
     getUser();
@@ -70,7 +70,7 @@ export default function Billing() {
     setLoading(true);
 
 
-    const selectedPriceID = monthly ? priceID : year_priceId
+    const selectedPriceID = monthly ? premium_priceID : career_max
 
 
     try {

@@ -21,8 +21,8 @@ const plans = [
     popular: false,
   },
   {
-    name: "Job Seeker",
-    price: "£4.99",
+    name: "Premium",
+    price: "£7.29",
     description: "For active job hunters.",
     features: [
       "100 tokens / month",
@@ -34,8 +34,8 @@ const plans = [
     popular: true,
   },
   {
-    name: "Pro Career",
-    price: "14.99",
+    name: "Career Max",
+    price: "£18.99",
     description: "For serious professionals.",
     features: [
       "Unlimited tokens",

@@ -13,6 +13,11 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+// Add these price IDs at the top
+const PREMIUM_PRICE_ID = "price_1SUSl4GTsfq9NWHAdMHCbsz5";
+const CAREER_MAX_PRICE_ID = "price_1SUSqmGTsfq9NWHAs88j0NDn";
+
+
 export async function POST(req) {
   const body = await req.text();
   const signature = req.headers.get("stripe-signature");
@@ -41,6 +46,10 @@ export async function POST(req) {
 
       case "customer.subscription.deleted":
         await handleSubscriptionDeleted(event.data.object);
+        break;
+
+      case "invoice.payment_succeeded":
+        await handleInvoicePaymentSucceeded(event.data.object);
         break;
 
       case "invoice.payment_failed":
@@ -72,13 +81,26 @@ async function handleCheckoutSessionCompleted(session) {
     return;
   }
 
+  // Get the price ID to determine which plan
+  const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+  const priceId = lineItems.data[0]?.price?.id;
+
+  // Set subscription details based on plan
+  let subscription_status = "Premium";
+  let credits_remaining = 100;
+
+  if (priceId === CAREER_MAX_PRICE_ID) {
+    subscription_status = "Career Max";
+    credits_remaining = 999999;
+  }
+
   const { error } = await supabase
     .from("profiles")
     .update({
       stripe_customer_id: customerId,
       is_subscribed: true,
-      subscription_status: "Pro",
-      credits_remaining: 999,
+      subscription_status: subscription_status,
+      credits_remaining: credits_remaining,
       credits_last_reset: new Date().toISOString(),
     })
     .eq("id", userId);
@@ -88,7 +110,7 @@ async function handleCheckoutSessionCompleted(session) {
     throw error;
   }
 
-  console.log(`User ${userId} upgraded to Pro`);
+  console.log(`User ${userId} upgraded to ${subscription_status}`);
 }
 
 async function handleSubscriptionUpdated(subscription) {
@@ -96,16 +118,31 @@ async function handleSubscriptionUpdated(subscription) {
 
   const customerId = subscription.customer;
   const status = subscription.status;
+  const priceId = subscription.items.data[0]?.price?.id;
 
   // If subscription is active or trialing, they're Pro. Otherwise, Free.
   const isPro = ["active", "trialing"].includes(status);
+
+  // Determine plan type
+  let subscription_status = "free";
+  let credits_remaining = 3;
+
+  if (isPro) {
+    if (priceId === CAREER_MAX_PRICE_ID) {
+      subscription_status = "Career Max";
+      credits_remaining = 999999;
+    } else {
+      subscription_status = "Premium";
+      credits_remaining = 100;
+    }
+  }
 
   const { error } = await supabase
     .from("profiles")
     .update({
       is_subscribed: isPro,
-      subscription_status: isPro ? "Pro" : "free",
-      credits_remaining: isPro ? 999 : 3,
+      subscription_status: subscription_status,
+      credits_remaining: credits_remaining,
       credits_last_reset: new Date().toISOString(),
     })
     .eq("stripe_customer_id", customerId);
@@ -141,6 +178,43 @@ async function handleSubscriptionDeleted(subscription) {
   );
 }
 
+async function handleInvoicePaymentSucceeded(invoice) {
+  console.log("Invoice payment succeeded:", invoice.id);
+
+  // Only reset on monthly renewals
+  if (invoice.billing_reason === "subscription_cycle") {
+    const customerId = invoice.customer;
+    const subscriptionId = invoice.subscription;
+
+    if (!subscriptionId) return;
+
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    const priceId = subscription.items.data[0]?.price?.id;
+
+    let credits_remaining = 100;
+    if (priceId === CAREER_MAX_PRICE_ID) {
+      credits_remaining = 999999;
+    }
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        credits_remaining: credits_remaining,
+        credits_last_reset: new Date().toISOString(),
+      })
+      .eq("stripe_customer_id", customerId);
+
+    if (error) {
+      console.error("Error resetting credits:", error);
+      throw error;
+    }
+
+    console.log(
+      `Credits reset for customer ${customerId} to ${credits_remaining}`
+    );
+  }
+}
+
 async function handleInvoicePaymentFailed(invoice) {
   console.log("Invoice payment failed:", invoice.id);
 
@@ -151,6 +225,7 @@ async function handleInvoicePaymentFailed(invoice) {
     .update({
       is_subscribed: false,
       subscription_status: "free",
+      credits_remaining: 3,
     })
     .eq("stripe_customer_id", customerId);
 
