@@ -677,7 +677,7 @@ export default function Account({ onNavigateToOptimizer }) {
                 <div>
                   <p className="text-sm text-muted-foreground">Credits Left</p>
                   <p className="text-xl text-foreground">
-                    {creditsRemaining}/{totalCredits}
+                    {creditsRemaining}
                   </p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/20">
