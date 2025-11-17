@@ -29,11 +29,11 @@ export default function Hero2() {
 
           <div className="pt-2 justify-center flex">
             <div className="inline-flex items-center gap-2 border border-white/20 rounded-full">
-              <img
-                src="/avatar-lula-meyers.png"
+              <Image
+                src={photo}
                 alt="logo"
                 className="h-9 w-auto border-3 border-black rounded-full"
-              ></img>
+              ></Image>
               <p className="text-base font-semibold text-white/80 pr-2.5">
                 4500+ CV's generated
               </p>
