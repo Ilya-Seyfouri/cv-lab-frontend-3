@@ -930,23 +930,7 @@ export default function Account({ onNavigateToOptimizer }) {
 
                     <div className="bg-white/5 h-px" />
 
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          CVs Generated
-                        </span>
-                        <span className="text-foreground">7</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          Cover Letters
-                        </span>
-                        <span className="text-foreground">7</span>
-                      </div>
-                    </div>
-
-                    <div className="bg-white/5 h-px" />
-
+      
                     <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-3">
                       <p className="text-sm text-foreground">
                         Credits Resets on Dec 15
