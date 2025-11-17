@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import button from "../../images/BUTTON_1.png";
-import tick from "../../images/tick.png";
+import button from "../../public/BUTTON_1.png";
+import tick from "../../public/tick.png";
 
 const plans = [
   {

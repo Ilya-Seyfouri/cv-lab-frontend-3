@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 import { twMerge } from "tailwind-merge";
 import { AnimatePresence, motion } from "framer-motion";
 
-import CVLOGO from "../../images/logo_text.png";
-import buttonImg from "../../images/BUTTON_1.png";
+import CVLOGO from "../../public/logo_text.png";
+import buttonImg from "../../public/BUTTON_1.png";
 
 const navLinks = [
   { label: "Home", href: "#home" },

@@ -2,9 +2,9 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import photo from "../../images/avatar-lula-meyers.jpg";
-import button from "../../images/BUTTON_1.png";
-import xxx from "../../images/x1.png";
+import photo from "../../public/avatar-lula-meyers.jpg";
+import button from "../../public/BUTTON_1.png";
+import xxx from "../../public/x1.png";
 import { Sparkles } from "lucide-react";
 
 export default function Hero2() {
@@ -29,11 +29,11 @@ export default function Hero2() {
 
           <div className="pt-2 justify-center flex">
             <div className="inline-flex items-center gap-2 border border-white/20 rounded-full">
-              <Image
-                src={photo}
+              <img
+                src="/avatar-lula-meyers.png"
                 alt="logo"
                 className="h-9 w-auto border-3 border-black rounded-full"
-              ></Image>
+              ></img>
               <p className="text-base font-semibold text-white/80 pr-2.5">
                 4500+ CV's generated
               </p>

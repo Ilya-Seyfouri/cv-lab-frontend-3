@@ -1,7 +1,7 @@
 "use client";
-import button from "../../images/BUTTON_1.png"
+import button from "../../public/BUTTON_1.png"
 import Image from "next/image";
-import CVLOGO from "../../images/logo_text.png";
+import CVLOGO from "../../public/logo_text.png";
 import { useRouter } from "next/navigation";
 
 export default function Footer() {
