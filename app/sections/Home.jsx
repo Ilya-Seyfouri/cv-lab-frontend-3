@@ -2,42 +2,46 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "../lib/supabase/client";
+import { useGeneration } from "../contexts/GenerationContext";
 import CV from "./CV";
 import CoverLetter from "./CoverLetter";
 
 export default function Home() {
+  // User/auth state stays local (not shared across components)
   const [user1, setUser1] = useState(null);
   const [userdetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const [isCompilingAll, setIsCompilingAll] = useState(false)
+  // Get generation state from context
+  const { generationState, updateGenerationState, resetGenerationState } =
+    useGeneration();
 
-  const [jobDescription, setJobDescription] = useState("");
-  const [userCV, setUserCV] = useState("");
-  const [cvFile, setCvFile] = useState(null);
-  const [error1, setError1] = useState("");
-
-  const [matchScore, setMatchScore] = useState(0);
-  const [matchReason, setMatchReason] = useState("");
-  const [evidenceMap, setEvidenceMap] = useState({});
-  const [missingSkills, setMissingSkills] = useState([]);
-  const [gapBridges, setGapBridges] = useState({});
-  const [showAnalysis, setShowAnalysis] = useState(false);
-
-  const [generatedCV, setGeneratedCV] = useState("");
-  const [isGeneratingCV, setIsGeneratingCV] = useState(false);
-  const [cvPdfData, setCvPdfData] = useState(null);
-  const [isCompilingCV, setIsCompilingCV] = useState(false);
-
-  const [generatedCoverLetter, setGeneratedCoverLetter] = useState("");
-  const [isGeneratingCoverLetter, setIsGeneratingCoverLetter] = useState(false);
-  const [coverLetterPdfData, setCoverLetterPdfData] = useState(null);
-  const [isCompilingCoverLetter, setIsCompilingCoverLetter] = useState(false);
-
-  const [isDragging, setIsDragging] = useState(false);
-  const [cvProgress, setCvProgress] = useState(0);
-  const [coverLetterProgress, setCoverLetterProgress] = useState(0);
-  const [processingStep, setProcessingStep] = useState("idle");
+  // Destructure for easier access
+  const {
+    jobDescription,
+    userCV,
+    cvFile,
+    isDragging,
+    isCompilingAll,
+    cvProgress,
+    coverLetterProgress,
+    processingStep,
+    generatedCV,
+    generatedCoverLetter,
+    cvPdfData,
+    coverLetterPdfData,
+    isGeneratingCV,
+    isGeneratingCoverLetter,
+    isCompilingCV,
+    isCompilingCoverLetter,
+    matchScore,
+    matchReason,
+    evidenceMap,
+    missingSkills,
+    gapBridges,
+    showAnalysis,
+    error1,
+  } = generationState;
 
   const supabase = createClient();
 
@@ -78,48 +82,60 @@ export default function Home() {
     }
   };
 
-  const handleDragOver = useCallback((e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  }, []);
+  const handleDragOver = useCallback(
+    (e) => {
+      e.preventDefault();
+      updateGenerationState({ isDragging: true });
+    },
+    [updateGenerationState]
+  );
 
-  const handleDragLeave = useCallback((e) => {
-    e.preventDefault();
-    setIsDragging(false);
-  }, []);
+  const handleDragLeave = useCallback(
+    (e) => {
+      e.preventDefault();
+      updateGenerationState({ isDragging: false });
+    },
+    [updateGenerationState]
+  );
 
-  const handleDrop = useCallback((e) => {
-    e.preventDefault();
-    setIsDragging(false);
+  const handleDrop = useCallback(
+    (e) => {
+      e.preventDefault();
+      updateGenerationState({ isDragging: false });
 
-    const file = e.dataTransfer.files[0];
-    if (
-      file &&
-      (file.type === "application/pdf" ||
-        file.type ===
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-        file.type === "text/plain")
-    ) {
-      setCvFile(file);
-      uploadCV(file);
-    }
-  }, []);
+      const file = e.dataTransfer.files[0];
+      if (
+        file &&
+        (file.type === "application/pdf" ||
+          file.type ===
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+          file.type === "text/plain")
+      ) {
+        updateGenerationState({ cvFile: file });
+        uploadCV(file);
+      }
+    },
+    [updateGenerationState]
+  );
 
-  const handleFileSelect = useCallback((e) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setCvFile(file);
-      uploadCV(file);
-    }
-  }, []);
+  const handleFileSelect = useCallback(
+    (e) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        updateGenerationState({ cvFile: file });
+        uploadCV(file);
+      }
+    },
+    [updateGenerationState]
+  );
 
   const uploadCV = async (file) => {
     if (!file) {
-      setError1("Please select a CV file first");
+      updateGenerationState({ error1: "Please select a CV file first" });
       return;
     }
 
-    setError1("");
+    updateGenerationState({ error1: "" });
     const formData = new FormData();
     formData.append("file", file);
 
@@ -133,31 +149,32 @@ export default function Home() {
       );
 
       const data = await response.json();
-      setUserCV(data.extracted_text);
+      updateGenerationState({ userCV: data.extracted_text });
     } catch (error) {
       console.error("Error uploading CV:", error);
-      setError1("Error uploading CV. Please try again.");
+      updateGenerationState({
+        error1: "Error uploading CV. Please try again.",
+      });
     }
   };
 
   const handleOptimize = async () => {
     if (!cvFile || !jobDescription) return;
 
-    setIsCompilingAll(true)
-
-    setProcessingStep("uploading");
-    setCvProgress(0);
+    updateGenerationState({
+      isCompilingAll: true,
+      processingStep: "uploading",
+      cvProgress: 0,
+    });
 
     await new Promise((resolve) => setTimeout(resolve, 800));
-    setCvProgress(25);
-    setProcessingStep("analyzing");
+    updateGenerationState({ cvProgress: 25, processingStep: "analyzing" });
 
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    setCvProgress(50);
-    setProcessingStep("optimizing");
+    updateGenerationState({ cvProgress: 50, processingStep: "optimizing" });
 
     await new Promise((resolve) => setTimeout(resolve, 1200));
-    setCvProgress(75);
+    updateGenerationState({ cvProgress: 75 });
 
     try {
       const {
@@ -184,18 +201,22 @@ export default function Home() {
 
       if (cvData && cvData.skills_report) {
         const report = JSON.parse(cvData.skills_report);
-        setMissingSkills(report.missing_skills);
-        setMatchScore(parseFloat(report.role_alignment.match_score) * 100);
-        setMatchReason(report.role_alignment.reason);
-        setEvidenceMap(report.evidence_map);
-        setGapBridges(report.gap_bridges);
-        setShowAnalysis(true);
+        updateGenerationState({
+          missingSkills: report.missing_skills,
+          matchScore: parseFloat(report.role_alignment.match_score) * 100,
+          matchReason: report.role_alignment.reason,
+          evidenceMap: report.evidence_map,
+          gapBridges: report.gap_bridges,
+          showAnalysis: true,
+        });
       }
 
       if (cvData && cvData.cv) {
-        setGeneratedCV(cvData.cv);
-        setCvProgress(100);
-        setProcessingStep("complete");
+        updateGenerationState({
+          generatedCV: cvData.cv,
+          cvProgress: 100,
+          processingStep: "complete",
+        });
         await compileCVToPDF(cvData.cv);
       }
 
@@ -218,22 +239,27 @@ export default function Home() {
       const coverLetterData = await coverLetterResponse.json();
 
       if (coverLetterData && coverLetterData.cover_letter) {
-        setGeneratedCoverLetter(coverLetterData.cover_letter);
-        await compileCoverLetterToPDF();
+        updateGenerationState({
+          generatedCoverLetter: coverLetterData.cover_letter,
+        });
+        await compileCoverLetterToPDF(coverLetterData.cover_letter);
       }
     } catch (error) {
       console.error("Error:", error);
-      setError1("Error generating documents. Please try again.");
-      setProcessingStep("idle");
+      updateGenerationState({
+        error1: "Error generating documents. Please try again.",
+        processingStep: "idle",
+      });
     }
 
-    setIsCompilingAll(false)
+    updateGenerationState({ isCompilingAll: false });
   };
+
 
   const compileCVToPDF = async (latexCode) => {
     if (!latexCode) return;
 
-    setIsCompilingCV(true);
+    updateGenerationState({ isCompilingCV: true });
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/compile-latex`,
@@ -246,12 +272,12 @@ export default function Home() {
 
       const data = await response.json();
       if (data.success) {
-        setCvPdfData(data.pdf);
+        updateGenerationState({ cvPdfData: data.pdf });
       }
     } catch (error) {
       console.error("Error compiling PDF:", error);
     } finally {
-      setIsCompilingCV(false);
+      updateGenerationState({ isCompilingCV: false });
     }
   };
 
@@ -276,76 +302,15 @@ export default function Home() {
     window.URL.revokeObjectURL(url);
   };
 
-  const generateCoverLetter = async () => {
-    if (!jobDescription.trim()) {
-      setError1("Please enter a job description");
+  const compileCoverLetterToPDF = async (coverLetterText) => {
+    const textToUse = coverLetterText || generatedCoverLetter;
+
+    if (!textToUse) {
+      updateGenerationState({ error1: "Please generate a cover letter first" });
       return;
     }
 
-    if (!userCV) {
-      setError1("Please upload your CV first");
-      return;
-    }
-
-    setError1("");
-    setIsGeneratingCoverLetter(true);
-    const progressTimer = simulateProgress2(setCoverLetterProgress);
-
-    setCoverLetterPdfData(null);
-
-    try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (!session) {
-        setError1("Please log in to continue");
-        return;
-      }
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify({
-            job_description: jobDescription,
-            user_cv: userCV,
-          }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (data && data.cover_letter) {
-        setError1("");
-        setGeneratedCoverLetter(data.cover_letter);
-        clearInterval(progressTimer);
-        setCoverLetterProgress(100);
-      } else {
-        setError1("Your out of credits. Subscribe for unlimited!");
-      }
-    } catch (error) {
-      console.error("Error generating cover letter:", error);
-      setError1("Your going too fast!. Please try again in 5 minutes.");
-    } finally {
-      setIsGeneratingCoverLetter(false);
-      clearInterval(progressTimer);
-      setCoverLetterProgress(0);
-    }
-  };
-
-  const compileCoverLetterToPDF = async () => {
-    if (!generatedCoverLetter) {
-      setError1("Please generate a cover letter first");
-      return;
-    }
-
-    setIsCompilingCoverLetter(true);
-    setError1("");
+    updateGenerationState({ isCompilingCoverLetter: true, error1: "" });
 
     try {
       const response = await fetch(
@@ -356,7 +321,7 @@ export default function Home() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            cover_letter: generatedCoverLetter,
+            cover_letter: textToUse,
           }),
         }
       );
@@ -364,23 +329,26 @@ export default function Home() {
       const data = await response.json();
 
       if (data.success) {
-        setError1("");
-        setCoverLetterPdfData(data.pdf);
+        updateGenerationState({ error1: "", coverLetterPdfData: data.pdf });
       } else {
-        setError1("Error creating PDF: " + (data.error || data.detail));
+        updateGenerationState({
+          error1: "Error creating PDF: " + (data.error || data.detail),
+        });
       }
     } catch (error) {
       console.error("Error creating cover letter PDF:", error);
-      setError1("Error creating PDF. Please try again.");
+      updateGenerationState({
+        error1: "Error creating PDF. Please try again.",
+      });
     } finally {
-      setIsCompilingCoverLetter(false);
+      updateGenerationState({ isCompilingCoverLetter: false });
     }
   };
 
   const downloadCoverLetterPDF = () => {
     if (!coverLetterPdfData) return;
 
-    setError1("");
+    updateGenerationState({ error1: "" });
 
     const byteCharacters = atob(coverLetterPdfData);
     const byteNumbers = new Array(byteCharacters.length);
@@ -401,12 +369,7 @@ export default function Home() {
   };
 
   const resetForm = () => {
-    setCvFile(null);
-    setJobDescription("");
-    setProcessingStep("idle");
-    setCvProgress(0);
-    setGeneratedCV("");
-    setCvPdfData(null);
+    resetGenerationState();
   };
 
   const canOptimize = cvFile && jobDescription.length > 50;
@@ -422,10 +385,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4">
-        {processingStep === "idle" ||
-        processingStep === "uploading" ||
-        processingStep === "analyzing" ||
-        processingStep === "optimizing" ? (
+        {processingStep !== "complete" ? (
           <div className="mx-auto max-w-5xl">
             {/* Header */}
             <div className="mb-12 text-center">
@@ -501,17 +461,7 @@ export default function Home() {
                         <p className="text-sm text-muted-foreground">
                           {(cvFile.size / 1024).toFixed(2)} KB
                         </p>
-                        <button
-                          type="button"
-                          className="mt-4 px-4 py-2 text-sm text-muted-foreground hover:text-foreground"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setCvFile(null);
-                            setUserCV("");
-                          }}
-                        >
-                          Remove
-                        </button>
+                       
                       </div>
                     ) : (
                       <div className="text-center">
@@ -567,8 +517,11 @@ export default function Home() {
                 </div>
                 <div className="p-6">
                   <textarea
+                    value={jobDescription}
                     placeholder="Paste the job description here..."
-                    onChange={(e) => setJobDescription(e.target.value)}
+                    onChange={(e) =>
+                      updateGenerationState({ jobDescription: e.target.value })
+                    }
                     className="min-h-[300px] w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
                   />
                   <p className="mt-2 text-sm text-muted-foreground">
@@ -634,7 +587,7 @@ export default function Home() {
              hover:bg-gradient-to-br focus:ring-4 focus:outline-none 
              focus:ring-cyan-300 dark:focus:ring-cyan-800 
              shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 
-             font-medium rounded-base text-sm px-6 py-3 text-center leading-5 rounded-xl"
+             font-medium rounded-base text-sm px-6 py-3 text-center leading-5 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Generate CV & Cover Letter
               </button>
@@ -753,6 +706,7 @@ function ResultsView({
       "bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600"
     );
   };
+
   return (
     <div className="mx-auto max-w-6xl">
       {/* Success Header */}
@@ -1360,10 +1314,10 @@ function ResultsView({
             downloadCVPDF();
             handleDownloadCoverLetter();
           }}
-        
           className="gap-2 inline-flex items-center px-6 py-3 text-base
           font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700
-          hover:from-cyan-700 hover:to-cyan-800 text-white transition-all" >
+          hover:from-cyan-700 hover:to-cyan-800 text-white transition-all"
+        >
           <svg
             className="h-4 w-4"
             fill="none"

@@ -255,7 +255,7 @@ export default function Account({ onNavigateToOptimizer }) {
       : user1?.subscription_status === "Career Max"
       ? "Career Max"
       : "free";
-  const creditsRemaining = user1?.credits_remaining || 1;
+  const creditsRemaining = user1?.credits_remaining || 0;
   const totalCredits =
     currentPlan === "Premium"
       ? 100
@@ -676,9 +676,7 @@ export default function Account({ onNavigateToOptimizer }) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Credits Left</p>
-                  <p className="text-xl text-foreground">
-                    {creditsRemaining}
-                  </p>
+                  <p className="text-xl text-foreground">{creditsRemaining}</p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/20">
                   <svg
@@ -778,16 +776,6 @@ export default function Account({ onNavigateToOptimizer }) {
                 >
                   Generation History
                 </button>
-                <button
-                  onClick={() => setActiveTab("billing")}
-                  className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-                    activeTab === "billing"
-                      ? "bg-background text-foreground shadow-sm"
-                      : ""
-                  }`}
-                >
-                  Billing
-                </button>
               </div>
             </div>
 
@@ -856,36 +844,36 @@ export default function Account({ onNavigateToOptimizer }) {
                     <div className="flex gap-3">
                       {(currentPlan === "Premium" ||
                         currentPlan === "Career Max") && (
-                          <button
-                            className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-4 py-2 rounded-lg text-white inline-flex items-center gap-2"
-                            onClick={handleManageSubscription}
+                        <button
+                          className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800  active:scale-95 transition px-4 py-2 rounded-lg text-white inline-flex items-center gap-2"
+                          onClick={handleManageSubscription}
+                        >
+                          <svg
+                            className="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
                           >
-                            <svg
-                              className="h-4 w-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                            Manage Subscription
-                          </button>
-                        )}
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                          Manage Subscription
+                        </button>
+                      )}
                       <button
                         onClick={signOutFunc}
-                        className="border-white/10 border px-4 py-2 rounded-lg hover:bg-white/5 transition-colors text-white inline-flex items-center gap-2"
+                        className="border-white/10 border hover:text-red-400 active:scale-95 transition px-4 py-2 rounded-lg hover:bg-white/5 transition-colors text-white inline-flex items-center gap-2"
                       >
                         <svg
                           className="h-4 w-4"
@@ -903,6 +891,67 @@ export default function Account({ onNavigateToOptimizer }) {
                         </svg>
                         Sign Out
                       </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="border-white/5 bg-card/50 backdrop-blur-sm rounded-lg border">
+                  <div className="p-6">
+                    <h3 className="text-foreground font-semibold">
+                      Usage This Month
+                    </h3>
+                  </div>
+                  <div className="p-6 space-y-4">
+                    <div>
+                      <div className="mb-2 flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          Credits Remaining
+                        </span>
+                        <span className="text-foreground">
+                          {creditsRemaining}
+                        </span>
+                      </div>
+
+                      <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                        <div
+                          className="h-full bg-gradient-to-r from-cyan-600 to-cyan-700"
+                          style={{
+                            width:
+                              totalCredits === "Unlimited"
+                                ? "0%"
+                                : `${
+                                    ((totalCredits - (totalCredits - creditsRemaining)) /
+                                      totalCredits) *
+                                    100
+                                  }%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="bg-white/5 h-px" />
+
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          CVs Generated
+                        </span>
+                        <span className="text-foreground">7</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">
+                          Cover Letters
+                        </span>
+                        <span className="text-foreground">7</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-white/5 h-px" />
+
+                    <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-3">
+                      <p className="text-sm text-foreground">
+                        Credits Resets on Dec 15
+                      </p>
+                      <p className="text-xs text-muted-foreground"></p>
                     </div>
                   </div>
                 </div>
@@ -1065,192 +1114,6 @@ export default function Account({ onNavigateToOptimizer }) {
                       </button>
                     </div>
                   )}
-                </div>
-              </div>
-            )}
-
-            {/* Billing Tab */}
-            {activeTab === "billing" && (
-              <div className="grid gap-8 lg:grid-cols-3">
-                {/* Current Plan */}
-                <div className="border-white/5 bg-card/50 backdrop-blur-sm rounded-lg border lg:col-span-2">
-                  <div className="p-6">
-                    <h3 className="flex items-center gap-2 text-foreground text-lg font-semibold">
-                      <svg
-                        className="h-5 w-5 text-cyan-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                        />
-                      </svg>
-                      Subscription & Billing
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Manage your subscription and payment methods
-                    </p>
-                  </div>
-                  <div className="p-6 space-y-6">
-                    {/* Current Plan Details */}
-                    <div className="rounded-lg border border-cyan-500/20 bg-cyan-500/5 p-6">
-                      <div className="mb-4 flex items-center justify-between">
-                        <div>
-                          <h3 className="text-lg text-foreground">
-                            {plan.name}
-                          </h3>
-                          <p className="text-sm text-muted-foreground">
-                            {plan.credits === 9999
-                              ? "Unlimited"
-                              : `${plan.credits} credits`}{" "}
-                            per month
-                          </p>
-                        </div>
-                        <span className="bg-gradient-to-r from-cyan-600 to-cyan-700 px-3 py-1 rounded text-white text-sm">
-                          Active
-                        </span>
-                      </div>
-                      <div className="bg-white/5 h-px mb-4" />
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-muted-foreground">
-                            Next billing date
-                          </p>
-                          <p className="text-foreground">December 15, 2024</p>
-                        </div>
-                        <p className="text-2xl text-foreground">$19.00</p>
-                      </div>
-                    </div>
-
-                    {/* Payment Method */}
-                    <div>
-                      <h4 className="mb-4 text-foreground">Payment Method</h4>
-                      <div className="flex items-center justify-between rounded-lg border border-white/5 bg-white/5 p-4">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-blue-700">
-                            <svg
-                              className="h-5 w-5 text-white"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
-                              />
-                            </svg>
-                          </div>
-                          <div>
-                            <p className="text-foreground">
-                              •••• •••• •••• 4242
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              Expires 12/25
-                            </p>
-                          </div>
-                        </div>
-                        <button className="border-white/10 border px-3 py-1 rounded text-sm hover:bg-white/5 transition-colors">
-                          Update
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex gap-3">
-                      {currentPlan === "Premium" ||
-                      currentPlan === "Career Max" ? (
-                        <>
-                          <button
-                            onClick={handleManageSubscription}
-                            className="border-white/10 border px-4 py-2 rounded-lg hover:bg-white/5 transition-colors"
-                          >
-                            Change Plan
-                          </button>
-                          <button className="border-red-500/20 text-red-400 hover:bg-red-500/10 border px-4 py-2 rounded-lg transition-colors">
-                            Cancel Subscription
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          onClick={checkoutbruh_premium}
-                          className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-4 py-2 rounded-lg text-white"
-                        >
-                          Upgrade to Premium
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Usage Summary */}
-                <div className="border-white/5 bg-card/50 backdrop-blur-sm rounded-lg border">
-                  <div className="p-6">
-                    <h3 className="text-foreground font-semibold">
-                      Usage This Month
-                    </h3>
-                  </div>
-                  <div className="p-6 space-y-4">
-                    <div>
-                      <div className="mb-2 flex justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          Credits Used
-                        </span>
-                        <span className="text-foreground">
-                          {creditsRemaining}/{totalCredits}
-                        </span>
-                      </div>
-                      <div className="h-2 overflow-hidden rounded-full bg-white/10">
-                        <div
-                          className="h-full bg-gradient-to-r from-cyan-600 to-cyan-700"
-                          style={{
-                            width: `${
-                              totalCredits === "Unlimited"
-                                ? 0
-                                : ((totalCredits - creditsRemaining) /
-                                    totalCredits) *
-                                  100
-                            }%`,
-                          }}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="bg-white/5 h-px" />
-
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          CVs Generated
-                        </span>
-                        <span className="text-foreground">7</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">
-                          Cover Letters
-                        </span>
-                        <span className="text-foreground">7</span>
-                      </div>
-                    </div>
-
-                    <div className="bg-white/5 h-px" />
-
-                    <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-3">
-                      <p className="text-sm text-foreground">
-                        Resets on Dec 15
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        You'll get {totalCredits} new credits
-                      </p>
-                    </div>
-                  </div>
                 </div>
               </div>
             )}

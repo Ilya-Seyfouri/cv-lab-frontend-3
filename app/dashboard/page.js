@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { GenerationProvider } from "../contexts/GenerationContext";
 
 import CV from "../sections/CV";
 import Sidebar from "../sections/Sidebar";
-import Details from "../sections/Details"; // safe to delete if unused
 import CoverLetter from "../sections/CoverLetter";
 import Home from "../sections/Home";
-import Billing from "../sections/Billing"; // safe to delete if unused
 import Account from "../sections/Account";
 
 export default function Dashboard() {
@@ -15,25 +14,23 @@ export default function Dashboard() {
   const [selectedTab, setSelectedTab] = useState("optimize");
 
   return (
-    <>
+    <GenerationProvider>
       <Sidebar selectedTab={selectedTab} onSelect={setSelectedTab} />
 
       {/* Padding so content isn't hidden behind fixed navbar */}
       <main className="pt-24">
-        {selectedTab === "account" && (
-          <>
-            <Account />
-          </>
-        )}
+        {/* Keep both sections mounted but only display one */}
+        <div style={{ display: selectedTab === "account" ? "block" : "none" }}>
+          <Account onNavigateToOptimizer={() => setSelectedTab("optimize")} />
+        </div>
 
-        {selectedTab === "optimize" && (
-          <>
-            <Home />
-            <CV />
-            <CoverLetter />
-          </>
-        )}
+        <div style={{ display: selectedTab === "optimize" ? "block" : "none" }}>
+          <Home />
+          <CV />
+          <CoverLetter />
+        </div>
       </main>
-    </>
+    </GenerationProvider>
   );
 }
+
