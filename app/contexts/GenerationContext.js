@@ -32,6 +32,9 @@ export function GenerationProvider({ children }) {
     // Analysis results
     matchScore: 0,
     matchReason: "",
+    ATSScore: 0,
+    keywordMatchScore: 0,// ✅ ADD THIS
+
     evidenceMap: {},
     missingSkills: [],
     gapBridges: {},
@@ -53,8 +56,10 @@ export function GenerationProvider({ children }) {
       userCV: "",
       cvFile: null,
       isDragging: false,
+      ATSScore: 0,
       isCompilingAll: false,
       isGeneratingCV: false,
+      keywordMatchScore: 0,
       isGeneratingCoverLetter: false,
       isCompilingCV: false,
       isCompilingCoverLetter: false,
