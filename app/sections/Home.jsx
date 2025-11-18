@@ -699,7 +699,7 @@ export default function Home() {
                     className="min-h-[300px] w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
                   />
                   <p className="mt-2 text-sm text-muted-foreground">
-                    {jobDescription.length}/50 characters
+                    {jobDescription.length} characters
                   </p>
                 </div>
               </div>

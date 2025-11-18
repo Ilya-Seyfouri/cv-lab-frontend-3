@@ -290,7 +290,7 @@ export default function Account({ onNavigateToOptimizer }) {
   }
 
   return (
-    <div className="min-h-screen py-20">
+    <div className="min-h-screen py-5">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-7xl">
           {/* Header */}
@@ -755,10 +755,10 @@ export default function Account({ onNavigateToOptimizer }) {
           {/* Main Content */}
           <div className="space-y-8">
             <div className="bg-card/50">
-              <div className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
+              <div className="inline-flex h-10 items-center justify-center   rounded-md bg-muted p-1 text-muted-foreground">
                 <button
                   onClick={() => setActiveTab("profile")}
-                  className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                  className={`inline-flex items-center justify-center border px-5 hover:bg-white/30 active:scale-95 transition whitespace-nowrap rounded-sm  py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
                     activeTab === "profile"
                       ? "bg-background text-foreground shadow-sm"
                       : ""
@@ -766,9 +766,10 @@ export default function Account({ onNavigateToOptimizer }) {
                 >
                   Profile
                 </button>
+                <div className="px-1.5"></div>
                 <button
                   onClick={() => setActiveTab("history")}
-                  className={`inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                  className={`inline-flex items-center justify-center whitespace-nowrap border hover:bg-white/30 active:scale-95 transition  rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
                     activeTab === "history"
                       ? "bg-background text-foreground shadow-sm"
                       : ""
@@ -919,7 +920,8 @@ export default function Account({ onNavigateToOptimizer }) {
                               totalCredits === "Unlimited"
                                 ? "0%"
                                 : `${
-                                    ((totalCredits - (totalCredits - creditsRemaining)) /
+                                    ((totalCredits -
+                                      (totalCredits - creditsRemaining)) /
                                       totalCredits) *
                                     100
                                   }%`,
@@ -930,7 +932,6 @@ export default function Account({ onNavigateToOptimizer }) {
 
                     <div className="bg-white/5 h-px" />
 
-      
                     <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-3">
                       <p className="text-sm text-foreground">
                         Credits Resets on Dec 15
