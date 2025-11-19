@@ -51,14 +51,13 @@ const plans = [
 
 export default function Pricing2() {
   const router = useRouter();
-  const w = typeof window === "undefined" ? 0 : window.innerWidth;
 
   return (
     <section
       style={{
         position: "relative",
-        paddingTop: w >= 768 ? "2.5rem" : "0",
-        paddingBottom: w >= 768 ? "2.5rem" : "0",
+        paddingTop: "2.5rem",
+        paddingBottom:"2.5rem",
         scrollMarginTop: "7rem",
       }}
       id="pricing"
@@ -90,11 +89,8 @@ export default function Pricing2() {
               WebkitBackgroundClip: "text",
               color: "transparent",
               fontSize:
-                w >= 1024
-                  ? "3rem"
-                  : w >= 768
-                  ? "2.25rem"
-                  : "1.875rem",
+                "3rem",
+                  
               fontWeight: "600",
               lineHeight: "1.25",
             }}
@@ -103,7 +99,7 @@ export default function Pricing2() {
           </h2>
           <p
             style={{
-              fontSize: w >= 768 ? "1.125rem" : "1rem",
+              fontSize:"1.125rem",
               color: "rgba(255, 255, 255, 0.6)",
             }}
           >
@@ -116,9 +112,9 @@ export default function Pricing2() {
           style={{
             display: "grid",
             gap: "2rem",
-            paddingTop: w >= 1024 ? "2.5rem" : "0",
+            paddingTop:"2.5rem",
             gridTemplateColumns:
-              w >= 1024 ? "repeat(3, 1fr)" : "1fr",
+               "repeat(3, 1fr)",
           }}
         >
           {plans.map((plan, index) => (
@@ -196,7 +192,7 @@ export default function Pricing2() {
                 <div style={{ marginBottom: "1.5rem" }}>
                   <h3
                     style={{
-                      fontSize: w >= 768 ? "1.5rem" : "1.25rem",
+                      fontSize: "1.5rem",
                       fontWeight: "600",
                       color: "white",
                     }}
@@ -206,7 +202,7 @@ export default function Pricing2() {
                   <p
                     style={{
                       marginTop: "0.5rem",
-                      fontSize: w >= 768 ? "1rem" : "0.875rem",
+                      fontSize:"1rem",
                       color: "rgba(255, 255, 255, 0.6)",
                     }}
                   >

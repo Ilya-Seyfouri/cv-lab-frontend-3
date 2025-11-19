@@ -27,8 +27,6 @@ const steps = [
 ];
 
 export default function HowItWorks() {
-  const w = typeof window === "undefined" ? 0 : window.innerWidth;
-
   return (
     <section
       style={{
@@ -65,12 +63,7 @@ export default function HowItWorks() {
                 "linear-gradient(to bottom, white, rgba(255, 255, 255, 0.6))",
               backgroundClip: "text",
               WebkitBackgroundClip: "text",
-              fontSize:
-                w >= 1024
-                  ? "3rem"
-                  : w >= 768
-                  ? "2.25rem"
-                  : "1.875rem",
+              fontSize: "3rem",
               fontWeight: "600",
               color: "transparent",
             }}
@@ -79,7 +72,7 @@ export default function HowItWorks() {
           </h2>
           <p
             style={{
-              fontSize: w >= 768 ? "1.125rem" : "1rem",
+              fontSize: "1.125rem",
               color: "rgba(255, 255, 255, 0.6)",
             }}
           >
@@ -93,8 +86,7 @@ export default function HowItWorks() {
           style={{
             display: "grid",
             gap: "2rem",
-            gridTemplateColumns:
-              w >= 768 ? "repeat(3, 1fr)" : "1fr",
+            gridTemplateColumns: "repeat(3, 1fr)",
           }}
         >
           {steps.map((item, index) => {
@@ -182,8 +174,7 @@ export default function HowItWorks() {
                   <h3
                     style={{
                       marginBottom: "0.75rem",
-                      fontSize:
-                        w >= 768 ? "1.25rem" : "1.125rem",
+                      fontSize: "1.25rem",
                       fontWeight: "600",
                       color: "white",
                     }}
@@ -194,7 +185,7 @@ export default function HowItWorks() {
                   {/* Description */}
                   <p
                     style={{
-                      fontSize: w >= 768 ? "1rem" : "0.875rem",
+                      fontSize:"1rem",
                       color: "rgba(255, 255, 255, 0.6)",
                     }}
                   >
@@ -208,7 +199,7 @@ export default function HowItWorks() {
                         position: "absolute",
                         right: "-1rem",
                         top: "50%",
-                        display: w >= 768 ? "block" : "none",
+                        display:"block",
                         height: "1px",
                         width: "2rem",
                         transform: "translateY(-50%)",

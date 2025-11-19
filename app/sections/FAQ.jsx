@@ -4,7 +4,6 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function FAQ() {
-  const w = typeof window === "undefined" ? 0 : window.innerWidth;
 
   const faqs = [
     {
@@ -58,20 +57,20 @@ export default function FAQ() {
         >
           <div
             style={{
-              paddingTop: w >= 1024 ? "3.75rem" : "7.5rem",
-              paddingBottom: w >= 1024 ? "7.5rem" : "7.5rem",
+              paddingTop: "3.75rem",
+              paddingBottom: "7.5rem",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              paddingLeft: w >= 1024 ? "0" : "1rem",
-              paddingRight: w >= 1024 ? "0" : "1rem",
+              paddingLeft: "0",
+              paddingRight: "0"
             }}
           >
             <div style={{ textAlign: "center" }}>
               <h2
                 style={{
-                  fontSize: w >= 1024 ? "3.75rem" : "2.25rem",
+                  fontSize: "3.75rem"
                 }}
               >
                 We've got the answers
@@ -79,17 +78,17 @@ export default function FAQ() {
             </div>
             <div
               style={{
-                paddingTop: w >= 1024 ? "2rem" : "1rem",
+                paddingTop: "2rem",
                 textAlign: "center",
               }}
             >
               <p
                 style={{
-                  fontSize: w >= 1024 ? "1.5rem" : "1.125rem",
+                  fontSize: "1.5rem",
                   color: "rgba(255, 255, 255, 0.5)",
                   paddingLeft: "1rem",
                   paddingRight: "1rem",
-                  paddingBottom: w >= 1024 ? "1.25rem" : "0",
+                  paddingBottom: "1.25rem"
                 }}
               >
                 Discover everything you need to know about CV Lab.
@@ -97,14 +96,12 @@ export default function FAQ() {
             </div>
             <div
               style={{
-                marginTop: w >= 1024 ? "3rem" : "2rem",
+                marginTop: "3rem",
                 display: "flex",
                 flexDirection: "column",
-                gap: w >= 1024 ? "1.5rem" : "1rem",
+                gap:"1.5rem",
                 width: "100%",
                 maxWidth: "56rem",
-                paddingLeft: w >= 1024 ? "0" : "1rem",
-                paddingRight: w >= 1024 ? "0" : "1rem",
               }}
             >
               {faqs.map((faq, index) => (
@@ -112,17 +109,17 @@ export default function FAQ() {
                   key={faq.question}
                   style={{
                     borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-                    paddingBottom: w >= 1024 ? "1.5rem" : "1rem",
-                    paddingTop: w >= 1024 ? "1.25rem" : "0.75rem",
-                    paddingLeft: w >= 1024 ? "1.25rem" : "0.75rem",
-                    paddingRight: w >= 1024 ? "1.25rem" : "0.75rem",
+                    paddingBottom: "1.5rem",
+                    paddingTop: "1.25rem",
+                    paddingLeft: "1.25rem",
+                    paddingRight: "1.25rem",
                   }}
                 >
                   <div
                     style={{
                       display: "flex",
                       justifyContent: "space-between",
-                      alignItems: w >= 1024 ? "center" : "flex-start",
+                      alignItems: "center",
                       gap: "1rem",
                       cursor: "pointer",
                     }}
@@ -133,7 +130,7 @@ export default function FAQ() {
                     <h3
                       style={{
                         fontWeight: "600",
-                        fontSize: w >= 1024 ? "1.125rem" : "1rem",
+                        fontSize: "1.125rem",
                         textAlign: "left",
                         paddingRight: "0.5rem",
                         color: "white",
@@ -143,8 +140,8 @@ export default function FAQ() {
                     </h3>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width={w >= 1024 ? "24" : "20"}
-                      height={w >= 1024 ? "24" : "20"}
+                      width={"24"}
+                      height={"24"}
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -182,7 +179,7 @@ export default function FAQ() {
                         <p
                           style={{
                             color: "rgba(255, 255, 255, 0.5)",
-                            fontSize: w >= 1024 ? "1rem" : "0.875rem",
+                            fontSize: "1rem",
                             lineHeight: "1.625",
                           }}
                         >

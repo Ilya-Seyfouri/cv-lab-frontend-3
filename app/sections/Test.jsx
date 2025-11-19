@@ -59,15 +59,14 @@ const testimonials = [
 const repeatedTestimonials = [...testimonials, ...testimonials];
 
 export default function Testimonials() {
-  const w = typeof window === "undefined" ? 0 : window.innerWidth;
 
   return (
     <section
       id="testimonials"
       style={{
         position: "relative",
-        paddingTop: w >= 768 ? "8rem" : "5rem",
-        paddingBottom: w >= 768 ? "8rem" : "5rem",
+        paddingTop: "8rem",
+        paddingBottom: "8rem",
         scrollMarginTop: "7rem",
       }}
     >
@@ -99,11 +98,8 @@ export default function Testimonials() {
               WebkitBackgroundClip: "text",
               color: "transparent",
               fontSize:
-                w >= 1024
-                  ? "3rem"
-                  : w >= 768
-                  ? "2.25rem"
-                  : "1.875rem",
+                "3rem",
+                  
               fontWeight: "600",
             }}
           >
@@ -111,7 +107,7 @@ export default function Testimonials() {
           </h2>
           <p
             style={{
-              fontSize: w >= 768 ? "1.125rem" : "1rem",
+              fontSize:"1.125rem" ,
               color: "rgba(255, 255, 255, 0.6)",
             }}
           >
@@ -136,8 +132,8 @@ export default function Testimonials() {
               <div
                 key={index}
                 style={{
-                  width: w >= 768 ? "600px" : "350px",
-                  height: w >= 768 ? "280px" : "260px",
+                  width: "600px",
+                  height: "280px",
                   flexShrink: 0,
                   borderRadius: "1.5rem",
                   border: "1px solid rgba(255, 255, 255, 0.05)",
@@ -204,7 +200,7 @@ export default function Testimonials() {
                     <p
                       style={{
                         fontSize:
-                          w >= 768 ? "1rem" : "0.875rem",
+                          "1rem",
                         color: "rgba(255, 255, 255, 0.7)",
                       }}
                     >
