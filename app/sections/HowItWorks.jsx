@@ -1,7 +1,5 @@
 "use client";
-
 import { Upload, Sparkles, Download } from "lucide-react";
-
 const steps = [
   {
     icon: Upload,
@@ -25,188 +23,49 @@ const steps = [
       "Get your optimized CV and tailored cover letter in seconds. Download and apply with confidence.",
   },
 ];
-
 export default function HowItWorks() {
   return (
-    <section
-      style={{
-        position: "relative",
-        paddingTop: "5rem",
-        paddingBottom: "5rem",
-        scrollMarginTop: "2.5rem",
-      }}
-      id="features"
-    >
-      <div
-        style={{
-          maxWidth: "72rem",
-          marginLeft: "auto",
-          marginRight: "auto",
-          paddingLeft: "1rem",
-          paddingRight: "1rem",
-        }}
-      >
+    <section className="relative py-20 md:py-15 scroll-mt-10" id="features">
+      <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
-        <div
-          style={{
-            marginLeft: "auto",
-            marginRight: "auto",
-            marginBottom: "4rem",
-            maxWidth: "48rem",
-            textAlign: "center",
-          }}
-        >
-          <h2
-            style={{
-              marginBottom: "1rem",
-              backgroundImage:
-                "linear-gradient(to bottom, white, rgba(255, 255, 255, 0.6))",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              fontSize: "3rem",
-              fontWeight: "600",
-              color: "transparent",
-            }}
-          >
+        <div className="mx-auto mb-16 max-w-3xl text-center">
+          <h2 className="mb-4 bg-gradient-to-b from-white to-white/60 bg-clip-text text-3xl md:text-4xl lg:text-5xl font-semibold text-transparent">
             How It Works
           </h2>
-          <p
-            style={{
-              fontSize: "1.125rem",
-              color: "rgba(255, 255, 255, 0.6)",
-            }}
-          >
+          <p className="text-base md:text-lg text-white/60">
             Tailor your CV in 3 simple steps. No complex setup, no learning
             curve.
           </p>
         </div>
-
         {/* Steps */}
-        <div
-          style={{
-            display: "grid",
-            gap: "2rem",
-            gridTemplateColumns: "repeat(3, 1fr)",
-          }}
-        >
+        <div className="grid gap-8 md:grid-cols-3">
           {steps.map((item, index) => {
             const Icon = item.icon;
             return (
               <div
                 key={index}
-                style={{
-                  position: "relative",
-                  height: "100%",
-                  borderRadius: "1.5rem",
-                  border: "1px solid rgba(255, 255, 255, 0.05)",
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  padding: "1px",
-                  backdropFilter: "blur(12px)",
-                  transition: "all 0.3s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(6, 182, 212, 0.4)";
-                  e.currentTarget.style.backgroundColor =
-                    "rgba(255, 255, 255, 0.1)";
-                  const icon = e.currentTarget.querySelector(".icon-wrapper");
-                  if (icon) icon.style.transform = "scale(1.1)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor =
-                    "rgba(255, 255, 255, 0.05)";
-                  e.currentTarget.style.backgroundColor =
-                    "rgba(255, 255, 255, 0.05)";
-                  const icon = e.currentTarget.querySelector(".icon-wrapper");
-                  if (icon) icon.style.transform = "scale(1)";
-                }}
+                className="group relative h-full rounded-3xl border border-white/5 bg-white/5 p-[1px] backdrop-blur-sm transition-all hover:border-cyan-500/40 hover:bg-white/10"
               >
-                <div
-                  style={{
-                    height: "100%",
-                    borderRadius: "1.5rem",
-                    backgroundColor: "rgba(0, 0, 0, 0.6)",
-                    padding: "2rem",
-                    textAlign: "center",
-                  }}
-                >
+                <div className="h-full rounded-3xl bg-black/60 p-8 text-center">
                   {/* Icon */}
-                  <div
-                    className="icon-wrapper"
-                    style={{
-                      marginLeft: "auto",
-                      marginRight: "auto",
-                      marginBottom: "1.5rem",
-                      display: "inline-flex",
-                      height: "4rem",
-                      width: "4rem",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: "1rem",
-                      backgroundImage:
-                        "linear-gradient(to bottom right, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.2))",
-                      transition: "transform 0.3s",
-                      transform: "scale(1)",
-                    }}
-                  >
-                    <Icon
-                      style={{
-                        height: "2rem",
-                        width: "2rem",
-                        color: "#67e8f9",
-                      }}
-                    />
+                  <div className="mx-auto mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 transition-transform group-hover:scale-110">
+                    <Icon className="h-8 w-8 text-cyan-300" />
                   </div>
-
                   {/* Step number */}
-                  <div
-                    style={{
-                      marginBottom: "0.5rem",
-                      fontSize: "0.875rem",
-                      fontWeight: "600",
-                      letterSpacing: "0.05em",
-                      color: "#67e8f9",
-                    }}
-                  >
+                  <div className="mb-2 text-sm font-semibold tracking-wide text-cyan-300">
                     {item.step}
                   </div>
-
                   {/* Title */}
-                  <h3
-                    style={{
-                      marginBottom: "0.75rem",
-                      fontSize: "1.25rem",
-                      fontWeight: "600",
-                      color: "white",
-                    }}
-                  >
+                  <h3 className="mb-3 text-lg md:text-xl font-semibold text-white">
                     {item.title}
                   </h3>
-
                   {/* Description */}
-                  <p
-                    style={{
-                      fontSize:"1rem",
-                      color: "rgba(255, 255, 255, 0.6)",
-                    }}
-                  >
+                  <p className="text-sm md:text-base text-white/60">
                     {item.description}
                   </p>
-
                   {/* Connector line on desktop (between cards) */}
                   {index < steps.length - 1 && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        right: "-1rem",
-                        top: "50%",
-                        display:"block",
-                        height: "1px",
-                        width: "2rem",
-                        transform: "translateY(-50%)",
-                        backgroundImage:
-                          "linear-gradient(to right, rgba(6, 182, 212, 0.5), transparent)",
-                      }}
-                    />
+                    <div className="absolute -right-4 top-1/2 hidden h-px w-8 -translate-y-1/2 bg-gradient-to-r from-cyan-500/50 to-transparent md:block" />
                   )}
                 </div>
               </div>
@@ -214,58 +73,15 @@ export default function HowItWorks() {
           })}
         </div>
       </div>
-
       {/* Background gradient */}
-      <div
-        style={{
-          pointerEvents: "none",
-          position: "absolute",
-          inset: "0",
-          zIndex: "-10",
-        }}
-      >
+      {/* Background gradient */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
         {/* Left card glow */}
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "15%",
-            height: "420px",
-            width: "420px",
-            transform: "translate(-50%, -50%)",
-            borderRadius: "9999px",
-            backgroundColor: "rgba(6, 182, 212, 0.1)",
-            filter: "blur(48px)",
-          }}
-        />
+        <div className="absolute top-1/2 left-[15%] h-[420px] w-[420px] -translate-y-1/2 -translate-x-1/2 rounded-full bg-cyan-500/10 blur-3xl" />
         {/* Middle card glow */}
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            height: "420px",
-            width: "420px",
-            transform: "translate(-50%, -50%)",
-            borderRadius: "9999px",
-            backgroundColor: "rgba(34, 211, 238, 0.1)",
-            filter: "blur(48px)",
-          }}
-        />
+        <div className="absolute top-1/2 left-1/2 h-[420px] w-[420px] -translate-y-1/2 -translate-x-1/2 rounded-full bg-cyan-400/10 blur-3xl" />
         {/* Right card glow */}
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            right: "15%",
-            height: "420px",
-            width: "420px",
-            transform: "translate(50%, -50%)",
-            borderRadius: "9999px",
-            backgroundColor: "rgba(6, 182, 212, 0.1)",
-            filter: "blur(48px)",
-          }}
-        />
+        <div className="absolute top-1/2 right-[15%] h-[420px] w-[420px] -translate-y-1/2 translate-x-1/2 rounded-full bg-cyan-500/10 blur-3xl" />
       </div>
     </section>
   );

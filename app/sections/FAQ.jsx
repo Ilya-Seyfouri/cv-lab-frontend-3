@@ -1,10 +1,8 @@
 "use client";
-
+import { twMerge } from "tailwind-merge";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-
 export default function FAQ() {
-
   const faqs = [
     {
       question: "How does it work?",
@@ -42,121 +40,49 @@ export default function FAQ() {
         "Yes. You can try the platform for free with limited features such as one CV and cover letter optimization. Premium plans unlock unlimited tailoring, advanced analytics, and full mock interview simulations.",
     },
   ];
-
   const [selectedIndex, setSelectedIndex] = useState(null);
-
   return (
     <>
-      <section id="faq" style={{ scrollMarginTop: "3.75rem" }}>
-        <div
-          style={{
-            maxWidth: "1280px",
-            marginLeft: "auto",
-            marginRight: "auto",
-          }}
-        >
-          <div
-            style={{
-              paddingTop: "3.75rem",
-              paddingBottom: "7.5rem",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              paddingLeft: "0",
-              paddingRight: "0"
-            }}
-          >
-            <div style={{ textAlign: "center" }}>
-              <h2
-                style={{
-                  fontSize: "3.75rem"
-                }}
-              >
-                We've got the answers
-              </h2>
+      <section id="faq" className="scroll-mt-15">
+        <div className="container">
+          <div className="pt-30 lg:pt-15 pb-30 lg:pb-30 flex flex-col justify-center items-center px-4 lg:px-0">
+            <div className="text-center">
+              <h2 className="text-4xl lg:text-6xl">We've got the answers</h2>
             </div>
-            <div
-              style={{
-                paddingTop: "2rem",
-                textAlign: "center",
-              }}
-            >
-              <p
-                style={{
-                  fontSize: "1.5rem",
-                  color: "rgba(255, 255, 255, 0.5)",
-                  paddingLeft: "1rem",
-                  paddingRight: "1rem",
-                  paddingBottom: "1.25rem"
-                }}
-              >
+            <div className="pt-4 lg:pt-8 text-center">
+              <p className="text-lg lg:text-2xl text-white/50 px-4 lg:pb-5">
                 Discover everything you need to know about CV Lab.
               </p>
             </div>
-            <div
-              style={{
-                marginTop: "3rem",
-                display: "flex",
-                flexDirection: "column",
-                gap:"1.5rem",
-                width: "100%",
-                maxWidth: "56rem",
-              }}
-            >
+            <div className="mt-8 lg:mt-12 flex flex-col gap-4 lg:gap-6 w-full max-w-4xl px-4 lg:px-0">
               {faqs.map((faq, index) => (
                 <div
                   key={faq.question}
-                  style={{
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-                    paddingBottom: "1.5rem",
-                    paddingTop: "1.25rem",
-                    paddingLeft: "1.25rem",
-                    paddingRight: "1.25rem",
-                  }}
+                  className="border-b border-white/10 pb-4 lg:pb-6 py-3 lg:py-5"
                 >
                   <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      gap: "1rem",
-                      cursor: "pointer",
-                    }}
+                    className="flex justify-between items-start lg:items-center gap-4 cursor-pointer"
                     onClick={() =>
                       setSelectedIndex(selectedIndex === index ? null : index)
                     }
                   >
-                    <h3
-                      style={{
-                        fontWeight: "600",
-                        fontSize: "1.125rem",
-                        textAlign: "left",
-                        paddingRight: "0.5rem",
-                        color: "white",
-                      }}
-                    >
+                    <h3 className="font-semibold text-base lg:text-lg text-left pr-2">
                       {faq.question}
                     </h3>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width={"24"}
-                      height={"24"}
+                      width="20"
+                      height="20"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      style={{
-                        color: "#22d3ee",
-                        flexShrink: 0,
-                        transition: "transform 0.3s",
-                        transform:
-                          selectedIndex === index
-                            ? "rotate(45deg)"
-                            : "rotate(0deg)",
-                      }}
+                      className={twMerge(
+                        "feather feather-plus text-cyan-400 flex-shrink-0 transition duration-300 lg:w-6 lg:h-6",
+                        selectedIndex == index && "rotate-45"
+                      )}
                     >
                       <line x1="12" y1="5" x2="12" y2="19"></line>
                       <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -174,15 +100,9 @@ export default function FAQ() {
                           height: 0,
                           marginTop: 0,
                         }}
-                        style={{ overflow: "hidden" }}
+                        className={twMerge("overflow-hidden")}
                       >
-                        <p
-                          style={{
-                            color: "rgba(255, 255, 255, 0.5)",
-                            fontSize: "1rem",
-                            lineHeight: "1.625",
-                          }}
-                        >
+                        <p className="text-white/50 text-sm lg:text-base leading-relaxed">
                           {faq.answer}
                         </p>
                       </motion.div>

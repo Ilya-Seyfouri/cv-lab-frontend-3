@@ -1,5 +1,4 @@
 "use client";
-
 import { Star, Quote } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -9,21 +8,20 @@ import photo3 from "../../public/photo3.jpg";
 import photo4 from "../../public/photo4.jpg";
 import photo5 from "../../public/avatar-owen-garcia.jpg";
 import photo6 from "../../public/avatar-ashwin-santiago.jpg";
-
 const testimonials = [
   {
     name: "Reece S",
     role: "Software Engineer",
     avatar: photo1,
     content:
-      "CV Lab helped me stand out in a crowded job market. Since I started using it, I've received way more callbacks.",
+      "CV Lab helped me stand out in a crowded job market. Since I started using it, I’ve received way more callbacks.",
   },
   {
     name: "Jessica T",
     role: "Marketing Manager",
     avatar: photo2,
     content:
-      "This AI turned my CV into a job-winning tool. I finally started getting interviews for the opportunities I've always dreamed of.",
+      "This AI turned my CV into a job-winning tool. I finally started getting interviews for the opportunities I’ve always dreamed of.",
   },
   {
     name: "Bernie S",
@@ -54,72 +52,26 @@ const testimonials = [
       "CV Lab helped me get noticed for my dream role. The tailored CV was spot-on—I landed an interview within a week!",
   },
 ];
-
 // Duplicate list for smooth infinite loop
 const repeatedTestimonials = [...testimonials, ...testimonials];
-
 export default function Testimonials() {
-
   return (
-    <section
-      id="testimonials"
-      style={{
-        position: "relative",
-        paddingTop: "8rem",
-        paddingBottom: "8rem",
-        scrollMarginTop: "7rem",
-      }}
-    >
-      <div
-        style={{
-          maxWidth: "72rem",
-          marginLeft: "auto",
-          marginRight: "auto",
-          paddingLeft: "1rem",
-          paddingRight: "1rem",
-        }}
-      >
+    <section id="testimonials" className="relative py-20 md:py-32 scroll-mt-28">
+      <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
-        <div
-          style={{
-            marginLeft: "auto",
-            marginRight: "auto",
-            marginBottom: "4rem",
-            maxWidth: "48rem",
-            textAlign: "center",
-          }}
-        >
-          <h2
-            style={{
-              marginBottom: "1rem",
-              backgroundImage:
-                "linear-gradient(to bottom, white, rgba(255, 255, 255, 0.6))",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              color: "transparent",
-              fontSize:
-                "3rem",
-                  
-              fontWeight: "600",
-            }}
-          >
+        <div className="mx-auto mb-16 max-w-3xl text-center">
+          <h2 className="mb-4 bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent text-3xl md:text-4xl lg:text-5xl font-semibold">
             Success Stories
           </h2>
-          <p
-            style={{
-              fontSize:"1.125rem" ,
-              color: "rgba(255, 255, 255, 0.6)",
-            }}
-          >
+          <p className="text-base md:text-lg text-white/60">
             Join thousands of job seekers who landed their dream roles with our
             AI-powered applications.
           </p>
         </div>
-
         {/* Conveyor belt */}
-        <div style={{ position: "relative", overflow: "hidden" }}>
+        <div className="relative overflow-hidden">
           <motion.div
-            style={{ display: "flex", gap: "2rem", width: "max-content" }}
+            className="flex gap-8 w-max"
             initial={{ x: 0 }}
             animate={{ x: "-50%" }}
             transition={{
@@ -131,128 +83,41 @@ export default function Testimonials() {
             {repeatedTestimonials.map((testimonial, index) => (
               <div
                 key={index}
-                style={{
-                  width: "600px",
-                  height: "280px",
-                  flexShrink: 0,
-                  borderRadius: "1.5rem",
-                  border: "1px solid rgba(255, 255, 255, 0.05)",
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  padding: "1px",
-                  backdropFilter: "blur(12px)",
-                  transition: "all 0.3s",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(6, 182, 212, 0.3)";
-                  e.currentTarget.style.backgroundColor =
-                    "rgba(255, 255, 255, 0.1)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor =
-                    "rgba(255, 255, 255, 0.05)";
-                  e.currentTarget.style.backgroundColor =
-                    "rgba(255, 255, 255, 0.05)";
-                }}
+                className="w-[350px] md:w-[600px] h-[260px] md:h-[280px] flex-shrink-0 
+                           rounded-3xl border border-white/5 bg-white/5 p-[1px]
+                           backdrop-blur-sm transition-all hover:border-cyan-500/30 hover:bg-white/10
+                           flex flex-col"
               >
-                <div
-                  style={{
-                    height: "100%",
-                    borderRadius: "1.5rem",
-                    backgroundColor: "rgba(0, 0, 0, 0.7)",
-                    padding: "1.5rem",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                  }}
-                >
+                <div className="h-full rounded-3xl bg-black/70 p-6 flex flex-col justify-between">
                   <div>
-                    <Quote
-                      style={{
-                        marginBottom: "1rem",
-                        height: "2rem",
-                        width: "2rem",
-                        color: "rgba(6, 182, 212, 0.6)",
-                      }}
-                    />
-
-                    <div
-                      style={{
-                        marginBottom: "1rem",
-                        display: "flex",
-                        gap: "0.25rem",
-                      }}
-                    >
+                    <Quote className="mb-4 h-8 w-8 text-cyan-500/60" />
+                    <div className="mb-4 flex gap-1">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star
                           key={i}
-                          style={{
-                            height: "1rem",
-                            width: "1rem",
-                            fill: "#06b6d4",
-                            color: "#06b6d4",
-                          }}
+                          className="h-4 w-4 fill-cyan-500 text-cyan-500"
                         />
                       ))}
                     </div>
-
-                    <p
-                      style={{
-                        fontSize:
-                          "1rem",
-                        color: "rgba(255, 255, 255, 0.7)",
-                      }}
-                    >
+                    <p className="text-sm md:text-base text-white/70">
                       {testimonial.content}
                     </p>
                   </div>
-
-                  <div
-                    style={{
-                      marginTop: "1.5rem",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.75rem",
-                    }}
-                  >
-                    <div
-                      style={{
-                        height: "2.5rem",
-                        width: "2.5rem",
-                        overflow: "hidden",
-                        borderRadius: "9999px",
-                        border: "2px solid rgba(6, 182, 212, 0.3)",
-                      }}
-                    >
+                  <div className="mt-6 flex items-center gap-3">
+                    <div className="h-10 w-10 overflow-hidden rounded-full ring-2 ring-cyan-500/30">
                       <Image
                         src={testimonial.avatar}
                         alt={testimonial.name}
                         width={40}
                         height={40}
-                        style={{
-                          height: "100%",
-                          width: "100%",
-                          objectFit: "cover",
-                        }}
+                        className="h-full w-full object-cover"
                       />
                     </div>
                     <div>
-                      <div
-                        style={{
-                          fontSize: "0.875rem",
-                          fontWeight: "600",
-                          color: "white",
-                        }}
-                      >
+                      <div className="text-sm font-semibold text-white">
                         {testimonial.name}
                       </div>
-                      <div
-                        style={{
-                          fontSize: "0.75rem",
-                          color: "rgba(255, 255, 255, 0.6)",
-                        }}
-                      >
+                      <div className="text-xs text-white/60">
                         {testimonial.role}
                       </div>
                     </div>
@@ -263,29 +128,9 @@ export default function Testimonials() {
           </motion.div>
         </div>
       </div>
-
       {/* Background glow */}
-      <div
-        style={{
-          pointerEvents: "none",
-          position: "absolute",
-          inset: "0",
-          zIndex: "-10",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: "50%",
-            height: "500px",
-            width: "500px",
-            transform: "translate(-50%, -50%)",
-            borderRadius: "9999px",
-            backgroundColor: "rgba(6, 182, 212, 0.1)",
-            filter: "blur(48px)",
-          }}
-        />
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/10 blur-3xl" />
       </div>
     </section>
   );

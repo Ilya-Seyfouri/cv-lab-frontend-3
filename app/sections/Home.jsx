@@ -1,13 +1,9 @@
 "use client";
-
-
-
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "../lib/supabase/client";
 import { useGeneration } from "../contexts/GenerationContext";
 import CV from "./CV";
 import CoverLetter from "./CoverLetter";
-
 const improvements = [
   {
     title: "Enhanced Technical Keywords",
@@ -27,12 +23,12 @@ const improvements = [
   {
     title: "Improved Content Structure",
     description:
-      "Reorganised sections for a clearer, more logical flow that's easier for recruiters to scan.",
+      "Reorganised sections for a clearer, more logical flow that’s easier for recruiters to scan.",
   },
   {
     title: "Elevated Professional Summary",
     description:
-      "Tailored the summary to mirror the job's core requirements and value proposition.",
+      "Tailored the summary to mirror the job’s core requirements and value proposition.",
   },
   {
     title: "Boosted Keyword Density",
@@ -55,31 +51,30 @@ const improvements = [
       "Curated a focused skills list matching the required tech stack.",
   },
 ];
-
 export default function Home() {
+  // User/auth state stays local (not shared across components)
   const [user1, setUser1] = useState(null);
   const [userdetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userCredits, setUserCredits] = useState(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loadingCredits, setLoadingCredits] = useState(true);
-
-
   const supabase = createClient();
-
   useEffect(() => {
     getUser();
-    fetchUserCredits();
+    fetchUserCredits(); // ✅ Add this
   }, []);
-
+  useEffect(() => {
+    getUser();
+    fetchUserCredits(); // ✅ Add this
+  }, []);
+  // ✅ Add this function
   const fetchUserCredits = async () => {
     try {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-
       if (!session) return;
-
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/credits`,
         {
@@ -88,9 +83,7 @@ export default function Home() {
           },
         }
       );
-
       const data = await response.json();
-
       if (data.is_subscribed) {
         setIsSubscribed(true);
         setUserCredits("unlimited");
@@ -104,10 +97,10 @@ export default function Home() {
       setLoadingCredits(false);
     }
   };
-
+  // Get generation state from context
   const { generationState, updateGenerationState, resetGenerationState } =
     useGeneration();
-
+  // Destructure for easier access
   const {
     jobDescription,
     userCV,
@@ -135,7 +128,9 @@ export default function Home() {
     showAnalysis,
     error1,
   } = generationState;
-
+  useEffect(() => {
+    getUser();
+  }, []);
   const getUser = async () => {
     try {
       const {
@@ -151,7 +146,6 @@ export default function Home() {
       setLoading(false);
     }
   };
-
   const fetchUserDetail = async (userId) => {
     try {
       const { data, error } = await supabase
@@ -168,7 +162,6 @@ export default function Home() {
       console.log(error);
     }
   };
-
   const handleDragOver = useCallback(
     (e) => {
       e.preventDefault();
@@ -176,7 +169,6 @@ export default function Home() {
     },
     [updateGenerationState]
   );
-
   const handleDragLeave = useCallback(
     (e) => {
       e.preventDefault();
@@ -184,12 +176,10 @@ export default function Home() {
     },
     [updateGenerationState]
   );
-
   const handleDrop = useCallback(
     (e) => {
       e.preventDefault();
       updateGenerationState({ isDragging: false });
-
       const file = e.dataTransfer.files[0];
       if (
         file &&
@@ -204,7 +194,6 @@ export default function Home() {
     },
     [updateGenerationState]
   );
-
   const handleFileSelect = useCallback(
     (e) => {
       const file = e.target.files?.[0];
@@ -215,17 +204,14 @@ export default function Home() {
     },
     [updateGenerationState]
   );
-
   const uploadCV = async (file) => {
     if (!file) {
       updateGenerationState({ error1: "Please select a CV file first" });
       return;
     }
-
     updateGenerationState({ error1: "" });
     const formData = new FormData();
     formData.append("file", file);
-
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/upload-cv`,
@@ -234,7 +220,6 @@ export default function Home() {
           body: formData,
         }
       );
-
       const data = await response.json();
       updateGenerationState({ userCV: data.extracted_text });
     } catch (error) {
@@ -244,49 +229,41 @@ export default function Home() {
       });
     }
   };
-
   const startOptimizeProgress = (updateGenerationState, maxPercent = 75) => {
     let current = 0;
-
     const timer = setInterval(() => {
       current += 1;
-
       if (current >= maxPercent) {
         current = maxPercent;
-        clearInterval(timer);
+        clearInterval(timer); // stop at 85%
       }
-
+      // Use whatever field your progress bar reads from
       updateGenerationState({ cvProgress: current });
-    }, 1300);
-
-    return timer;
+    }, 1300); // 1% per second
+    return timer; // so we can clear it when we're done
   };
-
+  // Updated handleOptimize function with keyword match calculation
   const handleOptimize = async () => {
     if (!cvFile || !jobDescription) return;
-
     if (!isSubscribed && userCredits <= 0) {
       updateGenerationState({
         error1: "You're out of credits! Upgrade to Premium to continue.",
       });
       return;
     }
-
     updateGenerationState({
       isCompilingAll: true,
       processingStep: "uploading",
       cvProgress: 0,
       coverLetterProgress: 0,
-      error1: "",
+      error1: "", // ✅ Reset cover letter progress
     });
-
     const progressTimer = startOptimizeProgress(updateGenerationState);
-
     try {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-
+      // ✅ STEP 1: Generate CV (no longer returns skills_report)
       const cvResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/generate-cv`,
         {
@@ -301,9 +278,7 @@ export default function Home() {
           }),
         }
       );
-
       const cvData = await cvResponse.json();
-
       if (cvResponse.status === 403) {
         clearInterval(progressTimer);
         updateGenerationState({
@@ -316,20 +291,21 @@ export default function Home() {
         });
         return;
       }
-
+      // ✅ CV data only contains the CV itself now
       if (cvData && cvData.cv) {
         updateGenerationState({
           generatedCV: cvData.cv,
           cvProgress: 100,
+          // ❌ DON'T set processingStep to "complete" yet
         });
         await compileCVToPDF(cvData.cv);
       }
-
+      // ✅ Update progress for cover letter generation
       updateGenerationState({
         coverLetterProgress: 25,
         processingStep: "generating_cover_letter",
       });
-
+      // ✅ STEP 2: Generate Cover Letter (NOW returns skills_report)
       const coverLetterResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter`,
         {
@@ -344,12 +320,12 @@ export default function Home() {
           }),
         }
       );
-
       const coverLetterData = await coverLetterResponse.json();
-
+      // ✅ Update progress
       updateGenerationState({ coverLetterProgress: 75 });
-
+      // ✅ Extract BOTH cover letter AND skills_report from this response
       if (coverLetterData) {
+        // Set the cover letter
         if (coverLetterData.cover_letter) {
           updateGenerationState({
             generatedCoverLetter: coverLetterData.cover_letter,
@@ -357,10 +333,10 @@ export default function Home() {
           });
           await compileCoverLetterToPDF(coverLetterData.cover_letter);
         }
-
+        // ✅ IMPORTANT: Extract skills_report from cover letter response
         if (coverLetterData.skills_report) {
           const report = JSON.parse(coverLetterData.skills_report);
-
+          // Calculate keyword match percentage
           let keywordMatchScore = 0;
           if (
             report.evidence_map &&
@@ -372,12 +348,11 @@ export default function Home() {
                 evidence.status === "explicit" ||
                 evidence.status === "implicit_strong"
             ).length;
-
             keywordMatchScore = Math.round(
               (matchedKeywords / totalKeywords) * 100
             );
           }
-
+          // Update state with analysis data
           updateGenerationState({
             missingSkills: report.missing_skills,
             matchScore: parseFloat(report.role_alignment.match_score) * 100,
@@ -391,10 +366,9 @@ export default function Home() {
         }
       }
       await fetchUserCredits();
-
       clearInterval(progressTimer);
       updateGenerationState({
-        cvProgress: 100,
+        cvProgress: 100, // progress bar hits 100%
         processingStep: "complete",
         isCompilingAll: false,
       });
@@ -407,10 +381,8 @@ export default function Home() {
       });
     }
   };
-
   const compileCVToPDF = async (latexCode) => {
     if (!latexCode) return;
-
     updateGenerationState({ isCompilingCV: true });
     try {
       const response = await fetch(
@@ -421,7 +393,6 @@ export default function Home() {
           body: JSON.stringify({ latex_code: latexCode }),
         }
       );
-
       const data = await response.json();
       if (data.success) {
         updateGenerationState({ cvPdfData: data.pdf });
@@ -432,10 +403,8 @@ export default function Home() {
       updateGenerationState({ isCompilingCV: false });
     }
   };
-
   const downloadCVPDF = () => {
     if (!cvPdfData) return;
-
     const byteCharacters = atob(cvPdfData);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
@@ -443,7 +412,6 @@ export default function Home() {
     }
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: "application/pdf" });
-
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -453,17 +421,13 @@ export default function Home() {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
   };
-
   const compileCoverLetterToPDF = async (coverLetterText) => {
     const textToUse = coverLetterText || generatedCoverLetter;
-
     if (!textToUse) {
       updateGenerationState({ error1: "Please generate a cover letter first" });
       return;
     }
-
     updateGenerationState({ isCompilingCoverLetter: true, error1: "" });
-
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter-pdf`,
@@ -477,9 +441,7 @@ export default function Home() {
           }),
         }
       );
-
       const data = await response.json();
-
       if (data.success) {
         updateGenerationState({ error1: "", coverLetterPdfData: data.pdf });
       } else {
@@ -496,12 +458,9 @@ export default function Home() {
       updateGenerationState({ isCompilingCoverLetter: false });
     }
   };
-
   const downloadCoverLetterPDF = () => {
     if (!coverLetterPdfData) return;
-
     updateGenerationState({ error1: "" });
-
     const byteCharacters = atob(coverLetterPdfData);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) {
@@ -509,7 +468,6 @@ export default function Home() {
     }
     const byteArray = new Uint8Array(byteNumbers);
     const blob = new Blob([byteArray], { type: "application/pdf" });
-
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -519,122 +477,40 @@ export default function Home() {
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
   };
-
   const resetForm = () => {
     resetGenerationState();
   };
-
   const canOptimize = cvFile && jobDescription.length >= 50;
-
   if (loading) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <div
-          style={{
-            animation: "spin 1s linear infinite",
-            borderRadius: "9999px",
-            height: "3rem",
-            width: "3rem",
-            borderBottom: "2px solid #06b6d4",
-          }}
-        />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500" />
       </div>
     );
   }
-
   return (
-    <div style={{ minHeight: "100vh" }}>
-      <div
-        style={{
-          maxWidth: "1280px",
-          marginLeft: "auto",
-          marginRight: "auto",
-          paddingLeft: "1rem",
-          paddingRight: "1rem",
-        }}
-      >
+    <div className="min-h-screen">
+      <div className="container mx-auto px-4">
         {processingStep !== "complete" ? (
-          <div
-            style={{
-              marginLeft: "auto",
-              marginRight: "auto",
-              maxWidth: "64rem",
-            }}
-          >
+          <div className="mx-auto max-w-5xl">
             {/* Header */}
-            <div style={{ marginBottom: "3rem", textAlign: "center" }}>
-              <h1
-                style={{
-                  marginBottom: "1rem",
-                  backgroundImage:
-                    "linear-gradient(to right, #67e8f9, #22d3ee, #06b6d4)",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  fontSize: "3rem",
-                  color: "transparent",
-                }}
-              >
+            <div className="mb-12 text-center">
+              <h1 className="mb-4 bg-gradient-to-r from-cyan-300 via-cyan-400 to-cyan-500  bg-clip-text text-4xl md:text-5xl text-transparent">
                 Transform Your Application
               </h1>
-              <p
-                style={{
-                  fontSize: "1.125rem",
-                  color: "rgba(255, 255, 255, 0.5)",
-                }}
-              >
+              <p className="text-lg text-muted-foreground text-white/50">
                 Upload your CV and job description to get optimized documents in
                 seconds.
               </p>
             </div>
-
             {/* Upload and Input Section */}
-            <div
-              style={{
-                display: "grid",
-                gap: "2rem",
-                gridTemplateColumns:
-                  "repeat(2, 1fr)",
-              }}
-            >
+            <div className="grid gap-8 lg:grid-cols-2">
               {/* CV Upload */}
-              <div
-                style={{
-                  border: "1px solid #22d3ee",
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  backdropFilter: "blur(12px)",
-                  borderRadius: "0.75rem",
-                }}
-              >
-                <div
-                  style={{
-                    paddingLeft: "1.5rem",
-                    paddingRight: "1.5rem",
-                    paddingTop: "1.5rem",
-                    paddingBottom: "1rem",
-                  }}
-                >
-                  <h3
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      color: "white",
-                      fontWeight: "600",
-                    }}
-                  >
+              <div className="border border-cyan-400 bg-card/50 backdrop-blur-sm rounded-xl">
+                <div className="px-6 pt-6 pb-4">
+                  <h3 className="flex items-center gap-2 text-foreground font-semibold">
                     <svg
-                      style={{
-                        height: "1.25rem",
-                        width: "1.25rem",
-                        color: "#22d3ee",
-                      }}
+                      className="h-5 w-5 text-cyan-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -649,83 +525,30 @@ export default function Home() {
                     Upload Your CV
                   </h3>
                 </div>
-                <div style={{ padding: "1.5rem" }}>
+                <div className="p-6">
                   <div
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
-                    style={{
-                      position: "relative",
-                      display: "flex",
-                      minHeight: "300px",
-                      cursor: "pointer",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderRadius: "0.75rem",
-                      border: isDragging
-                        ? "2px dashed #06b6d4"
+                    className={`relative flex min-h-[300px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all ${
+                      isDragging
+                        ? "border-cyan-500 bg-cyan-500/10"
                         : cvFile
-                        ? "2px dashed rgba(34, 197, 94, 0.5)"
-                        : "2px dashed rgba(255, 255, 255, 0.1)",
-                      backgroundColor: isDragging
-                        ? "rgba(6, 182, 212, 0.1)"
-                        : cvFile
-                        ? "rgba(34, 197, 94, 0.05)"
-                        : "rgba(255, 255, 255, 0.05)",
-                      transition: "all 0.2s",
-                    }}
-                    onMouseEnter={(e) => {
-                      if (!cvFile && !isDragging) {
-                        e.currentTarget.style.borderColor =
-                          "rgba(6, 182, 212, 0.5)";
-                        e.currentTarget.style.backgroundColor =
-                          "rgba(6, 182, 212, 0.05)";
-                      }
-                    }}
-                    onMouseLeave={(e) => {
-                      if (!cvFile && !isDragging) {
-                        e.currentTarget.style.borderColor =
-                          "rgba(255, 255, 255, 0.1)";
-                        e.currentTarget.style.backgroundColor =
-                          "rgba(255, 255, 255, 0.05)";
-                      }
-                    }}
+                        ? "border-green-500/50 bg-green-500/5"
+                        : "border-white/10 bg-white/5 hover:border-cyan-500/50 hover:bg-cyan-500/5"
+                    }`}
                   >
                     <input
                       type="file"
                       accept=".pdf,.docx,.txt"
                       onChange={handleFileSelect}
-                      style={{
-                        position: "absolute",
-                        inset: "0",
-                        cursor: "pointer",
-                        opacity: "0",
-                      }}
+                      className="absolute inset-0 cursor-pointer opacity-0"
                     />
-
                     {cvFile ? (
-                      <div style={{ textAlign: "center" }}>
-                        <div
-                          style={{
-                            marginLeft: "auto",
-                            marginRight: "auto",
-                            marginBottom: "1rem",
-                            display: "flex",
-                            height: "4rem",
-                            width: "4rem",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            borderRadius: "9999px",
-                            backgroundColor: "rgba(34, 197, 94, 0.2)",
-                          }}
-                        >
+                      <div className="text-center">
+                        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
                           <svg
-                            style={{
-                              height: "2rem",
-                              width: "2rem",
-                              color: "#4ade80",
-                            }}
+                            className="h-8 w-8 text-green-400"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -738,40 +561,16 @@ export default function Home() {
                             />
                           </svg>
                         </div>
-                        <p style={{ marginBottom: "0.5rem", color: "white" }}>
-                          {cvFile.name}
-                        </p>
-                        <p
-                          style={{
-                            fontSize: "0.875rem",
-                            color: "rgba(255, 255, 255, 0.6)",
-                          }}
-                        >
+                        <p className="mb-2 text-foreground">{cvFile.name}</p>
+                        <p className="text-sm text-muted-foreground">
                           {(cvFile.size / 1024).toFixed(2)} KB
                         </p>
                       </div>
                     ) : (
-                      <div style={{ textAlign: "center" }}>
-                        <div
-                          style={{
-                            marginLeft: "auto",
-                            marginRight: "auto",
-                            marginBottom: "1rem",
-                            display: "flex",
-                            height: "4rem",
-                            width: "4rem",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            borderRadius: "9999px",
-                            backgroundColor: "rgba(6, 182, 212, 0.2)",
-                          }}
-                        >
+                      <div className="text-center">
+                        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-cyan-500/20">
                           <svg
-                            style={{
-                              height: "2rem",
-                              width: "2rem",
-                              color: "#22d3ee",
-                            }}
+                            className="h-8 w-8 text-cyan-400"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -784,33 +583,13 @@ export default function Home() {
                             />
                           </svg>
                         </div>
-                        <p style={{ marginBottom: "0.5rem", color: "white" }}>
+                        <p className="mb-2 text-foreground">
                           Drag & drop your CV here
                         </p>
-                        <p
-                          style={{
-                            marginBottom: "1rem",
-                            fontSize: "0.875rem",
-                            color: "rgba(255, 255, 255, 0.6)",
-                          }}
-                        >
+                        <p className="mb-4 text-sm text-muted-foreground">
                           or click to browse
                         </p>
-                        <span
-                          style={{
-                            display: "inline-flex",
-                            alignItems: "center",
-                            paddingLeft: "0.75rem",
-                            paddingRight: "0.75rem",
-                            paddingTop: "0.25rem",
-                            paddingBottom: "0.25rem",
-                            borderRadius: "9999px",
-                            fontSize: "0.75rem",
-                            backgroundColor: "rgba(255, 255, 255, 0.05)",
-                            border: "1px solid rgba(255, 255, 255, 0.1)",
-                            color: "rgba(255, 255, 255, 0.6)",
-                          }}
-                        >
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs bg-white/5 border border-white/10 text-muted-foreground">
                           PDF, DOCX, TXT
                         </span>
                       </div>
@@ -818,39 +597,12 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-
               {/* Job Description */}
-              <div
-                style={{
-                  border: "1px solid #06b6d4",
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  backdropFilter: "blur(12px)",
-                  borderRadius: "0.75rem",
-                }}
-              >
-                <div
-                  style={{
-                    paddingLeft: "1.5rem",
-                    paddingRight: "1.5rem",
-                    paddingTop: "1.5rem",
-                    paddingBottom: "1rem",
-                  }}
-                >
-                  <h3
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      color: "white",
-                      fontWeight: "600",
-                    }}
-                  >
+              <div className="border border-cyan-500 bg-card/50 backdrop-blur-sm rounded-xl">
+                <div className="px-6 pt-6 pb-4">
+                  <h3 className="flex items-center gap-2 text-foreground font-semibold">
                     <svg
-                      style={{
-                        height: "1.25rem",
-                        width: "1.25rem",
-                        color: "#22d3ee",
-                      }}
+                      className="h-5 w-5 text-cyan-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -865,99 +617,30 @@ export default function Home() {
                     Job Description
                   </h3>
                 </div>
-                <div style={{ padding: "1.5rem" }}>
+                <div className="p-6">
                   <textarea
                     value={jobDescription}
                     placeholder="Paste the job description here..."
                     onChange={(e) =>
                       updateGenerationState({ jobDescription: e.target.value })
                     }
-                    style={{
-                      minHeight: "300px",
-                      width: "100%",
-                      resize: "none",
-                      borderRadius: "0.5rem",
-                      border: "1px solid rgba(255, 255, 255, 0.1)",
-                      backgroundColor: "rgba(255, 255, 255, 0.05)",
-                      paddingLeft: "1rem",
-                      paddingRight: "1rem",
-                      paddingTop: "0.75rem",
-                      paddingBottom: "0.75rem",
-                      color: "white",
-                      fontSize: "0.875rem",
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor =
-                        "rgba(6, 182, 212, 0.5)";
-                      e.currentTarget.style.outline =
-                        "2px solid rgba(6, 182, 212, 0.2)";
-                      e.currentTarget.style.outlineOffset = "2px";
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor =
-                        "rgba(255, 255, 255, 0.1)";
-                      e.currentTarget.style.outline = "none";
-                    }}
+                    className="min-h-[300px] w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
                   />
-                  <p
-                    style={{
-                      marginTop: "0.5rem",
-                      fontSize: "0.875rem",
-                      color: "rgba(255, 255, 255, 0.6)",
-                    }}
-                  >
+                  <p className="mt-2 text-sm text-muted-foreground">
                     {jobDescription.length} characters
                   </p>
                 </div>
               </div>
             </div>
-
             {/* Processing Status */}
             {processingStep !== "idle" && (
-              <div
-                style={{
-                  marginTop: "2rem",
-                  border: "1px solid rgba(6, 182, 212, 0.2)",
-                  backgroundColor: "rgba(6, 182, 212, 0.05)",
-                  backdropFilter: "blur(12px)",
-                  borderRadius: "0.75rem",
-                }}
-              >
-                <div style={{ padding: "1.5rem" }}>
-                  <div
-                    style={{
-                      marginBottom: "1rem",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "0.75rem",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          height: "2.5rem",
-                          width: "2.5rem",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          borderRadius: "9999px",
-                          backgroundColor: "rgba(6, 182, 212, 0.2)",
-                        }}
-                      >
+              <div className="mt-8 border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-sm rounded-xl">
+                <div className="p-6">
+                  <div className="mb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500/20">
                         <svg
-                          style={{
-                            height: "1.25rem",
-                            width: "1.25rem",
-                            animation:
-                              "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-                            color: "#22d3ee",
-                          }}
+                          className="h-5 w-5 animate-pulse text-cyan-400"
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -965,7 +648,7 @@ export default function Home() {
                         </svg>
                       </div>
                       <div>
-                        <p style={{ color: "white" }}>
+                        <p className="text-foreground">
                           {processingStep === "uploading" &&
                             "Uploading your CV..."}
                           {processingStep === "analyzing" &&
@@ -973,65 +656,33 @@ export default function Home() {
                           {processingStep === "optimizing" &&
                             "Optimizing your application..."}
                         </p>
-                        <p
-                          style={{
-                            fontSize: "0.875rem",
-                            color: "rgba(255, 255, 255, 0.6)",
-                          }}
-                        >
+                        <p className="text-sm text-muted-foreground">
                           This won't take long
                         </p>
                       </div>
                     </div>
-                    <span style={{ fontSize: "1.5rem", color: "#22d3ee" }}>
+                    <span className="text-2xl text-cyan-400">
                       {cvProgress}%
                     </span>
                   </div>
-                  <div
-                    style={{
-                      height: "0.5rem",
-                      width: "100%",
-                      overflow: "hidden",
-                      borderRadius: "9999px",
-                      backgroundColor: "rgba(255, 255, 255, 0.1)",
-                    }}
-                  >
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
                     <div
-                      style={{
-                        height: "100%",
-                        backgroundImage:
-                          "linear-gradient(to right, #0891b2, #0e7490)",
-                        transition: "width 0.3s",
-                        width: `${cvProgress}%`,
-                      }}
+                      className="h-full bg-gradient-to-r from-cyan-600 to-cyan-700 transition-all duration-300"
+                      style={{ width: `${cvProgress}%` }}
                     />
                   </div>
                 </div>
               </div>
             )}
-
             {/* Action Button */}
             {!canOptimize && (
-              <p
-                style={{
-                  paddingTop: "2rem",
-                  textAlign: "center",
-                  fontSize: "0.875rem",
-                  color: "rgba(255, 255, 255, 0.6)",
-                }}
-              >
+              <p className="pt-8 text-center text-sm text-muted-foreground">
                 {!cvFile && "Upload Your CV "}
                 {!cvFile && !jobDescription && "and "}
                 {!jobDescription && "Paste a Job Description."}
               </p>
             )}
-            <div
-              style={{
-                paddingTop: "2rem",
-                display: "flex",
-                justifyContent: "center",
-              }}
-            >
+            <div className=" pt-8 flex justify-center">
               <button
                 disabled={
                   !canOptimize ||
@@ -1039,69 +690,16 @@ export default function Home() {
                 }
                 onClick={handleOptimize}
                 type="button"
-                style={{
-                  color: "white",
-                  backgroundImage:
-                    "linear-gradient(to right, #22d3ee, #06b6d4, #0891b2)",
-                  boxShadow:
-                    "0 10px 15px -3px rgba(6, 182, 212, 0.5), 0 4px 6px -4px rgba(6, 182, 212, 0.5)",
-                  fontWeight: "500",
-                  borderRadius: "0.75rem",
-                  fontSize: "0.875rem",
-                  paddingLeft: "1.5rem",
-                  paddingRight: "1.5rem",
-                  paddingTop: "0.75rem",
-                  paddingBottom: "0.75rem",
-                  textAlign: "center",
-                  lineHeight: "1.25",
-                  opacity:
-                    !canOptimize ||
-                    (processingStep !== "idle" && processingStep !== "complete")
-                      ? "0.5"
-                      : "1",
-                  cursor:
-                    !canOptimize ||
-                    (processingStep !== "idle" && processingStep !== "complete")
-                      ? "not-allowed"
-                      : "pointer",
-                  border: "none",
-                }}
-                onMouseEnter={(e) => {
-                  if (
-                    canOptimize &&
-                    (processingStep === "idle" || processingStep === "complete")
-                  ) {
-                    e.currentTarget.style.backgroundImage =
-                      "linear-gradient(to bottom right, #06b6d4, #0891b2, #0e7490)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundImage =
-                    "linear-gradient(to right, #22d3ee, #06b6d4, #0891b2)";
-                }}
-                onFocus={(e) => {
-                  e.currentTarget.style.outline =
-                    "4px solid rgba(6, 182, 212, 0.3)";
-                  e.currentTarget.style.outlineOffset = "2px";
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.outline = "none";
-                }}
+                className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 
+             hover:bg-gradient-to-br focus:ring-4 focus:outline-none 
+             focus:ring-cyan-300 dark:focus:ring-cyan-800 
+             shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 
+             font-medium rounded-base text-sm px-6 py-3 text-center leading-5 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Generate CV & Cover Letter
               </button>
             </div>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                paddingTop: "2.5rem",
-                fontSize: "1rem",
-                color: "#f87171",
-              }}
-            >
+            <div className="flex justify-center items-center pt-10 text-md text-red-400">
               {error1}
             </div>
           </div>
@@ -1125,7 +723,6 @@ export default function Home() {
     </div>
   );
 }
-
 function ResultsView({
   onReset,
   cvFileName,
@@ -1144,26 +741,22 @@ function ResultsView({
   const [editableCoverLetter, setEditableCoverLetter] = useState("");
   const [isDownloadingCoverLetter, setIsDownloadingCoverLetter] =
     useState(false);
-
   const [randomImprovements] = useState(() =>
     [...improvements].sort(() => Math.random() - 0.5).slice(0, 3)
   );
-
   const [improvementScore] = useState(
     () => Math.floor(Math.random() * (84 - 45 + 1)) + 45
   );
-
+  // Update editable content when cover letter is generated
   useEffect(() => {
     if (generatedCoverLetter) {
       setEditableCoverLetter(generatedCoverLetter);
     }
   }, [generatedCoverLetter]);
-
+  // Compile and Download in one action
   const handleDownloadCoverLetter = async () => {
     if (!editableCoverLetter) return;
-
     setIsDownloadingCoverLetter(true);
-
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter-pdf`,
@@ -1177,9 +770,7 @@ function ResultsView({
           }),
         }
       );
-
       const data = await response.json();
-
       if (data.success && data.pdf) {
         const byteCharacters = atob(data.pdf);
         const byteNumbers = new Array(byteCharacters.length);
@@ -1188,7 +779,6 @@ function ResultsView({
         }
         const byteArray = new Uint8Array(byteNumbers);
         const blob = new Blob([byteArray], { type: "application/pdf" });
-
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
@@ -1204,40 +794,28 @@ function ResultsView({
       setIsDownloadingCoverLetter(false);
     }
   };
-
   const getEvidenceBadgeColor = (status) => {
     const colors = {
-      explicit: "linear-gradient(to right, #22c55e, #16a34a, #15803d)",
-      implicit_strong: "linear-gradient(to right, #84cc16, #65a30d)",
-      implicit_weak: "linear-gradient(to right, #facc15, #eab308, #ca8a04)",
-      transferable: "linear-gradient(to right, #fb923c, #f97316, #ea580c)",
-      absent: "linear-gradient(to right, #f87171, #ef4444, #dc2626)",
+      explicit: "bg-gradient-to-r from-green-500 via-green-600 to-green-700",
+      implicit_strong: "bg-gradient-to-r from-lime-400 to-lime-500",
+      implicit_weak:
+        "bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600",
+      transferable:
+        "bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600",
+      absent: "bg-gradient-to-r from-red-400 via-red-500 to-red-600",
     };
     return (
-      colors[status] || "linear-gradient(to right, #9ca3af, #6b7280, #4b5563)"
+      colors[status] ||
+      "bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600"
     );
   };
-
   return (
-    <div style={{ marginLeft: "auto", marginRight: "auto", maxWidth: "72rem" }}>
+    <div className="mx-auto max-w-6xl">
       {/* Success Header */}
-      <div style={{ marginBottom: "3rem", textAlign: "center" }}>
-        <div
-          style={{
-            marginLeft: "auto",
-            marginRight: "auto",
-            marginBottom: "1rem",
-            display: "flex",
-            height: "4rem",
-            width: "4rem",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: "9999px",
-            backgroundColor: "rgba(34, 197, 94, 0.2)",
-          }}
-        >
+      <div className="mb-12 text-center">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
           <svg
-            style={{ height: "2rem", width: "2rem", color: "#4ade80" }}
+            className="h-8 w-8 text-green-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -1250,274 +828,81 @@ function ResultsView({
             />
           </svg>
         </div>
-        <h1
-          style={{
-            marginBottom: "1rem",
-            backgroundImage:
-              "linear-gradient(to bottom, white, rgba(255, 255, 255, 0.6))",
-            backgroundClip: "text",
-            WebkitBackgroundClip: "text",
-            fontSize: "2.25rem",
-            color: "transparent",
-            fontWeight: "700",
-          }}
-        >
+        <h1 className="mb-4 bg-gradient-to-b from-white to-white/60 bg-clip-text text-4xl text-transparent font-bold">
           Optimization Complete!
         </h1>
-        <p style={{ fontSize: "1.125rem", color: "rgba(255, 255, 255, 0.6)" }}>
+        <p className="text-lg text-muted-foreground">
           Your documents are ready to download
         </p>
       </div>
-
       {/* Quick Stats */}
-      <div
-        style={{
-          marginBottom: "2rem",
-          display: "grid",
-          gap: "1rem",
-          gridTemplateColumns:
-            "repeat(3, 1fr)",
-        }}
-      >
-        <div
-          style={{
-            border: "1px solid rgba(34, 197, 94, 0.2)",
-            backgroundColor: "rgba(34, 197, 94, 0.05)",
-            backdropFilter: "blur(12px)",
-            borderRadius: "0.75rem",
-            padding: "1.5rem",
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{
-              marginBottom: "0.5rem",
-              fontSize: "1.875rem",
-              fontWeight: "700",
-              color: "#4ade80",
-            }}
-          >
+      <div className="mb-8 grid gap-4 md:grid-cols-3">
+        <div className="border border-green-500/20 bg-green-500/5 backdrop-blur-sm rounded-xl p-6 text-center">
+          <div className="mb-2 text-3xl font-bold text-green-400">
             {ATSScore + 2}%
           </div>
-          <p
-            style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.6)" }}
-          >
-            ATS Score
-          </p>
+          <p className="text-sm text-muted-foreground">ATS Score</p>
         </div>
-        <div
-          style={{
-            border: "1px solid rgba(6, 182, 212, 0.2)",
-            backgroundColor: "rgba(6, 182, 212, 0.05)",
-            backdropFilter: "blur(12px)",
-            borderRadius: "0.75rem",
-            padding: "1.5rem",
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{
-              marginBottom: "0.5rem",
-              fontSize: "1.875rem",
-              fontWeight: "700",
-              color: "#22d3ee",
-            }}
-          >
+        <div className="border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-sm rounded-xl p-6 text-center">
+          <div className="mb-2 text-3xl font-bold text-cyan-400">
             {Math.round(matchScore)}%
           </div>
-          <p
-            style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.6)" }}
-          >
-            Match Rate
-          </p>
+          <p className="text-sm text-muted-foreground">Match Rate</p>
         </div>
-        <div
-          style={{
-            border: "1px solid rgba(59, 130, 246, 0.2)",
-            backgroundColor: "rgba(59, 130, 246, 0.05)",
-            backdropFilter: "blur(12px)",
-            borderRadius: "0.75rem",
-            padding: "1.5rem",
-            textAlign: "center",
-          }}
-        >
-          <div
-            style={{
-              marginBottom: "0.5rem",
-              fontSize: "1.875rem",
-              fontWeight: "700",
-              color: "#60a5fa",
-            }}
-          >
+        <div className="border border-blue-500/20 bg-blue-500/5 backdrop-blur-sm rounded-xl p-6 text-center">
+          <div className="mb-2 text-3xl font-bold text-blue-400">
             +{improvementScore}%
           </div>
-          <p
-            style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.6)" }}
-          >
-            Improvement
-          </p>
+          <p className="text-sm text-muted-foreground">Improvement</p>
         </div>
       </div>
-
       {/* Results Tabs */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-        <div
-          style={{
-            display: "grid",
-            width: "100%",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "0.25rem",
-            borderRadius: "0.5rem",
-            backgroundColor: "rgba(255, 255, 255, 0.05)",
-            padding: "0.25rem",
-          }}
-        >
+      <div className="space-y-8">
+        <div className="grid w-full grid-cols-3 gap-1 rounded-lg bg-card/50 p-1">
           <button
             onClick={() => setActiveTab("cv")}
-            style={{
-              borderRadius: "0.375rem",
-              paddingLeft: "1rem",
-              paddingRight: "1rem",
-              paddingTop: "0.5rem",
-              paddingBottom: "0.5rem",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              transition: "all 0.2s",
-              backgroundColor:
-                activeTab === "cv" ? "rgba(255, 255, 255, 0.1)" : "transparent",
-              color: activeTab === "cv" ? "white" : "rgba(255, 255, 255, 0.6)",
-              border: "none",
-              cursor: "pointer",
-            }}
-            onMouseEnter={(e) => {
-              if (activeTab !== "cv") e.currentTarget.style.color = "white";
-            }}
-            onMouseLeave={(e) => {
-              if (activeTab !== "cv")
-                e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)";
-            }}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
+              activeTab === "cv"
+                ? "bg-white/10 text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
           >
             Optimized CV
           </button>
           <button
             onClick={() => setActiveTab("cover")}
-            style={{
-              borderRadius: "0.375rem",
-              paddingLeft: "1rem",
-              paddingRight: "1rem",
-              paddingTop: "0.5rem",
-              paddingBottom: "0.5rem",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              transition: "all 0.2s",
-              backgroundColor:
-                activeTab === "cover"
-                  ? "rgba(255, 255, 255, 0.1)"
-                  : "transparent",
-              color:
-                activeTab === "cover" ? "white" : "rgba(255, 255, 255, 0.6)",
-              border: "none",
-              cursor: "pointer",
-            }}
-            onMouseEnter={(e) => {
-              if (activeTab !== "cover") e.currentTarget.style.color = "white";
-            }}
-            onMouseLeave={(e) => {
-              if (activeTab !== "cover")
-                e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)";
-            }}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
+              activeTab === "cover"
+                ? "bg-white/10 text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
           >
             Cover Letter
           </button>
           <button
             onClick={() => setActiveTab("analysis")}
-            style={{
-              borderRadius: "0.375rem",
-              paddingLeft: "1rem",
-              paddingRight: "1rem",
-              paddingTop: "0.5rem",
-              paddingBottom: "0.5rem",
-              fontSize: "0.875rem",
-              fontWeight: "500",
-              transition: "all 0.2s",
-              backgroundColor:
-                activeTab === "analysis"
-                  ? "rgba(255, 255, 255, 0.1)"
-                  : "transparent",
-              color:
-                activeTab === "analysis" ? "white" : "rgba(255, 255, 255, 0.6)",
-              border: "none",
-              cursor: "pointer",
-            }}
-            onMouseEnter={(e) => {
-              if (activeTab !== "analysis")
-                e.currentTarget.style.color = "white";
-            }}
-            onMouseLeave={(e) => {
-              if (activeTab !== "analysis")
-                e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)";
-            }}
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
+              activeTab === "analysis"
+                ? "bg-white/10 text-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
           >
             Analysis
           </button>
         </div>
-
         {/* Optimized CV Tab */}
         {activeTab === "cv" && (
-          <div
-            style={{
-              border: "1px solid rgba(255, 255, 255, 0.05)",
-              backgroundColor: "rgba(255, 255, 255, 0.05)",
-              backdropFilter: "blur(12px)",
-              borderRadius: "0.75rem",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                paddingLeft: "1.5rem",
-                paddingRight: "1.5rem",
-                paddingTop: "1.5rem",
-                paddingBottom: "1rem",
-                borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
-              }}
-            >
-              <h3 style={{ fontWeight: "600", color: "white" }}>
+          <div className="border border-white/5 bg-card/50 backdrop-blur-sm rounded-xl">
+            <div className="flex flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-white/5">
+              <h3 className="font-semibold text-foreground">
                 Your Optimized CV
               </h3>
               <button
                 onClick={downloadCVPDF}
-                style={{
-                  gap: "0.5rem",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  paddingLeft: "1rem",
-                  paddingRight: "1rem",
-                  paddingTop: "0.5rem",
-                  paddingBottom: "0.5rem",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  borderRadius: "0.5rem",
-                  backgroundImage:
-                    "linear-gradient(to right, #0891b2, #0e7490)",
-                  color: "white",
-                  border: "none",
-                  cursor: "pointer",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.backgroundImage =
-                    "linear-gradient(to right, #0e7490, #155e75)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.backgroundImage =
-                    "linear-gradient(to right, #0891b2, #0e7490)")
-                }
+                className="gap-2 inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white"
               >
                 <svg
-                  style={{ height: "1rem", width: "1rem" }}
+                  className="h-4 w-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1532,39 +917,14 @@ function ResultsView({
                 Download CV
               </button>
             </div>
-            <div
-              style={{
-                padding: "1.5rem",
-                display: "flex",
-                flexDirection: "column",
-                gap: "1.5rem",
-              }}
-            >
+            <div className="p-6 space-y-6">
               {cvPdfData ? (
-                <div
-                  style={{
-                    borderRadius: "0.5rem",
-                    border: "1px solid rgba(255, 255, 255, 0.05)",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  }}
-                >
+                <div className="rounded-lg border border-white/5 bg-white/5 ">
                   <CV pdfData={cvPdfData} />
                 </div>
               ) : (
-                <div
-                  style={{
-                    borderRadius: "0.5rem",
-                    border: "1px solid rgba(255, 255, 255, 0.05)",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    padding: "1.5rem",
-                  }}
-                >
-                  <p
-                    style={{
-                      textAlign: "center",
-                      color: "rgba(255, 255, 255, 0.6)",
-                    }}
-                  >
+                <div className="rounded-lg border border-white/5 bg-white/5 p-6">
+                  <p className="text-center text-muted-foreground">
                     Generating your CV PDF...
                   </p>
                 </div>
@@ -1572,115 +932,37 @@ function ResultsView({
             </div>
           </div>
         )}
-
         {/* Cover Letter Tab */}
         {activeTab === "cover" && (
-          <div
-            style={{
-              border: "1px solid rgba(255, 255, 255, 0.05)",
-              backgroundColor: "rgba(255, 255, 255, 0.05)",
-              backdropFilter: "blur(12px)",
-              borderRadius: "0.75rem",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                paddingLeft: "1.5rem",
-                paddingRight: "1.5rem",
-                paddingTop: "1.5rem",
-                paddingBottom: "1rem",
-                borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
-              }}
-            >
+          <div className="border border-white/5 bg-card/50 backdrop-blur-sm rounded-xl">
+            <div className="flex flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-white/5">
               <div>
-                <h3
-                  style={{
-                    fontWeight: "600",
-                    color: "white",
-                    marginBottom: "0.25rem",
-                  }}
-                >
+                <h3 className="font-semibold text-foreground mb-1">
                   Your Cover Letter
                 </h3>
-                <p style={{ color: "#f87171", fontSize: "0.75rem" }}>
+                <p className="text-red-400 text-xs">
                   Edit your cover letter then download as PDF
                 </p>
               </div>
               <button
                 onClick={handleDownloadCoverLetter}
                 disabled={!editableCoverLetter || isDownloadingCoverLetter}
-                style={{
-                  gap: "0.5rem",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  paddingLeft: "1rem",
-                  paddingRight: "1rem",
-                  paddingTop: "0.5rem",
-                  paddingBottom: "0.5rem",
-                  fontSize: "0.875rem",
-                  fontWeight: "600",
-                  borderRadius: "0.5rem",
-                  color: "#1a1a1a",
-                  backgroundImage:
-                    "linear-gradient(to right, #d9f99d, #a3e635, #84cc16)",
-                  boxShadow:
-                    "0 10px 15px -3px rgba(132, 204, 22, 0.5), 0 4px 6px -4px rgba(132, 204, 22, 0.5)",
-                  opacity:
-                    !editableCoverLetter || isDownloadingCoverLetter
-                      ? "0.5"
-                      : "1",
-                  cursor:
-                    !editableCoverLetter || isDownloadingCoverLetter
-                      ? "not-allowed"
-                      : "pointer",
-                  border: "none",
-                  transition: "all 0.2s",
-                }}
-                onMouseEnter={(e) => {
-                  if (editableCoverLetter && !isDownloadingCoverLetter) {
-                    e.currentTarget.style.backgroundImage =
-                      "linear-gradient(to bottom right, #a3e635, #84cc16, #65a30d)";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundImage =
-                    "linear-gradient(to right, #d9f99d, #a3e635, #84cc16)";
-                }}
-                onFocus={(e) => {
-                  e.currentTarget.style.outline =
-                    "4px solid rgba(132, 204, 22, 0.5)";
-                  e.currentTarget.style.outlineOffset = "2px";
-                }}
-                onBlur={(e) => {
-                  e.currentTarget.style.outline = "none";
-                }}
-                onMouseDown={(e) => {
-                  if (editableCoverLetter && !isDownloadingCoverLetter) {
-                    e.currentTarget.style.transform = "scale(0.95)";
-                  }
-                }}
-                onMouseUp={(e) =>
-                  (e.currentTarget.style.transform = "scale(1)")
-                }
+                className="gap-2 inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg 
+                  text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 
+                  hover:bg-gradient-to-br focus:outline-none shadow-lg shadow-lime-500/50 
+                  dark:shadow-lg dark:shadow-lime-800/80 disabled:opacity-50 
+                  disabled:cursor-not-allowed active:scale-95 transition-transform"
               >
                 {isDownloadingCoverLetter ? (
                   <>
                     <svg
-                      style={{
-                        animation: "spin 1s linear infinite",
-                        height: "1.25rem",
-                        width: "1.25rem",
-                      }}
+                      className="animate-spin h-5 w-5"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
                       <circle
-                        style={{ opacity: "0.25" }}
+                        className="opacity-25"
                         cx="12"
                         cy="12"
                         r="10"
@@ -1688,7 +970,7 @@ function ResultsView({
                         strokeWidth="4"
                       ></circle>
                       <path
-                        style={{ opacity: "0.75" }}
+                        className="opacity-75"
                         fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
@@ -1703,68 +985,28 @@ function ResultsView({
                 )}
               </button>
             </div>
-            <div style={{ padding: "1.5rem" }}>
+            <div className="p-6">
               {editableCoverLetter ? (
                 <textarea
                   value={editableCoverLetter}
                   onChange={(e) => setEditableCoverLetter(e.target.value)}
-                  style={{
-                    width: "100%",
-                    minHeight: "600px",
-                    resize: "vertical",
-                    borderRadius: "0.5rem",
-                    border: "2px solid rgba(255, 255, 255, 0.6)",
-                    backgroundColor: "rgba(255, 255, 255, 0.15)",
-                    paddingLeft: "1rem",
-                    paddingRight: "1rem",
-                    paddingTop: "1rem",
-                    paddingBottom: "1rem",
-                    color: "white",
-                    fontSize: "0.875rem",
-                    fontFamily: "monospace",
-                    lineHeight: "1.625",
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.outline =
-                      "2px solid rgba(132, 204, 22, 0.5)";
-                    e.currentTarget.style.outlineOffset = "2px";
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.outline = "none";
-                  }}
+                  className="w-full min-h-[600px] resize-y rounded-lg border-2 border-white/60 
+                    bg-white/15 px-4 py-4 text-foreground text-sm font-mono leading-relaxed 
+                    placeholder:text-muted-foreground focus:outline-none focus:ring-2 
+                    focus:ring-lime-500/50"
                   placeholder="Your cover letter will appear here..."
                 />
               ) : (
-                <div
-                  style={{
-                    borderRadius: "0.5rem",
-                    border: "1px solid rgba(255, 255, 255, 0.05)",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    padding: "3rem",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
+                <div className="rounded-lg border border-white/5 bg-white/5 p-12">
+                  <div className="flex flex-col items-center justify-center">
                     <svg
-                      style={{
-                        animation: "spin 1s linear infinite",
-                        height: "2.5rem",
-                        width: "2.5rem",
-                        color: "#22d3ee",
-                        marginBottom: "1rem",
-                      }}
+                      className="animate-spin h-10 w-10 text-cyan-400 mb-4"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
                       <circle
-                        style={{ opacity: "0.25" }}
+                        className="opacity-25"
                         cx="12"
                         cy="12"
                         r="10"
@@ -1772,18 +1014,12 @@ function ResultsView({
                         strokeWidth="4"
                       ></circle>
                       <path
-                        style={{ opacity: "0.75" }}
+                        className="opacity-75"
                         fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    <p
-                      style={{
-                        textAlign: "center",
-                        color: "rgba(255, 255, 255, 0.6)",
-                        fontSize: "1.125rem",
-                      }}
-                    >
+                    <p className="text-center text-muted-foreground text-lg">
                       Generating your cover letter...
                     </p>
                   </div>
@@ -1792,45 +1028,15 @@ function ResultsView({
             </div>
           </div>
         )}
-
-        {/* Analysis Tab - I'll continue with the analysis section in the next part due to length */}
+        {/* Analysis Tab - UPDATED */}
         {activeTab === "analysis" && (
-          <div
-            style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
-          >
+          <div className="space-y-6">
             {/* Overall Score */}
-            <div
-              style={{
-                border: "1px solid rgba(255, 255, 255, 0.05)",
-                backgroundColor: "rgba(255, 255, 255, 0.05)",
-                backdropFilter: "blur(12px)",
-                borderRadius: "0.75rem",
-              }}
-            >
-              <div
-                style={{
-                  paddingLeft: "1.5rem",
-                  paddingRight: "1.5rem",
-                  paddingTop: "1.5rem",
-                  paddingBottom: "1rem",
-                  borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
-                }}
-              >
-                <h3
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    fontWeight: "600",
-                    color: "white",
-                  }}
-                >
+            <div className="border border-white/5 bg-card/50 backdrop-blur-sm rounded-xl">
+              <div className="px-6 pt-6 pb-4 border-b border-white/5">
+                <h3 className="flex items-center gap-2 font-semibold text-foreground">
                   <svg
-                    style={{
-                      height: "1.25rem",
-                      width: "1.25rem",
-                      color: "#4ade80",
-                    }}
+                    className="h-5 w-5 text-green-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -1845,188 +1051,59 @@ function ResultsView({
                   Original CV Assessment
                 </h3>
               </div>
-              <div
-                style={{
-                  padding: "1.5rem",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "1rem",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>
+              <div className="p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">
                     ATS Compatibility
                   </span>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.75rem",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "8rem",
-                        height: "0.5rem",
-                        borderRadius: "9999px",
-                        backgroundColor: "rgba(255, 255, 255, 0.1)",
-                        overflow: "hidden",
-                      }}
-                    >
+                  <div className="flex items-center gap-3">
+                    <div className="w-32 h-2 rounded-full bg-white/10 overflow-hidden">
                       <div
-                        style={{
-                          height: "100%",
-                          backgroundImage:
-                            "linear-gradient(to right, #22c55e, #16a34a)",
-                          width: `${ATSScore}%`,
-                        }}
+                        className="h-full bg-gradient-to-r from-green-500 to-green-600"
+                        style={{ width: `${ATSScore}%` }}
                       />
                     </div>
-                    <span
-                      style={{
-                        width: "3rem",
-                        textAlign: "right",
-                        color: "#4ade80",
-                      }}
-                    >
+                    <span className="w-12 text-right text-green-400">
                       {ATSScore + 2}%
                     </span>
                   </div>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>
-                    Keyword Match
-                  </span>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.75rem",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "8rem",
-                        height: "0.5rem",
-                        borderRadius: "9999px",
-                        backgroundColor: "rgba(255, 255, 255, 0.1)",
-                        overflow: "hidden",
-                      }}
-                    >
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Keyword Match</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-32 h-2 rounded-full bg-white/10 overflow-hidden">
                       <div
-                        style={{
-                          height: "100%",
-                          backgroundImage:
-                            "linear-gradient(to right, #22c55e, #16a34a)",
-                          width: `${keywordMatchScore || 0}%`,
-                        }}
+                        className="h-full bg-gradient-to-r from-green-500 to-green-600"
+                        style={{ width: `${keywordMatchScore || 0}%` }}
                       />
                     </div>
-                    <span
-                      style={{
-                        width: "3rem",
-                        textAlign: "right",
-                        color: "#4ade80",
-                      }}
-                    >
+                    <span className="w-12 text-right text-green-400">
                       {keywordMatchScore || 0}%
                     </span>
                   </div>
                 </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>
-                    Role Match
-                  </span>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.75rem",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "8rem",
-                        height: "0.5rem",
-                        borderRadius: "9999px",
-                        backgroundColor: "rgba(255, 255, 255, 0.1)",
-                        overflow: "hidden",
-                      }}
-                    >
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Role Match</span>
+                  <div className="flex items-center gap-3">
+                    <div className="w-32 h-2 rounded-full bg-white/10 overflow-hidden">
                       <div
-                        style={{
-                          height: "100%",
-                          backgroundImage:
-                            "linear-gradient(to right, #22c55e, #16a34a)",
-                          width: `${matchScore}%`,
-                        }}
+                        className="h-full bg-gradient-to-r from-green-500 to-green-600"
+                        style={{ width: `${matchScore}%` }}
                       />
                     </div>
-                    <span
-                      style={{
-                        width: "3rem",
-                        textAlign: "right",
-                        color: "#4ade80",
-                      }}
-                    >
+                    <span className="w-12 text-right  text-green-400">
                       {Math.round(matchScore)}%
                     </span>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Summary */}
-            <div
-              style={{
-                border: "1px solid rgba(34, 197, 94, 0.2)",
-                backgroundColor: "rgba(34, 197, 94, 0.05)",
-                backdropFilter: "blur(12px)",
-                borderRadius: "0.75rem",
-              }}
-            >
-              <div
-                style={{
-                  paddingLeft: "1.5rem",
-                  paddingRight: "1.5rem",
-                  paddingTop: "1.5rem",
-                  paddingBottom: "1rem",
-                  borderBottom: "1px solid rgba(34, 197, 94, 0.2)",
-                }}
-              >
-                <h3
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    fontWeight: "600",
-                    color: "white",
-                  }}
-                >
+            {/* Strengths */}
+            <div className="border border-green-500/20 bg-green-500/5 backdrop-blur-sm rounded-xl">
+              <div className="px-6 pt-6 pb-4 border-b border-green-500/20">
+                <h3 className="flex items-center gap-2 font-semibold text-foreground">
                   <svg
-                    style={{
-                      height: "1.25rem",
-                      width: "1.25rem",
-                      color: "#4ade80",
-                    }}
+                    className="h-5 w-5 text-green-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -2041,31 +1118,11 @@ function ResultsView({
                   Summary
                 </h3>
               </div>
-              <div style={{ padding: "1.5rem" }}>
-                <ul
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.75rem",
-                    listStyle: "none",
-                    padding: "0",
-                    margin: "0",
-                  }}
-                >
-                  <li
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: "0.75rem",
-                    }}
-                  >
+              <div className="p-6">
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-3">
                     <svg
-                      style={{
-                        height: "1.25rem",
-                        width: "1.25rem",
-                        flexShrink: 0,
-                        color: "#4ade80",
-                      }}
+                      className="h-5 w-5 shrink-0 text-green-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -2078,47 +1135,19 @@ function ResultsView({
                       />
                     </svg>
                     <div>
-                      <p style={{ color: "white" }}>{matchReason}</p>
+                      <p className="text-foreground">{matchReason}</p>
                     </div>
                   </li>
                 </ul>
               </div>
             </div>
-
             {/* Missing Skills */}
             {missingSkills && missingSkills.length > 0 && (
-              <div
-                style={{
-                  border: "1px solid rgba(234, 179, 8, 0.2)",
-                  backgroundColor: "rgba(234, 179, 8, 0.05)",
-                  backdropFilter: "blur(12px)",
-                  borderRadius: "0.75rem",
-                }}
-              >
-                <div
-                  style={{
-                    paddingLeft: "1.5rem",
-                    paddingRight: "1.5rem",
-                    paddingTop: "1.5rem",
-                    paddingBottom: "1rem",
-                    borderBottom: "1px solid rgba(234, 179, 8, 0.2)",
-                  }}
-                >
-                  <h3
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      fontWeight: "600",
-                      color: "white",
-                    }}
-                  >
+              <div className="border border-yellow-500/20 bg-yellow-500/5 backdrop-blur-sm rounded-xl">
+                <div className="px-6 pt-6 pb-4 border-b border-yellow-500/20">
+                  <h3 className="flex items-center gap-2 font-semibold text-foreground">
                     <svg
-                      style={{
-                        height: "1.25rem",
-                        width: "1.25rem",
-                        color: "#facc15",
-                      }}
+                      className="h-5 w-5 text-yellow-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -2133,33 +1162,12 @@ function ResultsView({
                     Missing Skills
                   </h3>
                 </div>
-                <div style={{ padding: "1.5rem" }}>
-                  <ul
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "0.75rem",
-                      listStyle: "none",
-                      padding: "0",
-                      margin: "0",
-                    }}
-                  >
+                <div className="p-6">
+                  <ul className="space-y-3">
                     {missingSkills.map((skill, idx) => (
-                      <li
-                        key={idx}
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          gap: "0.75rem",
-                        }}
-                      >
+                      <li key={idx} className="flex items-start gap-3">
                         <svg
-                          style={{
-                            height: "1.25rem",
-                            width: "1.25rem",
-                            flexShrink: 0,
-                            color: "#facc15",
-                          }}
+                          className="h-5 w-5 shrink-0 text-yellow-400"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -2171,18 +1179,12 @@ function ResultsView({
                             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                           />
                         </svg>
-                        <div style={{ flex: "1" }}>
-                          <p style={{ fontWeight: "600", color: "white" }}>
+                        <div className="flex-1">
+                          <p className="font-semibold text-foreground">
                             {skill}
                           </p>
                           {gapBridges && gapBridges[skill] && (
-                            <p
-                              style={{
-                                fontSize: "0.875rem",
-                                color: "rgba(255, 255, 255, 0.6)",
-                                marginTop: "0.25rem",
-                              }}
-                            >
+                            <p className="text-sm text-muted-foreground mt-1">
                               {gapBridges[skill].bridge_text}
                             </p>
                           )}
@@ -2193,40 +1195,12 @@ function ResultsView({
                 </div>
               </div>
             )}
-
-            {/* Key Improvements Made */}
-            <div
-              style={{
-                border: "1px solid rgba(6, 182, 212, 0.2)",
-                backgroundColor: "rgba(6, 182, 212, 0.05)",
-                backdropFilter: "blur(12px)",
-                borderRadius: "0.75rem",
-              }}
-            >
-              <div
-                style={{
-                  paddingLeft: "1.5rem",
-                  paddingRight: "1.5rem",
-                  paddingTop: "1.5rem",
-                  paddingBottom: "1rem",
-                  borderBottom: "1px solid rgba(6, 182, 212, 0.2)",
-                }}
-              >
-                <h3
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                    fontWeight: "600",
-                    color: "white",
-                  }}
-                >
+            {/* Improvements Made */}
+            <div className="border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-sm rounded-xl">
+              <div className="px-6 pt-6 pb-4 border-b border-cyan-500/20">
+                <h3 className="flex items-center gap-2 font-semibold text-foreground">
                   <svg
-                    style={{
-                      height: "1.25rem",
-                      width: "1.25rem",
-                      color: "#22d3ee",
-                    }}
+                    className="h-5 w-5 text-cyan-400"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -2241,33 +1215,12 @@ function ResultsView({
                   Key Improvements Made
                 </h3>
               </div>
-              <div style={{ padding: "1.5rem" }}>
-                <ul
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.75rem",
-                    listStyle: "none",
-                    padding: "0",
-                    margin: "0",
-                  }}
-                >
+              <div className="p-6">
+                <ul className="space-y-3">
                   {randomImprovements.map((item, index) => (
-                    <li
-                      key={index}
-                      style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        gap: "0.75rem",
-                      }}
-                    >
+                    <li key={index} className="flex items-start gap-3">
                       <svg
-                        style={{
-                          height: "1.25rem",
-                          width: "1.25rem",
-                          flexShrink: 0,
-                          color: "#22d3ee",
-                        }}
+                        className="h-5 w-5 shrink-0 text-cyan-400"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -2278,13 +1231,8 @@ function ResultsView({
                         />
                       </svg>
                       <div>
-                        <p style={{ color: "white" }}>{item.title}</p>
-                        <p
-                          style={{
-                            fontSize: "0.875rem",
-                            color: "rgba(255, 255, 255, 0.6)",
-                          }}
-                        >
+                        <p className="text-foreground">{item.title}</p>
+                        <p className="text-sm text-muted-foreground">
                           {item.description}
                         </p>
                       </div>
@@ -2293,41 +1241,13 @@ function ResultsView({
                 </ul>
               </div>
             </div>
-
             {/* CV vs Job Requirements */}
             {evidenceMap && Object.keys(evidenceMap).length > 0 && (
-              <div
-                style={{
-                  border: "1px solid rgba(255, 255, 255, 0.05)",
-                  backgroundColor: "rgba(255, 255, 255, 0.05)",
-                  backdropFilter: "blur(12px)",
-                  borderRadius: "0.75rem",
-                }}
-              >
-                <div
-                  style={{
-                    paddingLeft: "1.5rem",
-                    paddingRight: "1.5rem",
-                    paddingTop: "1.5rem",
-                    paddingBottom: "1rem",
-                    borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
-                  }}
-                >
-                  <h3
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      fontWeight: "600",
-                      color: "white",
-                    }}
-                  >
+              <div className="border border-white/5 bg-card/50 backdrop-blur-sm rounded-xl">
+                <div className="px-6 pt-6 pb-4 border-b border-white/5">
+                  <h3 className="flex items-center gap-2 font-semibold text-foreground">
                     <svg
-                      style={{
-                        height: "1.25rem",
-                        width: "1.25rem",
-                        color: "#60a5fa",
-                      }}
+                      className="h-5 w-5 text-blue-400"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -2342,100 +1262,34 @@ function ResultsView({
                     CV vs Job Requirements
                   </h3>
                 </div>
-                <div
-                  style={{
-                    padding: "1.5rem",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "0.75rem",
-                  }}
-                >
+                <div className="p-6 space-y-3">
                   {Object.entries(evidenceMap)
-                    .filter(([, details]) => details?.status !== "absent")
+                    .filter(([, details]) => details?.status !== "absent") // ✅ ADD THIS FILTER
                     .map(([skill, details]) => (
                       <div
                         key={skill}
-                        style={{
-                          border: "1px solid rgba(255, 255, 255, 0.05)",
-                          borderRadius: "0.75rem",
-                          padding: "1rem",
-                          backgroundColor: "rgba(255, 255, 255, 0.05)",
-                          transition: "all 0.2s",
-                        }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            "rgba(255, 255, 255, 0.1)")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.backgroundColor =
-                            "rgba(255, 255, 255, 0.05)")
-                        }
+                        className="border border-white/5 rounded-xl p-4 bg-white/5 hover:bg-white/10 transition-all"
                       >
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "flex-start",
-                            justifyContent: "space-between",
-                            marginBottom: "0.5rem",
-                            flexWrap: "wrap",
-                            gap: "0.5rem",
-                          }}
-                        >
-                          <h5
-                            style={{
-                              fontWeight: "600",
-                              color: "white",
-                              fontSize: "0.875rem",
-                              flex: "1",
-                            }}
-                          >
+                        <div className="flex items-start justify-between mb-2 flex-wrap gap-2">
+                          <h5 className="font-semibold text-foreground text-sm flex-1">
                             {skill}
                           </h5>
                           <span
-                            style={{
-                              backgroundImage: getEvidenceBadgeColor(
-                                details.status
-                              ),
-                              paddingLeft: "0.75rem",
-                              paddingRight: "0.75rem",
-                              paddingTop: "0.25rem",
-                              paddingBottom: "0.25rem",
-                              borderRadius: "9999px",
-                              fontSize: "0.75rem",
-                              fontWeight: "600",
-                              color: "white",
-                              boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-                            }}
+                            className={`${getEvidenceBadgeColor(
+                              details.status
+                            )} px-3 py-1 rounded-full text-xs font-semibold text-white shadow-sm`}
                           >
                             {details.status.replace("_", " ").toUpperCase()}
                           </span>
                         </div>
                         {details.evidence && details.evidence.length > 0 ? (
-                          <div
-                            style={{
-                              marginTop: "0.5rem",
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "0.5rem",
-                            }}
-                          >
+                          <div className="mt-2 space-y-2">
                             {details.evidence.map((item, idx) => (
                               <div
                                 key={idx}
-                                style={{
-                                  fontSize: "0.75rem",
-                                  color: "rgba(255, 255, 255, 0.6)",
-                                  paddingLeft: "0.75rem",
-                                  borderLeft:
-                                    "2px solid rgba(34, 211, 238, 0.8)",
-                                }}
+                                className="text-xs text-muted-foreground pl-3 border-l-2 border-cyan-400/80"
                               >
-                                <span
-                                  style={{
-                                    fontWeight: "600",
-                                    color: "#67e8f9",
-                                  }}
-                                >
+                                <span className="font-semibold text-cyan-300">
                                   {item.section}:
                                 </span>{" "}
                                 {item.bullet}
@@ -2443,14 +1297,7 @@ function ResultsView({
                             ))}
                           </div>
                         ) : (
-                          <p
-                            style={{
-                              fontSize: "0.75rem",
-                              color: "rgba(255, 255, 255, 0.6)",
-                              fontStyle: "italic",
-                              marginTop: "0.5rem",
-                            }}
-                          >
+                          <p className="text-xs text-muted-foreground italic mt-2">
                             No direct evidence found
                           </p>
                         )}
@@ -2462,40 +1309,11 @@ function ResultsView({
           </div>
         )}
       </div>
-
       {/* Action Buttons */}
-      <div
-        style={{
-          marginTop: "2rem",
-          display: "flex",
-          justifyContent: "center",
-          gap: "1rem",
-          paddingBottom: "2.5rem",
-        }}
-      >
+      <div className="mt-8 flex justify-center gap-4 pb-10 ">
         <button
           onClick={onReset}
-          style={{
-            paddingLeft: "1.5rem",
-            paddingRight: "1.5rem",
-            paddingTop: "0.75rem",
-            paddingBottom: "0.75rem",
-            fontSize: "1rem",
-            fontWeight: "600",
-            borderRadius: "0.5rem",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            color: "white",
-            transition: "all 0.2s",
-            backgroundColor: "transparent",
-            cursor: "pointer",
-          }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor =
-              "rgba(255, 255, 255, 0.05)")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = "transparent")
-          }
+          className="px-6 py-3 text-base font-semibold rounded-lg border border-white/10 hover:bg-white/5 text-foreground transition-all"
         >
           Optimize Another CV
         </button>
@@ -2504,34 +1322,12 @@ function ResultsView({
             downloadCVPDF();
             handleDownloadCoverLetter();
           }}
-          style={{
-            gap: "0.5rem",
-            display: "inline-flex",
-            alignItems: "center",
-            paddingLeft: "1.5rem",
-            paddingRight: "1.5rem",
-            paddingTop: "0.75rem",
-            paddingBottom: "0.75rem",
-            fontSize: "1rem",
-            fontWeight: "600",
-            borderRadius: "0.5rem",
-            backgroundImage: "linear-gradient(to right, #0891b2, #0e7490)",
-            color: "white",
-            transition: "all 0.2s",
-            border: "none",
-            cursor: "pointer",
-          }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundImage =
-              "linear-gradient(to right, #0e7490, #155e75)")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundImage =
-              "linear-gradient(to right, #0891b2, #0e7490)")
-          }
+          className="gap-2 inline-flex items-center px-6 py-3 text-base
+          font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700
+          hover:from-cyan-700 hover:to-cyan-800 text-white transition-all"
         >
           <svg
-            style={{ height: "1rem", width: "1rem" }}
+            className="h-4 w-4"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
