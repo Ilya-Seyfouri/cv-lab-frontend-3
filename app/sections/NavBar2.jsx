@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { twMerge } from "tailwind-merge";
 import { AnimatePresence, motion } from "framer-motion";
 
 import CVLOGO from "../../public/logo_text.png";
@@ -22,27 +21,76 @@ export default function Navbar2() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/5 bg-background/80 backdrop-blur-xl">
-      <div className="container mx-auto px-4">
+    <header
+      style={{
+        position: "sticky",
+        top: "0",
+        zIndex: 50,
+        borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        backdropFilter: "blur(24px)",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1280px",
+          marginLeft: "auto",
+          marginRight: "auto",
+          paddingLeft: "1rem",
+          paddingRight: "1rem",
+        }}
+      >
         {/* Top row */}
-        <div className="flex h-16 items-center justify-between">
+        <div
+          style={{
+            display: "flex",
+            height: "4rem",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
           {/* Left: logo + desktop nav */}
-          <div className="flex items-center gap-8">
+          <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
             {/* Logo */}
-            <a href="/" className="flex items-center gap-2">
-              <Image src={CVLOGO} alt="CVCraft logo" className="h-10 mt-1.5 w-auto" />
+            <a
+              href="/"
+              style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
+            >
+              <Image
+                src={CVLOGO}
+                alt="CVCraft logo"
+                style={{
+                  height: "2.5rem",
+                  marginTop: "0.375rem",
+                  width: "auto",
+                }}
+                priority
+              />
             </a>
 
             {/* Desktop nav links */}
             <nav
-              className="hidden items-center gap-6 md:flex"
+              className="desktopOnly"
+              style={{
+                alignItems: "center",
+                gap: "1.5rem",
+                display: "flex",
+              }}
               aria-label="Main navigation"
             >
               {navLinks.map((link) => (
                 <a
                   key={link.label}
                   href={link.href}
-                  className="text-md text-muted-foreground transition-colors hover:text-foreground"
+                  style={{
+                    fontSize: "1rem",
+                    color: "rgba(255, 255, 255, 0.6)",
+                    transition: "color 0.2s",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "white")}
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)")
+                  }
                 >
                   {link.label}
                 </a>
@@ -51,28 +99,92 @@ export default function Navbar2() {
           </div>
 
           {/* Right: desktop buttons + mobile toggle */}
-          <div className="flex items-center gap-3">
-            {/* Desktop "Login" — ghost style */}
+          <div
+            style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}
+          >
+            {/* Desktop "Login" */}
             <button
+              type="button"
               onClick={() => router.push("/auth")}
-              className="hidden rounded-md px-3 py-2 cursor-pointer text-md font-medium text-muted-foreground transition-colors hover:text-foreground md:inline-flex focus:outline-none focus:ring-2 focus:ring-cyan-500/60"
+              className="desktopInline"
+              style={{
+                borderRadius: "0.375rem",
+                paddingLeft: "0.75rem",
+                paddingRight: "0.75rem",
+                paddingTop: "0.5rem",
+                paddingBottom: "0.5rem",
+                cursor: "pointer",
+                fontSize: "1rem",
+                fontWeight: 500,
+                color: "rgba(255, 255, 255, 0.6)",
+                transition: "color 0.2s",
+                border: "none",
+                backgroundColor: "transparent",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "white")}
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)")
+              }
+              onFocus={(e) => {
+                e.currentTarget.style.outline =
+                  "2px solid rgba(6, 182, 212, 0.6)";
+                e.currentTarget.style.outlineOffset = "2px";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.outline = "none";
+              }}
             >
               Login
             </button>
 
-            {/* Desktop primary CTA with gradient (uses your button image inside) */}
+            {/* Desktop primary CTA */}
             <button
+              type="button"
               onClick={() => router.push("/auth")}
-              className="hidden items-center gap-2 rounded-lg 
-bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 
-px-4 py-2 text-md font-semibold text-white 
-shadow-lg shadow-cyan-500/30 transition 
-hover:from-cyan-500 hover:via-cyan-600 hover:to-cyan-700 
-md:inline-flex 
-focus:outline-none focus:ring-2 focus:ring-cyan-500/70 cursor-pointer"
+              className="desktopInline"
+              style={{
+                alignItems: "center",
+                gap: "0.5rem",
+                borderRadius: "0.5rem",
+                backgroundImage:
+                  "linear-gradient(to right, #22d3ee, #06b6d4, #0891b2)",
+                paddingLeft: "1rem",
+                paddingRight: "1rem",
+                paddingTop: "0.5rem",
+                paddingBottom: "0.5rem",
+                fontSize: "1rem",
+                fontWeight: 600,
+                color: "white",
+                boxShadow:
+                  "0 10px 15px -3px rgba(6, 182, 212, 0.3), 0 4px 6px -4px rgba(6, 182, 212, 0.3)",
+                transition: "all 0.2s",
+                cursor: "pointer",
+                border: "none",
+                display: "inline-flex",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundImage =
+                  "linear-gradient(to right, #06b6d4, #0891b2, #0e7490)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundImage =
+                  "linear-gradient(to right, #22d3ee, #06b6d4, #0891b2)";
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.outline =
+                  "2px solid rgba(6, 182, 212, 0.7)";
+                e.currentTarget.style.outlineOffset = "2px";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.outline = "none";
+              }}
             >
               <span>Get Started</span>
-              <Image src={buttonImg} alt="CTA icon" className="h-6 w-auto" />
+              <Image
+                src={buttonImg}
+                alt="CTA icon"
+                style={{ height: "1.5rem", width: "auto" }}
+              />
             </button>
 
             {/* Mobile menu toggle */}
@@ -81,9 +193,27 @@ focus:outline-none focus:ring-2 focus:ring-cyan-500/70 cursor-pointer"
               onClick={() => setIsOpen((prev) => !prev)}
               aria-label="Toggle navigation menu"
               aria-expanded={isOpen}
-              className="inline-flex items-center justify-center rounded-md p-2 md:hidden focus:outline-none focus:ring-2 focus:ring-cyan-500/60"
+              className="mobileInline"
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: "0.375rem",
+                padding: "0.5rem",
+                border: "none",
+                backgroundColor: "transparent",
+                cursor: "pointer",
+                display: "inline-flex",
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.outline =
+                  "2px solid rgba(6, 182, 212, 0.6)";
+                e.currentTarget.style.outlineOffset = "2px";
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.outline = "none";
+              }}
             >
-              {/* Your animated hamburger icon */}
+              {/* Animated hamburger icon */}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -94,34 +224,43 @@ focus:outline-none focus:ring-2 focus:ring-cyan-500/70 cursor-pointer"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="h-6 w-6 text-foreground"
+                style={{ height: "1.5rem", width: "1.5rem", color: "white" }}
               >
                 <line
                   x1="3"
                   y1="6"
                   x2="21"
                   y2="6"
-                  className={twMerge(
-                    "origin-left transition",
-                    isOpen && "rotate-45 -translate-y-1"
-                  )}
+                  style={{
+                    transformOrigin: "left",
+                    transition: "all 0.2s",
+                    transform: isOpen
+                      ? "rotate(45deg) translateY(-0.25rem)"
+                      : "none",
+                  }}
                 />
                 <line
                   x1="3"
                   y1="12"
                   x2="21"
                   y2="12"
-                  className={twMerge("transition", isOpen && "opacity-0")}
+                  style={{
+                    transition: "all 0.2s",
+                    opacity: isOpen ? "0" : "1",
+                  }}
                 />
                 <line
                   x1="3"
                   y1="18"
                   x2="21"
                   y2="18"
-                  className={twMerge(
-                    "origin-left transition",
-                    isOpen && "-rotate-45 translate-y-1"
-                  )}
+                  style={{
+                    transformOrigin: "left",
+                    transition: "all 0.2s",
+                    transform: isOpen
+                      ? "rotate(-45deg) translateY(0.25rem)"
+                      : "none",
+                  }}
                 />
               </svg>
             </button>
@@ -137,10 +276,19 @@ focus:outline-none focus:ring-2 focus:ring-cyan-500/70 cursor-pointer"
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="overflow-hidden md:hidden"
+              className="mobileBlock"
+              style={{
+                overflow: "hidden",
+              }}
             >
               <nav
-                className="flex flex-col gap-3 pb-4 pt-2"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.75rem",
+                  paddingBottom: "1rem",
+                  paddingTop: "0.5rem",
+                }}
                 aria-label="Mobile navigation"
               >
                 {navLinks.map((link) => (
@@ -148,29 +296,73 @@ focus:outline-none focus:ring-2 focus:ring-cyan-500/70 cursor-pointer"
                     key={link.label}
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="text-sm text-muted-foreground pl-4 transition-colors hover:text-foreground"
+                    style={{
+                      fontSize: "0.875rem",
+                      color: "rgba(255, 255, 255, 0.6)",
+                      paddingLeft: "1rem",
+                      transition: "color 0.2s",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.color = "white")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)")
+                    }
                   >
                     {link.label}
                   </a>
                 ))}
 
-                
                 {/* Mobile login CTA */}
                 <button
+                  type="button"
                   onClick={() => {
                     setIsOpen(false);
                     router.push("/auth");
                   }}
-                  className="mt-2 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r 
-                    from-cyan-500 to-cyan-600 px-4 py-2 text-sm font-semibold text-white 
-                    shadow-lg shadow-cyan-500/30 transition hover:from-cyan-700 hover:to-cyan-800 
-                    focus:outline-none focus:ring-2 focus:ring-cyan-500/70"
+                  style={{
+                    marginTop: "0.5rem",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    borderRadius: "0.5rem",
+                    backgroundImage:
+                      "linear-gradient(to right, #06b6d4, #0891b2)",
+                    paddingLeft: "1rem",
+                    paddingRight: "1rem",
+                    paddingTop: "0.5rem",
+                    paddingBottom: "0.5rem",
+                    fontSize: "0.875rem",
+                    fontWeight: 600,
+                    color: "white",
+                    boxShadow:
+                      "0 10px 15px -3px rgba(6, 182, 212, 0.3), 0 4px 6px -4px rgba(6, 182, 212, 0.3)",
+                    transition: "all 0.2s",
+                    border: "none",
+                    cursor: "pointer",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundImage =
+                      "linear-gradient(to right, #0e7490, #155e75)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundImage =
+                      "linear-gradient(to right, #06b6d4, #0891b2)";
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.outline =
+                      "2px solid rgba(6, 182, 212, 0.7)";
+                    e.currentTarget.style.outlineOffset = "2px";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.outline = "none";
+                  }}
                 >
                   <span>Login</span>
                   <Image
                     src={buttonImg}
                     alt="login button icon"
-                    className="h-6 w-auto"
+                    style={{ height: "1.5rem", width: "auto" }}
                   />
                 </button>
               </nav>
@@ -178,6 +370,37 @@ focus:outline-none focus:ring-2 focus:ring-cyan-500/70 cursor-pointer"
           )}
         </AnimatePresence>
       </div>
+
+      {/* Responsive helpers */}
+      <style jsx>{`
+        /* >= md */
+        @media (min-width: 768px) {
+          .desktopOnly {
+            display: flex;
+          }
+          .desktopInline {
+            display: inline-flex;
+          }
+          .mobileInline,
+          .mobileBlock {
+            display: none !important;
+          }
+        }
+
+        /* < md */
+        @media (max-width: 767px) {
+          .desktopOnly,
+          .desktopInline {
+            display: none !important;
+          }
+          .mobileInline {
+            display: inline-flex;
+          }
+          .mobileBlock {
+            display: block;
+          }
+        }
+      `}</style>
     </header>
   );
 }

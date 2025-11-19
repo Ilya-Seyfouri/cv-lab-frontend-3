@@ -11,12 +11,8 @@ export default function Account({ onNavigateToOptimizer }) {
   const supabase = createClient();
   const router = useRouter();
 
-  
   const premium_priceID = "price_1SUSl4GTsfq9NWHAdMHCbsz5";
   const career_max = "price_1SUSqmGTsfq9NWHAs88j0NDn";
-
-
-
 
   const checkoutbruh_premium = async () => {
     if (!user1) {
@@ -24,8 +20,7 @@ export default function Account({ onNavigateToOptimizer }) {
       return;
     }
 
-
-    const selectedPriceID = premium_priceID
+    const selectedPriceID = premium_priceID;
 
     try {
       const response = await fetch("/api/create-checkout-session", {
@@ -57,13 +52,11 @@ export default function Account({ onNavigateToOptimizer }) {
     }
   };
 
-
   const checkoutbruh_career_max = async () => {
     if (!user1) {
       console.error("No user found");
       return;
     }
-
 
     const selectedPriceID = career_max;
 
@@ -96,7 +89,6 @@ export default function Account({ onNavigateToOptimizer }) {
       setLoading(false);
     }
   };
-
 
   // Mock data for past generations
   const pastGenerations = [
@@ -275,7 +267,7 @@ export default function Account({ onNavigateToOptimizer }) {
 
   const planDetails = {
     free: { name: "Free Trial", credits: 3 },
-    "Premium": { name: "Premium", credits: 100 },
+    Premium: { name: "Premium", credits: 100 },
     "Career Max": { name: "Career Max", credits: "Unlimited" },
   };
 
@@ -283,379 +275,122 @@ export default function Account({ onNavigateToOptimizer }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/60"></div>
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            animation: "spin 1s linear infinite",
+            borderRadius: "9999px",
+            height: "3rem",
+            width: "3rem",
+            borderBottom: "2px solid rgba(255, 255, 255, 0.6)",
+          }}
+        ></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen py-5">
-      <div className="container mx-auto px-4">
-        <div className="mx-auto max-w-7xl">
+    <div
+      style={{
+        minHeight: "100vh",
+        paddingTop: "1.25rem",
+        paddingBottom: "1.25rem",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: "1280px",
+          marginLeft: "auto",
+          marginRight: "auto",
+          paddingLeft: "1rem",
+          paddingRight: "1rem",
+        }}
+      >
+        <div
+          style={{ maxWidth: "80rem", marginLeft: "auto", marginRight: "auto" }}
+        >
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="mb-2 bg-gradient-to-b from-white to-white/60 bg-clip-text text-4xl text-transparent">
+          <div style={{ marginBottom: "2rem" }}>
+            <h1
+              style={{
+                marginBottom: "0.5rem",
+                backgroundImage:
+                  "linear-gradient(to bottom, white, rgba(255, 255, 255, 0.6))",
+                backgroundClip: "text",
+                WebkitBackgroundClip: "text",
+                fontSize: "2.25rem",
+                color: "transparent",
+              }}
+            >
               Account Dashboard
             </h1>
-            <p className="text-muted-foreground">
+            <p style={{ color: "rgba(255, 255, 255, 0.6)" }}>
               Manage your profile, credits, and view your application history
             </p>
           </div>
 
-          {/* Upgrade Banner for Free Users */}
-          {currentPlan === "free" && (
-            <div className="mb-8">
-              <div className="overflow-hidden border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 via-cyan-500/5 to-transparent backdrop-blur-sm rounded-lg border">
-                <div className="p-0">
-                  <div className="relative">
-                    {/* Background decoration */}
-                    <div className="pointer-events-none absolute inset-0">
-                      <div className="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-cyan-500/10 to-transparent" />
-                      <div className="absolute right-10 top-1/2 h-32 w-32 -translate-y-1/2 rounded-full bg-cyan-500/20 blur-3xl" />
-                    </div>
-
-                    <div className="relative p-8">
-                      <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                        <div className="flex-1">
-                          <div className="mb-3 flex items-center gap-2">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-700">
-                              <svg
-                                className="h-4 w-4 text-white"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M13 10V3L4 14h7v7l9-11h-7z"
-                                />
-                              </svg>
-                            </div>
-                            <span className="bg-cyan-500/20 text-cyan-300 px-2.5 py-0.5 rounded text-sm">
-                              Free Trial Active
-                            </span>
-                          </div>
-                          <h3 className="mb-2 text-2xl text-foreground">
-                            Unlock Your Full Potential
-                          </h3>
-                          <p className="mb-4 max-w-2xl text-muted-foreground">
-                            You have {creditsRemaining} of {totalCredits} free
-                            credits remaining. Upgrade now to get unlimited
-                            access to all premium features.
-                          </p>
-                          <div className="flex flex-wrap gap-4 text-sm">
-                            <div className="flex items-center gap-2 text-cyan-300">
-                              <svg
-                                className="h-4 w-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
-                              <span>100 tokens / month</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-cyan-300">
-                              <svg
-                                className="h-4 w-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
-                              <span>Keyword Intergration</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-cyan-300">
-                              <svg
-                                className="h-4 w-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
-                              <span>ATS optimization</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-cyan-300">
-                              <svg
-                                className="h-4 w-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
-                              <span>AI undetectable</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex shrink-0 flex-col gap-3">
-                          <button
-                            onClick={checkoutbruh_premium}
-                            className="gap-2 bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-6 py-3 rounded-lg text-white font-semibold inline-flex items-center justify-center"
-                          >
-                            Upgrade to Premium
-                            <svg
-                              className="h-4 w-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 5l7 7-7 7"
-                              />
-                            </svg>
-                          </button>
-                          <p className="text-center text-xs text-muted-foreground">
-                            Starting at £7/month
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Mini Plan Comparison */}
-              <div className="mt-6 grid gap-4 md:grid-cols-2">
-                <div className="border-white/5 bg-card/50 backdrop-blur-sm transition-all hover:border-cyan-500/30 rounded-lg border p-6">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <h4 className="mb-1 text-foreground">Premium</h4>
-                      <p className="text-2xl">
-                        <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                          £7.29
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          /month
-                        </span>
-                      </p>
-                    </div>
-                    <span className="bg-gradient-to-r from-cyan-600 to-cyan-700 px-2.5 py-0.5 rounded text-xs text-white">
-                      Popular
-                    </span>
-                  </div>
-                  <ul className="mb-4 space-y-2 text-sm">
-                    <li className="flex items-start gap-2 text-muted-foreground">
-                      <svg
-                        className="h-4 w-4 shrink-0 text-cyan-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>100 tokens per month</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-muted-foreground">
-                      <svg
-                        className="h-4 w-4 shrink-0 text-cyan-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>Access to CV tailor </span>
-                    </li>
-                    <li className="flex items-start gap-2 text-muted-foreground">
-                      <svg
-                        className="h-4 w-4 shrink-0 text-cyan-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>Access to cover letter generator</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-muted-foreground">
-                      <svg
-                        className="h-4 w-4 shrink-0 text-cyan-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>Keyword + ATS optimization</span>
-                    </li>
-                  </ul>
-                  <button
-                    onClick={checkoutbruh_premium}
-                    className="w-full bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-4 py-2 rounded-lg text-white"
-                  >
-                    Choose Plan
-                  </button>
-                </div>
-
-                <div className="border-white/5 bg-card/50 backdrop-blur-sm transition-all hover:border-cyan-500/30 rounded-lg border p-6">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div>
-                      <h4 className="mb-1 text-foreground">Career Max</h4>
-                      <p className="text-2xl">
-                        <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                          £18.99
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          /month
-                        </span>
-                      </p>
-                    </div>
-                    <span className="border-cyan-500/30 text-cyan-300 border px-2.5 py-0.5 rounded text-xs">
-                      Best Value
-                    </span>
-                  </div>
-                  <ul className="mb-4 space-y-2 text-sm">
-                    <li className="flex items-start gap-2 text-muted-foreground">
-                      <svg
-                        className="h-4 w-4 shrink-0 text-cyan-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>Unlimited tokens</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-muted-foreground">
-                      <svg
-                        className="h-4 w-4 shrink-0 text-cyan-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>Everything in Premium</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-muted-foreground">
-                      <svg
-                        className="h-4 w-4 shrink-0 text-cyan-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>Access to Interview Simulator</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-muted-foreground">
-                      <svg
-                        className="h-4 w-4 shrink-0 text-cyan-500"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                      <span>Salary negotiation guide</span>
-                    </li>
-                  </ul>
-                  <button
-                    onClick={checkoutbruh_career_max}
-                    className="w-full border-white/10 hover:bg-white/5 border px-4 py-2 rounded-lg text-white"
-                  >
-                    Choose Plan
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Quick Stats */}
-          <div className="mb-8 grid gap-4 md:grid-cols-4">
-            <div className="border-cyan-500/20 bg-cyan-500/5 backdrop-blur-sm rounded-lg border p-6">
-              <div className="flex items-center justify-between">
+          <div
+            style={{
+              marginBottom: "2rem",
+              display: "grid",
+              gap: "1rem",
+              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+            }}
+          >
+            <div
+              style={{
+                border: "1px solid rgba(6, 182, 212, 0.2)",
+                backgroundColor: "rgba(6, 182, 212, 0.05)",
+                backdropFilter: "blur(12px)",
+                borderRadius: "0.5rem",
+                padding: "1.5rem",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
                 <div>
-                  <p className="text-sm text-muted-foreground">Current Plan</p>
-                  <p className="text-xl text-foreground">{plan.name}</p>
+                  <p
+                    style={{
+                      fontSize: "0.875rem",
+                      color: "rgba(255, 255, 255, 0.6)",
+                    }}
+                  >
+                    Current Plan
+                  </p>
+                  <p style={{ fontSize: "1.25rem", color: "white" }}>
+                    {plan.name}
+                  </p>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-cyan-500/20">
+                <div
+                  style={{
+                    display: "flex",
+                    height: "3rem",
+                    width: "3rem",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "9999px",
+                    backgroundColor: "rgba(6, 182, 212, 0.2)",
+                  }}
+                >
                   <svg
-                    className="h-6 w-6 text-cyan-400"
+                    style={{
+                      height: "1.5rem",
+                      width: "1.5rem",
+                      color: "#22d3ee",
+                    }}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -672,15 +407,52 @@ export default function Account({ onNavigateToOptimizer }) {
               </div>
             </div>
 
-            <div className="border-green-500/20 bg-green-500/5 backdrop-blur-sm rounded-lg border p-6">
-              <div className="flex items-center justify-between">
+            <div
+              style={{
+                border: "1px solid rgba(34, 197, 94, 0.2)",
+                backgroundColor: "rgba(34, 197, 94, 0.05)",
+                backdropFilter: "blur(12px)",
+                borderRadius: "0.5rem",
+                padding: "1.5rem",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
                 <div>
-                  <p className="text-sm text-muted-foreground">Credits Left</p>
-                  <p className="text-xl text-foreground">{creditsRemaining}</p>
+                  <p
+                    style={{
+                      fontSize: "0.875rem",
+                      color: "rgba(255, 255, 255, 0.6)",
+                    }}
+                  >
+                    Credits Left
+                  </p>
+                  <p style={{ fontSize: "1.25rem", color: "white" }}>
+                    {creditsRemaining}
+                  </p>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-500/20">
+                <div
+                  style={{
+                    display: "flex",
+                    height: "3rem",
+                    width: "3rem",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "9999px",
+                    backgroundColor: "rgba(34, 197, 94, 0.2)",
+                  }}
+                >
                   <svg
-                    className="h-6 w-6 text-green-400"
+                    style={{
+                      height: "1.5rem",
+                      width: "1.5rem",
+                      color: "#4ade80",
+                    }}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -697,19 +469,52 @@ export default function Account({ onNavigateToOptimizer }) {
               </div>
             </div>
 
-            <div className="border-blue-500/20 bg-blue-500/5 backdrop-blur-sm rounded-lg border p-6">
-              <div className="flex items-center justify-between">
+            <div
+              style={{
+                border: "1px solid rgba(59, 130, 246, 0.2)",
+                backgroundColor: "rgba(59, 130, 246, 0.05)",
+                backdropFilter: "blur(12px)",
+                borderRadius: "0.5rem",
+                padding: "1.5rem",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
                 <div>
-                  <p className="text-sm text-muted-foreground">
+                  <p
+                    style={{
+                      fontSize: "0.875rem",
+                      color: "rgba(255, 255, 255, 0.6)",
+                    }}
+                  >
                     Total Generated
                   </p>
-                  <p className="text-xl text-foreground">
+                  <p style={{ fontSize: "1.25rem", color: "white" }}>
                     {pastGenerations.length}
                   </p>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/20">
+                <div
+                  style={{
+                    display: "flex",
+                    height: "3rem",
+                    width: "3rem",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "9999px",
+                    backgroundColor: "rgba(59, 130, 246, 0.2)",
+                  }}
+                >
                   <svg
-                    className="h-6 w-6 text-blue-400"
+                    style={{
+                      height: "1.5rem",
+                      width: "1.5rem",
+                      color: "#60a5fa",
+                    }}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -726,15 +531,50 @@ export default function Account({ onNavigateToOptimizer }) {
               </div>
             </div>
 
-            <div className="border-orange-500/20 bg-orange-500/5 backdrop-blur-sm rounded-lg border p-6">
-              <div className="flex items-center justify-between">
+            <div
+              style={{
+                border: "1px solid rgba(249, 115, 22, 0.2)",
+                backgroundColor: "rgba(249, 115, 22, 0.05)",
+                backdropFilter: "blur(12px)",
+                borderRadius: "0.5rem",
+                padding: "1.5rem",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
                 <div>
-                  <p className="text-sm text-muted-foreground">Avg. Score</p>
-                  <p className="text-xl text-foreground">89</p>
+                  <p
+                    style={{
+                      fontSize: "0.875rem",
+                      color: "rgba(255, 255, 255, 0.6)",
+                    }}
+                  >
+                    Avg. Score
+                  </p>
+                  <p style={{ fontSize: "1.25rem", color: "white" }}>89</p>
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-500/20">
+                <div
+                  style={{
+                    display: "flex",
+                    height: "3rem",
+                    width: "3rem",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    borderRadius: "9999px",
+                    backgroundColor: "rgba(249, 115, 22, 0.2)",
+                  }}
+                >
                   <svg
-                    className="h-6 w-6 text-orange-400"
+                    style={{
+                      height: "1.5rem",
+                      width: "1.5rem",
+                      color: "#fb923c",
+                    }}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -753,27 +593,120 @@ export default function Account({ onNavigateToOptimizer }) {
           </div>
 
           {/* Main Content */}
-          <div className="space-y-8">
-            <div className="bg-card/50">
-              <div className="inline-flex h-10 items-center justify-center   rounded-md bg-muted p-1 text-muted-foreground">
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "2rem" }}
+          >
+            <div style={{ backgroundColor: "rgba(255, 255, 255, 0.05)" }}>
+              <div
+                style={{
+                  display: "inline-flex",
+                  height: "2.5rem",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "0.375rem",
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  padding: "0.25rem",
+                  color: "rgba(255, 255, 255, 0.6)",
+                }}
+              >
                 <button
                   onClick={() => setActiveTab("profile")}
-                  className={`inline-flex items-center justify-center border px-5 hover:bg-white/30 active:scale-95 transition whitespace-nowrap rounded-sm  py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-                    activeTab === "profile"
-                      ? "bg-background text-foreground shadow-sm"
-                      : ""
-                  }`}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    paddingLeft: "1.25rem",
+                    paddingRight: "1.25rem",
+                    whiteSpace: "nowrap",
+                    borderRadius: "0.125rem",
+                    paddingTop: "0.375rem",
+                    paddingBottom: "0.375rem",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    transition: "all 0.2s",
+                    cursor: "pointer",
+                    backgroundColor:
+                      activeTab === "profile"
+                        ? "rgba(255, 255, 255, 0.1)"
+                        : "transparent",
+                    color:
+                      activeTab === "profile"
+                        ? "white"
+                        : "rgba(255, 255, 255, 0.6)",
+                    boxShadow:
+                      activeTab === "profile"
+                        ? "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
+                        : "none",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor =
+                      "rgba(255, 255, 255, 0.3)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor =
+                      activeTab === "profile"
+                        ? "rgba(255, 255, 255, 0.1)"
+                        : "transparent")
+                  }
+                  onMouseDown={(e) =>
+                    (e.currentTarget.style.transform = "scale(0.95)")
+                  }
+                  onMouseUp={(e) =>
+                    (e.currentTarget.style.transform = "scale(1)")
+                  }
                 >
                   Profile
                 </button>
-                <div className="px-1.5"></div>
+                <div
+                  style={{ paddingLeft: "0.375rem", paddingRight: "0.375rem" }}
+                ></div>
                 <button
                   onClick={() => setActiveTab("history")}
-                  className={`inline-flex items-center justify-center whitespace-nowrap border hover:bg-white/30 active:scale-95 transition  rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-                    activeTab === "history"
-                      ? "bg-background text-foreground shadow-sm"
-                      : ""
-                  }`}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    whiteSpace: "nowrap",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    borderRadius: "0.125rem",
+                    paddingLeft: "0.75rem",
+                    paddingRight: "0.75rem",
+                    paddingTop: "0.375rem",
+                    paddingBottom: "0.375rem",
+                    fontSize: "0.875rem",
+                    fontWeight: "500",
+                    transition: "all 0.2s",
+                    cursor: "pointer",
+                    backgroundColor:
+                      activeTab === "history"
+                        ? "rgba(255, 255, 255, 0.1)"
+                        : "transparent",
+                    color:
+                      activeTab === "history"
+                        ? "white"
+                        : "rgba(255, 255, 255, 0.6)",
+                    boxShadow:
+                      activeTab === "history"
+                        ? "0 1px 2px 0 rgba(0, 0, 0, 0.05)"
+                        : "none",
+                  }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor =
+                      "rgba(255, 255, 255, 0.3)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor =
+                      activeTab === "history"
+                        ? "rgba(255, 255, 255, 0.1)"
+                        : "transparent")
+                  }
+                  onMouseDown={(e) =>
+                    (e.currentTarget.style.transform = "scale(0.95)")
+                  }
+                  onMouseUp={(e) =>
+                    (e.currentTarget.style.transform = "scale(1)")
+                  }
                 >
                   Generation History
                 </button>
@@ -782,13 +715,42 @@ export default function Account({ onNavigateToOptimizer }) {
 
             {/* Profile Tab */}
             {activeTab === "profile" && (
-              <div className="grid gap-8 lg:grid-cols-3">
+              <div
+                style={{
+                  display: "grid",
+                  gap: "2rem",
+
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                }}
+              >
                 {/* Profile Info */}
-                <div className="border-white/5 bg-card/50 backdrop-blur-sm rounded-lg border lg:col-span-2">
-                  <div className="p-6">
-                    <h3 className="flex items-center gap-2 text-foreground text-lg font-semibold">
+                <div
+                  style={{
+                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    backdropFilter: "blur(12px)",
+                    borderRadius: "0.5rem",
+                    gridColumn:
+                      window.innerWidth >= 1024 ? "span 2 / span 2" : "auto",
+                  }}
+                >
+                  <div style={{ padding: "1.5rem" }}>
+                    <h3
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        color: "white",
+                        fontSize: "1.125rem",
+                        fontWeight: "600",
+                      }}
+                    >
                       <svg
-                        className="h-5 w-5 text-cyan-400"
+                        style={{
+                          height: "1.25rem",
+                          width: "1.25rem",
+                          color: "#22d3ee",
+                        }}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -803,14 +765,52 @@ export default function Account({ onNavigateToOptimizer }) {
                       </svg>
                       Profile Information
                     </h3>
-                    <p className="text-sm text-muted-foreground">
+                    <p
+                      style={{
+                        fontSize: "0.875rem",
+                        color: "rgba(255, 255, 255, 0.6)",
+                      }}
+                    >
                       Update your personal information
                     </p>
                   </div>
-                  <div className="p-6 space-y-6">
-                    <div className="flex items-center gap-6">
-                      <div className="h-20 w-20 ring-2 ring-cyan-500/20 rounded-full overflow-hidden">
-                        <div className="bg-cyan-500/10 text-lg text-cyan-400 h-full w-full flex items-center justify-center font-semibold">
+                  <div
+                    style={{
+                      padding: "1.5rem",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "1.5rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "1.5rem",
+                      }}
+                    >
+                      <div
+                        style={{
+                          height: "5rem",
+                          width: "5rem",
+                          border: "2px solid rgba(6, 182, 212, 0.2)",
+                          borderRadius: "9999px",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <div
+                          style={{
+                            backgroundColor: "rgba(6, 182, 212, 0.1)",
+                            fontSize: "1.125rem",
+                            color: "#22d3ee",
+                            height: "100%",
+                            width: "100%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontWeight: "600",
+                          }}
+                        >
                           {userData.name
                             .split(" ")
                             .map((n) => n[0])
@@ -818,39 +818,94 @@ export default function Account({ onNavigateToOptimizer }) {
                         </div>
                       </div>
                       <div>
-                        <h3 className="text-foreground">{userData.name}</h3>
-                        <p className="text-sm text-muted-foreground">
+                        <h3 style={{ color: "white" }}>{userData.name}</h3>
+                        <p
+                          style={{
+                            fontSize: "0.875rem",
+                            color: "rgba(255, 255, 255, 0.6)",
+                          }}
+                        >
                           Member since {userData.memberSince}
                         </p>
                       </div>
                     </div>
 
-                    <div className="bg-white/5 h-px" />
+                    <div
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.05)",
+                        height: "1px",
+                      }}
+                    />
 
-                    <div className="space-y-4">
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "1rem",
+                      }}
+                    >
                       <div>
-                        <label className="text-sm text-muted-foreground">
+                        <label
+                          style={{
+                            fontSize: "0.875rem",
+                            color: "rgba(255, 255, 255, 0.6)",
+                          }}
+                        >
                           Full Name
                         </label>
-                        <p className="text-foreground">{userData.name}</p>
+                        <p style={{ color: "white" }}>{userData.name}</p>
                       </div>
                       <div>
-                        <label className="text-sm text-muted-foreground">
+                        <label
+                          style={{
+                            fontSize: "0.875rem",
+                            color: "rgba(255, 255, 255, 0.6)",
+                          }}
+                        >
                           Email Address
                         </label>
-                        <p className="text-foreground">{userData.email}</p>
+                        <p style={{ color: "white" }}>{userData.email}</p>
                       </div>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div style={{ display: "flex", gap: "0.75rem" }}>
                       {(currentPlan === "Premium" ||
                         currentPlan === "Career Max") && (
                         <button
-                          className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800  active:scale-95 transition px-4 py-2 rounded-lg text-white inline-flex items-center gap-2"
+                          style={{
+                            backgroundImage:
+                              "linear-gradient(to right, #0891b2, #0e7490)",
+                            paddingLeft: "1rem",
+                            paddingRight: "1rem",
+                            paddingTop: "0.5rem",
+                            paddingBottom: "0.5rem",
+                            borderRadius: "0.5rem",
+                            color: "white",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "0.5rem",
+                            transition: "all 0.2s",
+                            cursor: "pointer",
+                            border: "none",
+                          }}
                           onClick={handleManageSubscription}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.backgroundColor =
+                              "linear-gradient(to right, #0e7490, #155e75)")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.backgroundColor =
+                              "linear-gradient(to right, #0891b2, #0e7490)")
+                          }
+                          onMouseDown={(e) =>
+                            (e.currentTarget.style.transform = "scale(0.95)")
+                          }
+                          onMouseUp={(e) =>
+                            (e.currentTarget.style.transform = "scale(1)")
+                          }
                         >
                           <svg
-                            className="h-4 w-4"
+                            style={{ height: "1rem", width: "1rem" }}
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -874,10 +929,39 @@ export default function Account({ onNavigateToOptimizer }) {
                       )}
                       <button
                         onClick={signOutFunc}
-                        className="border-white/10 border hover:text-red-400 active:scale-95 transition px-4 py-2 rounded-lg hover:bg-white/5 transition-colors text-white inline-flex items-center gap-2"
+                        style={{
+                          border: "1px solid rgba(255, 255, 255, 0.1)",
+                          paddingLeft: "1rem",
+                          paddingRight: "1rem",
+                          paddingTop: "0.5rem",
+                          paddingBottom: "0.5rem",
+                          borderRadius: "0.5rem",
+                          transition: "all 0.2s",
+                          color: "white",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "0.5rem",
+                          backgroundColor: "transparent",
+                          cursor: "pointer",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor =
+                            "rgba(255, 255, 255, 0.05)";
+                          e.currentTarget.style.color = "#f87171";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                          e.currentTarget.style.color = "white";
+                        }}
+                        onMouseDown={(e) =>
+                          (e.currentTarget.style.transform = "scale(0.95)")
+                        }
+                        onMouseUp={(e) =>
+                          (e.currentTarget.style.transform = "scale(1)")
+                        }
                       >
                         <svg
-                          className="h-4 w-4"
+                          style={{ height: "1rem", width: "1rem" }}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -895,27 +979,57 @@ export default function Account({ onNavigateToOptimizer }) {
                     </div>
                   </div>
                 </div>
-                <div className="border-white/5 bg-card/50 backdrop-blur-sm rounded-lg border">
-                  <div className="p-6">
-                    <h3 className="text-foreground font-semibold">
+                <div
+                  style={{
+                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    backdropFilter: "blur(12px)",
+                    borderRadius: "0.5rem",
+                  }}
+                >
+                  <div style={{ padding: "1.5rem" }}>
+                    <h3 style={{ color: "white", fontWeight: "600" }}>
                       Usage This Month
                     </h3>
                   </div>
-                  <div className="p-6 space-y-4">
+                  <div
+                    style={{
+                      padding: "1.5rem",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "1rem",
+                    }}
+                  >
                     <div>
-                      <div className="mb-2 flex justify-between text-sm">
-                        <span className="text-muted-foreground">
+                      <div
+                        style={{
+                          marginBottom: "0.5rem",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          fontSize: "0.875rem",
+                        }}
+                      >
+                        <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>
                           Credits Remaining
                         </span>
-                        <span className="text-foreground">
+                        <span style={{ color: "white" }}>
                           {creditsRemaining}
                         </span>
                       </div>
 
-                      <div className="h-2 overflow-hidden rounded-full bg-white/10">
+                      <div
+                        style={{
+                          height: "0.5rem",
+                          overflow: "hidden",
+                          borderRadius: "9999px",
+                          backgroundColor: "rgba(255, 255, 255, 0.1)",
+                        }}
+                      >
                         <div
-                          className="h-full bg-gradient-to-r from-cyan-600 to-cyan-700"
                           style={{
+                            height: "100%",
+                            backgroundImage:
+                              "linear-gradient(to right, #0891b2, #0e7490)",
                             width:
                               totalCredits === "Unlimited"
                                 ? "0%"
@@ -930,13 +1044,30 @@ export default function Account({ onNavigateToOptimizer }) {
                       </div>
                     </div>
 
-                    <div className="bg-white/5 h-px" />
+                    <div
+                      style={{
+                        backgroundColor: "rgba(255, 255, 255, 0.05)",
+                        height: "1px",
+                      }}
+                    />
 
-                    <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-3">
-                      <p className="text-sm text-foreground">
+                    <div
+                      style={{
+                        borderRadius: "0.5rem",
+                        border: "1px solid rgba(34, 197, 94, 0.2)",
+                        backgroundColor: "rgba(34, 197, 94, 0.05)",
+                        padding: "0.75rem",
+                      }}
+                    >
+                      <p style={{ fontSize: "0.875rem", color: "white" }}>
                         Credits Resets on Dec 15
                       </p>
-                      <p className="text-xs text-muted-foreground"></p>
+                      <p
+                        style={{
+                          fontSize: "0.75rem",
+                          color: "rgba(255, 255, 255, 0.6)",
+                        }}
+                      ></p>
                     </div>
                   </div>
                 </div>
@@ -945,11 +1076,31 @@ export default function Account({ onNavigateToOptimizer }) {
 
             {/* History Tab */}
             {activeTab === "history" && (
-              <div className="border-white/5 bg-card/50 backdrop-blur-sm rounded-lg border">
-                <div className="p-6">
-                  <h3 className="flex items-center gap-2 text-foreground text-lg font-semibold">
+              <div
+                style={{
+                  border: "1px solid rgba(255, 255, 255, 0.05)",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  backdropFilter: "blur(12px)",
+                  borderRadius: "0.5rem",
+                }}
+              >
+                <div style={{ padding: "1.5rem" }}>
+                  <h3
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      color: "white",
+                      fontSize: "1.125rem",
+                      fontWeight: "600",
+                    }}
+                  >
                     <svg
-                      className="h-5 w-5 text-cyan-400"
+                      style={{
+                        height: "1.25rem",
+                        width: "1.25rem",
+                        color: "#22d3ee",
+                      }}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -964,33 +1115,103 @@ export default function Account({ onNavigateToOptimizer }) {
                     </svg>
                     Generation History
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p
+                    style={{
+                      fontSize: "0.875rem",
+                      color: "rgba(255, 255, 255, 0.6)",
+                    }}
+                  >
                     View and download your past CV and cover letter generations
                   </p>
                 </div>
-                <div className="p-6">
-                  <div className="space-y-4">
+                <div style={{ padding: "1.5rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "1rem",
+                    }}
+                  >
                     {pastGenerations.map((generation) => (
                       <div
                         key={generation.id}
-                        className="flex flex-col gap-4 rounded-lg border border-white/5 bg-white/5 p-4 transition-all hover:border-cyan-500/20 hover:bg-white/10 sm:flex-row sm:items-center sm:justify-between"
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "1rem",
+                          borderRadius: "0.5rem",
+                          border: "1px solid rgba(255, 255, 255, 0.05)",
+                          backgroundColor: "rgba(255, 255, 255, 0.05)",
+                          padding: "1rem",
+                          transition: "all 0.2s",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor =
+                            "rgba(6, 182, 212, 0.2)";
+                          e.currentTarget.style.backgroundColor =
+                            "rgba(255, 255, 255, 0.1)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor =
+                            "rgba(255, 255, 255, 0.05)";
+                          e.currentTarget.style.backgroundColor =
+                            "rgba(255, 255, 255, 0.05)";
+                        }}
                       >
-                        <div className="flex-1">
-                          <div className="mb-2 flex items-center gap-2">
-                            <h4 className="text-foreground">
+                        <div style={{ flex: "1" }}>
+                          <div
+                            style={{
+                              marginBottom: "0.5rem",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "0.5rem",
+                            }}
+                          >
+                            <h4 style={{ color: "white" }}>
                               {generation.jobTitle}
                             </h4>
-                            <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs">
+                            <span
+                              style={{
+                                backgroundColor: "rgba(34, 197, 94, 0.2)",
+                                color: "#4ade80",
+                                paddingLeft: "0.5rem",
+                                paddingRight: "0.5rem",
+                                paddingTop: "0.25rem",
+                                paddingBottom: "0.25rem",
+                                borderRadius: "0.25rem",
+                                fontSize: "0.75rem",
+                              }}
+                            >
                               Score: {generation.score}
                             </span>
                           </div>
-                          <p className="mb-1 text-sm text-muted-foreground">
+                          <p
+                            style={{
+                              marginBottom: "0.25rem",
+                              fontSize: "0.875rem",
+                              color: "rgba(255, 255, 255, 0.6)",
+                            }}
+                          >
                             {generation.company}
                           </p>
-                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                            <span className="flex items-center gap-1">
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "1rem",
+                              fontSize: "0.75rem",
+                              color: "rgba(255, 255, 255, 0.6)",
+                            }}
+                          >
+                            <span
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "0.25rem",
+                              }}
+                            >
                               <svg
-                                className="h-3 w-3"
+                                style={{ height: "0.75rem", width: "0.75rem" }}
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -1012,9 +1233,15 @@ export default function Account({ onNavigateToOptimizer }) {
                                 }
                               )}
                             </span>
-                            <span className="flex items-center gap-1">
+                            <span
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "0.25rem",
+                              }}
+                            >
                               <svg
-                                className="h-3 w-3"
+                                style={{ height: "0.75rem", width: "0.75rem" }}
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
@@ -1031,10 +1258,35 @@ export default function Account({ onNavigateToOptimizer }) {
                             </span>
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          <button className="border-white/10 border px-3 py-2 rounded text-sm hover:bg-white/5 transition-colors inline-flex items-center gap-2">
+                        <div style={{ display: "flex", gap: "0.5rem" }}>
+                          <button
+                            style={{
+                              border: "1px solid rgba(255, 255, 255, 0.1)",
+                              paddingLeft: "0.75rem",
+                              paddingRight: "0.75rem",
+                              paddingTop: "0.5rem",
+                              paddingBottom: "0.5rem",
+                              borderRadius: "0.25rem",
+                              fontSize: "0.875rem",
+                              transition: "background-color 0.2s",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "0.5rem",
+                              backgroundColor: "transparent",
+                              color: "white",
+                              cursor: "pointer",
+                            }}
+                            onMouseEnter={(e) =>
+                              (e.currentTarget.style.backgroundColor =
+                                "rgba(255, 255, 255, 0.05)")
+                            }
+                            onMouseLeave={(e) =>
+                              (e.currentTarget.style.backgroundColor =
+                                "transparent")
+                            }
+                          >
                             <svg
-                              className="h-4 w-4"
+                              style={{ height: "1rem", width: "1rem" }}
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -1049,9 +1301,33 @@ export default function Account({ onNavigateToOptimizer }) {
                             </svg>
                             View
                           </button>
-                          <button className="bg-cyan-600 hover:bg-cyan-700 px-3 py-2 rounded text-sm text-white inline-flex items-center gap-2">
+                          <button
+                            style={{
+                              backgroundColor: "#0891b2",
+                              paddingLeft: "0.75rem",
+                              paddingRight: "0.75rem",
+                              paddingTop: "0.5rem",
+                              paddingBottom: "0.5rem",
+                              borderRadius: "0.25rem",
+                              fontSize: "0.875rem",
+                              color: "white",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "0.5rem",
+                              border: "none",
+                              cursor: "pointer",
+                            }}
+                            onMouseEnter={(e) =>
+                              (e.currentTarget.style.backgroundColor =
+                                "#0e7490")
+                            }
+                            onMouseLeave={(e) =>
+                              (e.currentTarget.style.backgroundColor =
+                                "#0891b2")
+                            }
+                          >
                             <svg
-                              className="h-4 w-4"
+                              style={{ height: "1rem", width: "1rem" }}
                               fill="none"
                               stroke="currentColor"
                               viewBox="0 0 24 24"
@@ -1072,9 +1348,22 @@ export default function Account({ onNavigateToOptimizer }) {
                   </div>
 
                   {pastGenerations.length === 0 && (
-                    <div className="py-12 text-center">
+                    <div
+                      style={{
+                        paddingTop: "3rem",
+                        paddingBottom: "3rem",
+                        textAlign: "center",
+                      }}
+                    >
                       <svg
-                        className="mx-auto mb-4 h-12 w-12 text-muted-foreground"
+                        style={{
+                          marginLeft: "auto",
+                          marginRight: "auto",
+                          marginBottom: "1rem",
+                          height: "3rem",
+                          width: "3rem",
+                          color: "rgba(255, 255, 255, 0.6)",
+                        }}
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -1087,18 +1376,809 @@ export default function Account({ onNavigateToOptimizer }) {
                           d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                         />
                       </svg>
-                      <p className="mb-2 text-foreground">No generations yet</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p style={{ marginBottom: "0.5rem", color: "white" }}>
+                        No generations yet
+                      </p>
+                      <p
+                        style={{
+                          fontSize: "0.875rem",
+                          color: "rgba(255, 255, 255, 0.6)",
+                        }}
+                      >
                         Start optimizing your CV to see your history here
                       </p>
                       <button
                         onClick={onNavigateToOptimizer}
-                        className="mt-4 bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-4 py-2 rounded-lg text-white"
+                        style={{
+                          marginTop: "1rem",
+                          backgroundImage:
+                            "linear-gradient(to right, #0891b2, #0e7490)",
+                          paddingLeft: "1rem",
+                          paddingRight: "1rem",
+                          paddingTop: "0.5rem",
+                          paddingBottom: "0.5rem",
+                          borderRadius: "0.5rem",
+                          color: "white",
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            "linear-gradient(to right, #0e7490, #155e75)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            "linear-gradient(to right, #0891b2, #0e7490)")
+                        }
                       >
                         Optimize Your First CV
                       </button>
                     </div>
                   )}
+                </div>
+              </div>
+            )}
+
+            {/* Upgrade Banner for Free Users */}
+            {currentPlan === "free" && (
+              <div style={{ marginBottom: "2rem" }}>
+                <div
+                  style={{
+                    overflow: "hidden",
+                    border: "1px solid rgba(6, 182, 212, 0.3)",
+                    backgroundImage:
+                      "linear-gradient(to bottom right, rgba(6, 182, 212, 0.1), rgba(6, 182, 212, 0.05), transparent)",
+                    backdropFilter: "blur(12px)",
+                    borderRadius: "0.5rem",
+                  }}
+                >
+                  <div style={{ padding: "0" }}>
+                    <div style={{ position: "relative" }}>
+                      {/* Background decoration */}
+                      <div
+                        style={{
+                          pointerEvents: "none",
+                          position: "absolute",
+                          inset: "0",
+                        }}
+                      >
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: "0",
+                            top: "0",
+                            height: "100%",
+                            width: "50%",
+                            backgroundImage:
+                              "linear-gradient(to left, rgba(6, 182, 212, 0.1), transparent)",
+                          }}
+                        />
+                        <div
+                          style={{
+                            position: "absolute",
+                            right: "2.5rem",
+                            top: "50%",
+                            height: "8rem",
+                            width: "8rem",
+                            transform: "translateY(-50%)",
+                            borderRadius: "9999px",
+                            backgroundColor: "rgba(6, 182, 212, 0.2)",
+                            filter: "blur(48px)",
+                          }}
+                        />
+                      </div>
+
+                      <div style={{ position: "relative", padding: "2rem" }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "1.5rem",
+                          }}
+                        >
+                          <div style={{ flex: "1" }}>
+                            <div
+                              style={{
+                                marginBottom: "0.75rem",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "0.5rem",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  height: "2rem",
+                                  width: "2rem",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  borderRadius: "0.5rem",
+                                  backgroundImage:
+                                    "linear-gradient(to bottom right, #06b6d4, #0891b2)",
+                                }}
+                              >
+                                <svg
+                                  style={{
+                                    height: "1rem",
+                                    width: "1rem",
+                                    color: "white",
+                                  }}
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                                  />
+                                </svg>
+                              </div>
+                              <span
+                                style={{
+                                  backgroundColor: "rgba(6, 182, 212, 0.2)",
+                                  color: "#67e8f9",
+                                  paddingLeft: "0.625rem",
+                                  paddingRight: "0.625rem",
+                                  paddingTop: "0.125rem",
+                                  paddingBottom: "0.125rem",
+                                  borderRadius: "0.25rem",
+                                  fontSize: "0.875rem",
+                                }}
+                              >
+                                Free Trial Active
+                              </span>
+                            </div>
+                            <h3
+                              style={{
+                                marginBottom: "0.5rem",
+                                fontSize: "1.5rem",
+                                color: "white",
+                              }}
+                            >
+                              Unlock Your Full Potential
+                            </h3>
+                            <p
+                              style={{
+                                marginBottom: "1rem",
+                                maxWidth: "48rem",
+                                color: "rgba(255, 255, 255, 0.6)",
+                              }}
+                            >
+                              You have {creditsRemaining} of {totalCredits} free
+                              credits remaining. Upgrade now to get unlimited
+                              access to all premium features.
+                            </p>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                gap: "1rem",
+                                fontSize: "0.875rem",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "0.5rem",
+                                  color: "#67e8f9",
+                                }}
+                              >
+                                <svg
+                                  style={{ height: "1rem", width: "1rem" }}
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                                <span>100 tokens / month</span>
+                              </div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "0.5rem",
+                                  color: "#67e8f9",
+                                }}
+                              >
+                                <svg
+                                  style={{ height: "1rem", width: "1rem" }}
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                                <span>Keyword Intergration</span>
+                              </div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "0.5rem",
+                                  color: "#67e8f9",
+                                }}
+                              >
+                                <svg
+                                  style={{ height: "1rem", width: "1rem" }}
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                                <span>ATS optimization</span>
+                              </div>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: "0.5rem",
+                                  color: "#67e8f9",
+                                }}
+                              >
+                                <svg
+                                  style={{ height: "1rem", width: "1rem" }}
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                                <span>AI undetectable</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div
+                            style={{
+                              display: "flex",
+                              flexShrink: "0",
+                              flexDirection: "column",
+                              gap: "0.75rem",
+                            }}
+                          >
+                            <button
+                              onClick={checkoutbruh_premium}
+                              style={{
+                                gap: "0.5rem",
+                                backgroundImage:
+                                  "linear-gradient(to right, #0891b2, #0e7490)",
+                                paddingLeft: "1.5rem",
+                                paddingRight: "1.5rem",
+                                paddingTop: "0.75rem",
+                                paddingBottom: "0.75rem",
+                                borderRadius: "0.5rem",
+                                color: "white",
+                                fontWeight: "600",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                border: "none",
+                                cursor: "pointer",
+                              }}
+                              onMouseEnter={(e) =>
+                                (e.currentTarget.style.backgroundColor =
+                                  "linear-gradient(to right, #0e7490, #155e75)")
+                              }
+                              onMouseLeave={(e) =>
+                                (e.currentTarget.style.backgroundColor =
+                                  "linear-gradient(to right, #0891b2, #0e7490)")
+                              }
+                            >
+                              Upgrade to Premium
+                              <svg
+                                style={{ height: "1rem", width: "1rem" }}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 5l7 7-7 7"
+                                />
+                              </svg>
+                            </button>
+                            <p
+                              style={{
+                                textAlign: "center",
+                                fontSize: "0.75rem",
+                                color: "rgba(255, 255, 255, 0.6)",
+                              }}
+                            >
+                              Starting at £7/month
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mini Plan Comparison */}
+                <div
+                  style={{
+                    marginTop: "1.5rem",
+                    display: "grid",
+                    gap: "1rem",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+                  }}
+                >
+                  <div
+                    style={{
+                      border: "1px solid rgba(255, 255, 255, 0.05)",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      backdropFilter: "blur(12px)",
+                      transition: "all 0.2s",
+                      borderRadius: "0.5rem",
+                      padding: "1.5rem",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.borderColor =
+                        "rgba(6, 182, 212, 0.3)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.borderColor =
+                        "rgba(255, 255, 255, 0.05)")
+                    }
+                  >
+                    <div
+                      style={{
+                        marginBottom: "1rem",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div>
+                        <h4 style={{ marginBottom: "0.25rem", color: "white" }}>
+                          Premium
+                        </h4>
+                        <p style={{ fontSize: "1.5rem" }}>
+                          <span
+                            style={{
+                              backgroundImage:
+                                "linear-gradient(to right, #22d3ee, #60a5fa)",
+                              backgroundClip: "text",
+                              WebkitBackgroundClip: "text",
+                              color: "transparent",
+                            }}
+                          >
+                            £7.29
+                          </span>
+                          <span
+                            style={{
+                              fontSize: "0.875rem",
+                              color: "rgba(255, 255, 255, 0.6)",
+                            }}
+                          >
+                            /month
+                          </span>
+                        </p>
+                      </div>
+                      <span
+                        style={{
+                          backgroundImage:
+                            "linear-gradient(to right, #0891b2, #0e7490)",
+                          paddingLeft: "0.625rem",
+                          paddingRight: "0.625rem",
+                          paddingTop: "0.125rem",
+                          paddingBottom: "0.125rem",
+                          borderRadius: "0.25rem",
+                          fontSize: "0.75rem",
+                          color: "white",
+                        }}
+                      >
+                        Popular
+                      </span>
+                    </div>
+                    <ul
+                      style={{
+                        marginBottom: "1rem",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.5rem",
+                        fontSize: "0.875rem",
+                        listStyle: "none",
+                        padding: "0",
+                      }}
+                    >
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: "0.5rem",
+                          color: "rgba(255, 255, 255, 0.6)",
+                        }}
+                      >
+                        <svg
+                          style={{
+                            height: "1rem",
+                            width: "1rem",
+                            flexShrink: "0",
+                            color: "#06b6d4",
+                          }}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        <span>100 tokens per month</span>
+                      </li>
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: "0.5rem",
+                          color: "rgba(255, 255, 255, 0.6)",
+                        }}
+                      >
+                        <svg
+                          style={{
+                            height: "1rem",
+                            width: "1rem",
+                            flexShrink: "0",
+                            color: "#06b6d4",
+                          }}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        <span>Access to CV tailor </span>
+                      </li>
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: "0.5rem",
+                          color: "rgba(255, 255, 255, 0.6)",
+                        }}
+                      >
+                        <svg
+                          style={{
+                            height: "1rem",
+                            width: "1rem",
+                            flexShrink: "0",
+                            color: "#06b6d4",
+                          }}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        <span>Access to cover letter generator</span>
+                      </li>
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: "0.5rem",
+                          color: "rgba(255, 255, 255, 0.6)",
+                        }}
+                      >
+                        <svg
+                          style={{
+                            height: "1rem",
+                            width: "1rem",
+                            flexShrink: "0",
+                            color: "#06b6d4",
+                          }}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        <span>Keyword + ATS optimization</span>
+                      </li>
+                    </ul>
+                    <button
+                      onClick={checkoutbruh_premium}
+                      style={{
+                        width: "100%",
+                        backgroundImage:
+                          "linear-gradient(to right, #0891b2, #0e7490)",
+                        paddingLeft: "1rem",
+                        paddingRight: "1rem",
+                        paddingTop: "0.5rem",
+                        paddingBottom: "0.5rem",
+                        borderRadius: "0.5rem",
+                        color: "white",
+                        border: "none",
+                        cursor: "pointer",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          "linear-gradient(to right, #0e7490, #155e75)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          "linear-gradient(to right, #0891b2, #0e7490)")
+                      }
+                    >
+                      Choose Plan
+                    </button>
+                  </div>
+
+                  <div
+                    style={{
+                      border: "1px solid rgba(255, 255, 255, 0.05)",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      backdropFilter: "blur(12px)",
+                      transition: "all 0.2s",
+                      borderRadius: "0.5rem",
+                      padding: "1.5rem",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.borderColor =
+                        "rgba(6, 182, 212, 0.3)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.borderColor =
+                        "rgba(255, 255, 255, 0.05)")
+                    }
+                  >
+                    <div
+                      style={{
+                        marginBottom: "1rem",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div>
+                        <h4 style={{ marginBottom: "0.25rem", color: "white" }}>
+                          Career Max
+                        </h4>
+                        <p style={{ fontSize: "1.5rem" }}>
+                          <span
+                            style={{
+                              backgroundImage:
+                                "linear-gradient(to right, #22d3ee, #60a5fa)",
+                              backgroundClip: "text",
+                              WebkitBackgroundClip: "text",
+                              color: "transparent",
+                            }}
+                          >
+                            £18.99
+                          </span>
+                          <span
+                            style={{
+                              fontSize: "0.875rem",
+                              color: "rgba(255, 255, 255, 0.6)",
+                            }}
+                          >
+                            /month
+                          </span>
+                        </p>
+                      </div>
+                      <span
+                        style={{
+                          border: "1px solid rgba(6, 182, 212, 0.3)",
+                          color: "#67e8f9",
+                          paddingLeft: "0.625rem",
+                          paddingRight: "0.625rem",
+                          paddingTop: "0.125rem",
+                          paddingBottom: "0.125rem",
+                          borderRadius: "0.25rem",
+                          fontSize: "0.75rem",
+                        }}
+                      >
+                        Best Value
+                      </span>
+                    </div>
+                    <ul
+                      style={{
+                        marginBottom: "1rem",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.5rem",
+                        fontSize: "0.875rem",
+                        listStyle: "none",
+                        padding: "0",
+                      }}
+                    >
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: "0.5rem",
+                          color: "rgba(255, 255, 255, 0.6)",
+                        }}
+                      >
+                        <svg
+                          style={{
+                            height: "1rem",
+                            width: "1rem",
+                            flexShrink: "0",
+                            color: "#06b6d4",
+                          }}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        <span>Unlimited tokens</span>
+                      </li>
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: "0.5rem",
+                          color: "rgba(255, 255, 255, 0.6)",
+                        }}
+                      >
+                        <svg
+                          style={{
+                            height: "1rem",
+                            width: "1rem",
+                            flexShrink: "0",
+                            color: "#06b6d4",
+                          }}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        <span>Everything in Premium</span>
+                      </li>
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: "0.5rem",
+                          color: "rgba(255, 255, 255, 0.6)",
+                        }}
+                      >
+                        <svg
+                          style={{
+                            height: "1rem",
+                            width: "1rem",
+                            flexShrink: "0",
+                            color: "#06b6d4",
+                          }}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        <span>Access to Interview Simulator</span>
+                      </li>
+                      <li
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: "0.5rem",
+                          color: "rgba(255, 255, 255, 0.6)",
+                        }}
+                      >
+                        <svg
+                          style={{
+                            height: "1rem",
+                            width: "1rem",
+                            flexShrink: "0",
+                            color: "#06b6d4",
+                          }}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                        <span>Salary negotiation guide</span>
+                      </li>
+                    </ul>
+                    <button
+                      onClick={checkoutbruh_career_max}
+                      style={{
+                        width: "100%",
+                        border: "1px solid rgba(255, 255, 255, 0.1)",
+                        paddingLeft: "1rem",
+                        paddingRight: "1rem",
+                        paddingTop: "0.5rem",
+                        paddingBottom: "0.5rem",
+                        borderRadius: "0.5rem",
+                        color: "white",
+                        backgroundColor: "transparent",
+                        cursor: "pointer",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          "rgba(255, 255, 255, 0.05)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
+                    >
+                      Choose Plan
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

@@ -25,12 +25,12 @@ const improvements = [
   {
     title: "Improved Content Structure",
     description:
-      "Reorganised sections for a clearer, more logical flow that’s easier for recruiters to scan.",
+      "Reorganised sections for a clearer, more logical flow that's easier for recruiters to scan.",
   },
   {
     title: "Elevated Professional Summary",
     description:
-      "Tailored the summary to mirror the job’s core requirements and value proposition.",
+      "Tailored the summary to mirror the job's core requirements and value proposition.",
   },
   {
     title: "Boosted Keyword Density",
@@ -55,7 +55,6 @@ const improvements = [
 ];
 
 export default function Home() {
-  // User/auth state stays local (not shared across components)
   const [user1, setUser1] = useState(null);
   const [userdetails, setUserDetails] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -67,15 +66,9 @@ export default function Home() {
 
   useEffect(() => {
     getUser();
-    fetchUserCredits(); // ✅ Add this
+    fetchUserCredits();
   }, []);
 
-  useEffect(() => {
-    getUser();
-    fetchUserCredits(); // ✅ Add this
-  }, []);
-
-  // ✅ Add this function
   const fetchUserCredits = async () => {
     try {
       const {
@@ -109,11 +102,9 @@ export default function Home() {
     }
   };
 
-  // Get generation state from context
   const { generationState, updateGenerationState, resetGenerationState } =
     useGeneration();
 
-  // Destructure for easier access
   const {
     jobDescription,
     userCV,
@@ -141,10 +132,6 @@ export default function Home() {
     showAnalysis,
     error1,
   } = generationState;
-
-  useEffect(() => {
-    getUser();
-  }, []);
 
   const getUser = async () => {
     try {
@@ -263,23 +250,21 @@ export default function Home() {
 
       if (current >= maxPercent) {
         current = maxPercent;
-        clearInterval(timer); // stop at 85%
+        clearInterval(timer);
       }
 
-      // Use whatever field your progress bar reads from
       updateGenerationState({ cvProgress: current });
-    }, 1300); // 1% per second
+    }, 1300);
 
-    return timer; // so we can clear it when we're done
+    return timer;
   };
-  // Updated handleOptimize function with keyword match calculation
+
   const handleOptimize = async () => {
     if (!cvFile || !jobDescription) return;
 
     if (!isSubscribed && userCredits <= 0) {
       updateGenerationState({
-        error1:
-          "You're out of credits! Upgrade to Premium to continue."
+        error1: "You're out of credits! Upgrade to Premium to continue.",
       });
       return;
     }
@@ -289,7 +274,7 @@ export default function Home() {
       processingStep: "uploading",
       cvProgress: 0,
       coverLetterProgress: 0,
-      error1: "", // ✅ Reset cover letter progress
+      error1: "",
     });
 
     const progressTimer = startOptimizeProgress(updateGenerationState);
@@ -299,7 +284,6 @@ export default function Home() {
         data: { session },
       } = await supabase.auth.getSession();
 
-      // ✅ STEP 1: Generate CV (no longer returns skills_report)
       const cvResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/generate-cv`,
         {
@@ -322,7 +306,7 @@ export default function Home() {
         updateGenerationState({
           error1:
             cvData.detail?.message ||
-          "You're out of credits! Upgrade to Premium to continue.",
+            "You're out of credits! Upgrade to Premium to continue.",
           processingStep: "idle",
           isCompilingAll: false,
           cvProgress: 0,
@@ -330,23 +314,19 @@ export default function Home() {
         return;
       }
 
-      // ✅ CV data only contains the CV itself now
       if (cvData && cvData.cv) {
         updateGenerationState({
           generatedCV: cvData.cv,
           cvProgress: 100,
-          // ❌ DON'T set processingStep to "complete" yet
         });
         await compileCVToPDF(cvData.cv);
       }
 
-      // ✅ Update progress for cover letter generation
       updateGenerationState({
         coverLetterProgress: 25,
         processingStep: "generating_cover_letter",
       });
 
-      // ✅ STEP 2: Generate Cover Letter (NOW returns skills_report)
       const coverLetterResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter`,
         {
@@ -364,12 +344,9 @@ export default function Home() {
 
       const coverLetterData = await coverLetterResponse.json();
 
-      // ✅ Update progress
       updateGenerationState({ coverLetterProgress: 75 });
 
-      // ✅ Extract BOTH cover letter AND skills_report from this response
       if (coverLetterData) {
-        // Set the cover letter
         if (coverLetterData.cover_letter) {
           updateGenerationState({
             generatedCoverLetter: coverLetterData.cover_letter,
@@ -378,11 +355,9 @@ export default function Home() {
           await compileCoverLetterToPDF(coverLetterData.cover_letter);
         }
 
-        // ✅ IMPORTANT: Extract skills_report from cover letter response
         if (coverLetterData.skills_report) {
           const report = JSON.parse(coverLetterData.skills_report);
 
-          // Calculate keyword match percentage
           let keywordMatchScore = 0;
           if (
             report.evidence_map &&
@@ -400,7 +375,6 @@ export default function Home() {
             );
           }
 
-          // Update state with analysis data
           updateGenerationState({
             missingSkills: report.missing_skills,
             matchScore: parseFloat(report.role_alignment.match_score) * 100,
@@ -417,7 +391,7 @@ export default function Home() {
 
       clearInterval(progressTimer);
       updateGenerationState({
-        cvProgress: 100, // progress bar hits 100%
+        cvProgress: 100,
         processingStep: "complete",
         isCompilingAll: false,
       });
@@ -551,36 +525,113 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500" />
+      <div
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            animation: "spin 1s linear infinite",
+            borderRadius: "9999px",
+            height: "3rem",
+            width: "3rem",
+            borderBottom: "2px solid #06b6d4",
+          }}
+        />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4">
+    <div style={{ minHeight: "100vh" }}>
+      <div
+        style={{
+          maxWidth: "1280px",
+          marginLeft: "auto",
+          marginRight: "auto",
+          paddingLeft: "1rem",
+          paddingRight: "1rem",
+        }}
+      >
         {processingStep !== "complete" ? (
-          <div className="mx-auto max-w-5xl">
+          <div
+            style={{
+              marginLeft: "auto",
+              marginRight: "auto",
+              maxWidth: "64rem",
+            }}
+          >
             {/* Header */}
-            <div className="mb-12 text-center">
-              <h1 className="mb-4 bg-gradient-to-r from-cyan-300 via-cyan-400 to-cyan-500  bg-clip-text text-4xl md:text-5xl text-transparent">
+            <div style={{ marginBottom: "3rem", textAlign: "center" }}>
+              <h1
+                style={{
+                  marginBottom: "1rem",
+                  backgroundImage:
+                    "linear-gradient(to right, #67e8f9, #22d3ee, #06b6d4)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  fontSize: window.innerWidth >= 768 ? "3rem" : "2.25rem",
+                  color: "transparent",
+                }}
+              >
                 Transform Your Application
               </h1>
-              <p className="text-lg text-muted-foreground text-white/50">
+              <p
+                style={{
+                  fontSize: "1.125rem",
+                  color: "rgba(255, 255, 255, 0.5)",
+                }}
+              >
                 Upload your CV and job description to get optimized documents in
                 seconds.
               </p>
             </div>
 
             {/* Upload and Input Section */}
-            <div className="grid gap-8 lg:grid-cols-2">
+            <div
+              style={{
+                display: "grid",
+                gap: "2rem",
+                gridTemplateColumns:
+                  window.innerWidth >= 1024 ? "repeat(2, 1fr)" : "1fr",
+              }}
+            >
               {/* CV Upload */}
-              <div className="border border-cyan-400 bg-card/50 backdrop-blur-sm rounded-xl">
-                <div className="px-6 pt-6 pb-4">
-                  <h3 className="flex items-center gap-2 text-foreground font-semibold">
+              <div
+                style={{
+                  border: "1px solid #22d3ee",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  backdropFilter: "blur(12px)",
+                  borderRadius: "0.75rem",
+                }}
+              >
+                <div
+                  style={{
+                    paddingLeft: "1.5rem",
+                    paddingRight: "1.5rem",
+                    paddingTop: "1.5rem",
+                    paddingBottom: "1rem",
+                  }}
+                >
+                  <h3
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      color: "white",
+                      fontWeight: "600",
+                    }}
+                  >
                     <svg
-                      className="h-5 w-5 text-cyan-400"
+                      style={{
+                        height: "1.25rem",
+                        width: "1.25rem",
+                        color: "#22d3ee",
+                      }}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -595,31 +646,83 @@ export default function Home() {
                     Upload Your CV
                   </h3>
                 </div>
-                <div className="p-6">
+                <div style={{ padding: "1.5rem" }}>
                   <div
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
-                    className={`relative flex min-h-[300px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed transition-all ${
-                      isDragging
-                        ? "border-cyan-500 bg-cyan-500/10"
+                    style={{
+                      position: "relative",
+                      display: "flex",
+                      minHeight: "300px",
+                      cursor: "pointer",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "0.75rem",
+                      border: isDragging
+                        ? "2px dashed #06b6d4"
                         : cvFile
-                        ? "border-green-500/50 bg-green-500/5"
-                        : "border-white/10 bg-white/5 hover:border-cyan-500/50 hover:bg-cyan-500/5"
-                    }`}
+                        ? "2px dashed rgba(34, 197, 94, 0.5)"
+                        : "2px dashed rgba(255, 255, 255, 0.1)",
+                      backgroundColor: isDragging
+                        ? "rgba(6, 182, 212, 0.1)"
+                        : cvFile
+                        ? "rgba(34, 197, 94, 0.05)"
+                        : "rgba(255, 255, 255, 0.05)",
+                      transition: "all 0.2s",
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!cvFile && !isDragging) {
+                        e.currentTarget.style.borderColor =
+                          "rgba(6, 182, 212, 0.5)";
+                        e.currentTarget.style.backgroundColor =
+                          "rgba(6, 182, 212, 0.05)";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!cvFile && !isDragging) {
+                        e.currentTarget.style.borderColor =
+                          "rgba(255, 255, 255, 0.1)";
+                        e.currentTarget.style.backgroundColor =
+                          "rgba(255, 255, 255, 0.05)";
+                      }
+                    }}
                   >
                     <input
                       type="file"
                       accept=".pdf,.docx,.txt"
                       onChange={handleFileSelect}
-                      className="absolute inset-0 cursor-pointer opacity-0"
+                      style={{
+                        position: "absolute",
+                        inset: "0",
+                        cursor: "pointer",
+                        opacity: "0",
+                      }}
                     />
 
                     {cvFile ? (
-                      <div className="text-center">
-                        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
+                      <div style={{ textAlign: "center" }}>
+                        <div
+                          style={{
+                            marginLeft: "auto",
+                            marginRight: "auto",
+                            marginBottom: "1rem",
+                            display: "flex",
+                            height: "4rem",
+                            width: "4rem",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: "9999px",
+                            backgroundColor: "rgba(34, 197, 94, 0.2)",
+                          }}
+                        >
                           <svg
-                            className="h-8 w-8 text-green-400"
+                            style={{
+                              height: "2rem",
+                              width: "2rem",
+                              color: "#4ade80",
+                            }}
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -632,16 +735,40 @@ export default function Home() {
                             />
                           </svg>
                         </div>
-                        <p className="mb-2 text-foreground">{cvFile.name}</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p style={{ marginBottom: "0.5rem", color: "white" }}>
+                          {cvFile.name}
+                        </p>
+                        <p
+                          style={{
+                            fontSize: "0.875rem",
+                            color: "rgba(255, 255, 255, 0.6)",
+                          }}
+                        >
                           {(cvFile.size / 1024).toFixed(2)} KB
                         </p>
                       </div>
                     ) : (
-                      <div className="text-center">
-                        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-cyan-500/20">
+                      <div style={{ textAlign: "center" }}>
+                        <div
+                          style={{
+                            marginLeft: "auto",
+                            marginRight: "auto",
+                            marginBottom: "1rem",
+                            display: "flex",
+                            height: "4rem",
+                            width: "4rem",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            borderRadius: "9999px",
+                            backgroundColor: "rgba(6, 182, 212, 0.2)",
+                          }}
+                        >
                           <svg
-                            className="h-8 w-8 text-cyan-400"
+                            style={{
+                              height: "2rem",
+                              width: "2rem",
+                              color: "#22d3ee",
+                            }}
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -654,13 +781,33 @@ export default function Home() {
                             />
                           </svg>
                         </div>
-                        <p className="mb-2 text-foreground">
+                        <p style={{ marginBottom: "0.5rem", color: "white" }}>
                           Drag & drop your CV here
                         </p>
-                        <p className="mb-4 text-sm text-muted-foreground">
+                        <p
+                          style={{
+                            marginBottom: "1rem",
+                            fontSize: "0.875rem",
+                            color: "rgba(255, 255, 255, 0.6)",
+                          }}
+                        >
                           or click to browse
                         </p>
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs bg-white/5 border border-white/10 text-muted-foreground">
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            paddingLeft: "0.75rem",
+                            paddingRight: "0.75rem",
+                            paddingTop: "0.25rem",
+                            paddingBottom: "0.25rem",
+                            borderRadius: "9999px",
+                            fontSize: "0.75rem",
+                            backgroundColor: "rgba(255, 255, 255, 0.05)",
+                            border: "1px solid rgba(255, 255, 255, 0.1)",
+                            color: "rgba(255, 255, 255, 0.6)",
+                          }}
+                        >
                           PDF, DOCX, TXT
                         </span>
                       </div>
@@ -670,11 +817,37 @@ export default function Home() {
               </div>
 
               {/* Job Description */}
-              <div className="border border-cyan-500 bg-card/50 backdrop-blur-sm rounded-xl">
-                <div className="px-6 pt-6 pb-4">
-                  <h3 className="flex items-center gap-2 text-foreground font-semibold">
+              <div
+                style={{
+                  border: "1px solid #06b6d4",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  backdropFilter: "blur(12px)",
+                  borderRadius: "0.75rem",
+                }}
+              >
+                <div
+                  style={{
+                    paddingLeft: "1.5rem",
+                    paddingRight: "1.5rem",
+                    paddingTop: "1.5rem",
+                    paddingBottom: "1rem",
+                  }}
+                >
+                  <h3
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      color: "white",
+                      fontWeight: "600",
+                    }}
+                  >
                     <svg
-                      className="h-5 w-5 text-cyan-400"
+                      style={{
+                        height: "1.25rem",
+                        width: "1.25rem",
+                        color: "#22d3ee",
+                      }}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -689,16 +862,47 @@ export default function Home() {
                     Job Description
                   </h3>
                 </div>
-                <div className="p-6">
+                <div style={{ padding: "1.5rem" }}>
                   <textarea
                     value={jobDescription}
                     placeholder="Paste the job description here..."
                     onChange={(e) =>
                       updateGenerationState({ jobDescription: e.target.value })
                     }
-                    className="min-h-[300px] w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-foreground text-sm placeholder:text-muted-foreground focus:border-cyan-500/50 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
+                    style={{
+                      minHeight: "300px",
+                      width: "100%",
+                      resize: "none",
+                      borderRadius: "0.5rem",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      paddingLeft: "1rem",
+                      paddingRight: "1rem",
+                      paddingTop: "0.75rem",
+                      paddingBottom: "0.75rem",
+                      color: "white",
+                      fontSize: "0.875rem",
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor =
+                        "rgba(6, 182, 212, 0.5)";
+                      e.currentTarget.style.outline =
+                        "2px solid rgba(6, 182, 212, 0.2)";
+                      e.currentTarget.style.outlineOffset = "2px";
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor =
+                        "rgba(255, 255, 255, 0.1)";
+                      e.currentTarget.style.outline = "none";
+                    }}
                   />
-                  <p className="mt-2 text-sm text-muted-foreground">
+                  <p
+                    style={{
+                      marginTop: "0.5rem",
+                      fontSize: "0.875rem",
+                      color: "rgba(255, 255, 255, 0.6)",
+                    }}
+                  >
                     {jobDescription.length} characters
                   </p>
                 </div>
@@ -707,13 +911,50 @@ export default function Home() {
 
             {/* Processing Status */}
             {processingStep !== "idle" && (
-              <div className="mt-8 border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-sm rounded-xl">
-                <div className="p-6">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500/20">
+              <div
+                style={{
+                  marginTop: "2rem",
+                  border: "1px solid rgba(6, 182, 212, 0.2)",
+                  backgroundColor: "rgba(6, 182, 212, 0.05)",
+                  backdropFilter: "blur(12px)",
+                  borderRadius: "0.75rem",
+                }}
+              >
+                <div style={{ padding: "1.5rem" }}>
+                  <div
+                    style={{
+                      marginBottom: "1rem",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.75rem",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          height: "2.5rem",
+                          width: "2.5rem",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          borderRadius: "9999px",
+                          backgroundColor: "rgba(6, 182, 212, 0.2)",
+                        }}
+                      >
                         <svg
-                          className="h-5 w-5 animate-pulse text-cyan-400"
+                          style={{
+                            height: "1.25rem",
+                            width: "1.25rem",
+                            animation:
+                              "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+                            color: "#22d3ee",
+                          }}
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
@@ -721,7 +962,7 @@ export default function Home() {
                         </svg>
                       </div>
                       <div>
-                        <p className="text-foreground">
+                        <p style={{ color: "white" }}>
                           {processingStep === "uploading" &&
                             "Uploading your CV..."}
                           {processingStep === "analyzing" &&
@@ -729,19 +970,37 @@ export default function Home() {
                           {processingStep === "optimizing" &&
                             "Optimizing your application..."}
                         </p>
-                        <p className="text-sm text-muted-foreground">
+                        <p
+                          style={{
+                            fontSize: "0.875rem",
+                            color: "rgba(255, 255, 255, 0.6)",
+                          }}
+                        >
                           This won't take long
                         </p>
                       </div>
                     </div>
-                    <span className="text-2xl text-cyan-400">
+                    <span style={{ fontSize: "1.5rem", color: "#22d3ee" }}>
                       {cvProgress}%
                     </span>
                   </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-white/10">
+                  <div
+                    style={{
+                      height: "0.5rem",
+                      width: "100%",
+                      overflow: "hidden",
+                      borderRadius: "9999px",
+                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    }}
+                  >
                     <div
-                      className="h-full bg-gradient-to-r from-cyan-600 to-cyan-700 transition-all duration-300"
-                      style={{ width: `${cvProgress}%` }}
+                      style={{
+                        height: "100%",
+                        backgroundImage:
+                          "linear-gradient(to right, #0891b2, #0e7490)",
+                        transition: "width 0.3s",
+                        width: `${cvProgress}%`,
+                      }}
                     />
                   </div>
                 </div>
@@ -749,7 +1008,27 @@ export default function Home() {
             )}
 
             {/* Action Button */}
-            <div className="mt-8 flex justify-center">
+            {!canOptimize && (
+              <p
+                style={{
+                  paddingTop: "2rem",
+                  textAlign: "center",
+                  fontSize: "0.875rem",
+                  color: "rgba(255, 255, 255, 0.6)",
+                }}
+              >
+                {!cvFile && "Upload Your CV "}
+                {!cvFile && !jobDescription && "and "}
+                {!jobDescription && "Paste a Job Description."}
+              </p>
+            )}
+            <div
+              style={{
+                paddingTop: "2rem",
+                display: "flex",
+                justifyContent: "center",
+              }}
+            >
               <button
                 disabled={
                   !canOptimize ||
@@ -757,24 +1036,69 @@ export default function Home() {
                 }
                 onClick={handleOptimize}
                 type="button"
-                className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 
-             hover:bg-gradient-to-br focus:ring-4 focus:outline-none 
-             focus:ring-cyan-300 dark:focus:ring-cyan-800 
-             shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 
-             font-medium rounded-base text-sm px-6 py-3 text-center leading-5 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  color: "white",
+                  backgroundImage:
+                    "linear-gradient(to right, #22d3ee, #06b6d4, #0891b2)",
+                  boxShadow:
+                    "0 10px 15px -3px rgba(6, 182, 212, 0.5), 0 4px 6px -4px rgba(6, 182, 212, 0.5)",
+                  fontWeight: "500",
+                  borderRadius: "0.75rem",
+                  fontSize: "0.875rem",
+                  paddingLeft: "1.5rem",
+                  paddingRight: "1.5rem",
+                  paddingTop: "0.75rem",
+                  paddingBottom: "0.75rem",
+                  textAlign: "center",
+                  lineHeight: "1.25",
+                  opacity:
+                    !canOptimize ||
+                    (processingStep !== "idle" && processingStep !== "complete")
+                      ? "0.5"
+                      : "1",
+                  cursor:
+                    !canOptimize ||
+                    (processingStep !== "idle" && processingStep !== "complete")
+                      ? "not-allowed"
+                      : "pointer",
+                  border: "none",
+                }}
+                onMouseEnter={(e) => {
+                  if (
+                    canOptimize &&
+                    (processingStep === "idle" || processingStep === "complete")
+                  ) {
+                    e.currentTarget.style.backgroundImage =
+                      "linear-gradient(to bottom right, #06b6d4, #0891b2, #0e7490)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundImage =
+                    "linear-gradient(to right, #22d3ee, #06b6d4, #0891b2)";
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.outline =
+                    "4px solid rgba(6, 182, 212, 0.3)";
+                  e.currentTarget.style.outlineOffset = "2px";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.outline = "none";
+                }}
               >
                 Generate CV & Cover Letter
               </button>
             </div>
 
-            {!canOptimize && (
-              <p className="mt-4 text-center text-sm text-muted-foreground">
-                {!cvFile && "Upload Your CV "}
-                {!cvFile && !jobDescription && "and "}
-                {!jobDescription && "Paste a Job Description."}
-              </p>
-            )}
-            <div className="flex justify-center items-center pt-10 text-md text-red-400">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                paddingTop: "2.5rem",
+                fontSize: "1rem",
+                color: "#f87171",
+              }}
+            >
               {error1}
             </div>
           </div>
@@ -826,14 +1150,12 @@ function ResultsView({
     () => Math.floor(Math.random() * (84 - 45 + 1)) + 45
   );
 
-  // Update editable content when cover letter is generated
   useEffect(() => {
     if (generatedCoverLetter) {
       setEditableCoverLetter(generatedCoverLetter);
     }
   }, [generatedCoverLetter]);
 
-  // Compile and Download in one action
   const handleDownloadCoverLetter = async () => {
     if (!editableCoverLetter) return;
 
@@ -882,27 +1204,37 @@ function ResultsView({
 
   const getEvidenceBadgeColor = (status) => {
     const colors = {
-      explicit: "bg-gradient-to-r from-green-500 via-green-600 to-green-700",
-      implicit_strong: "bg-gradient-to-r from-lime-400 to-lime-500",
-      implicit_weak:
-        "bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600",
-      transferable:
-        "bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600",
-      absent: "bg-gradient-to-r from-red-400 via-red-500 to-red-600",
+      explicit: "linear-gradient(to right, #22c55e, #16a34a, #15803d)",
+      implicit_strong: "linear-gradient(to right, #84cc16, #65a30d)",
+      implicit_weak: "linear-gradient(to right, #facc15, #eab308, #ca8a04)",
+      transferable: "linear-gradient(to right, #fb923c, #f97316, #ea580c)",
+      absent: "linear-gradient(to right, #f87171, #ef4444, #dc2626)",
     };
     return (
-      colors[status] ||
-      "bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600"
+      colors[status] || "linear-gradient(to right, #9ca3af, #6b7280, #4b5563)"
     );
   };
 
   return (
-    <div className="mx-auto max-w-6xl">
+    <div style={{ marginLeft: "auto", marginRight: "auto", maxWidth: "72rem" }}>
       {/* Success Header */}
-      <div className="mb-12 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
+      <div style={{ marginBottom: "3rem", textAlign: "center" }}>
+        <div
+          style={{
+            marginLeft: "auto",
+            marginRight: "auto",
+            marginBottom: "1rem",
+            display: "flex",
+            height: "4rem",
+            width: "4rem",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "9999px",
+            backgroundColor: "rgba(34, 197, 94, 0.2)",
+          }}
+        >
           <svg
-            className="h-8 w-8 text-green-400"
+            style={{ height: "2rem", width: "2rem", color: "#4ade80" }}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -915,66 +1247,213 @@ function ResultsView({
             />
           </svg>
         </div>
-        <h1 className="mb-4 bg-gradient-to-b from-white to-white/60 bg-clip-text text-4xl text-transparent font-bold">
+        <h1
+          style={{
+            marginBottom: "1rem",
+            backgroundImage:
+              "linear-gradient(to bottom, white, rgba(255, 255, 255, 0.6))",
+            backgroundClip: "text",
+            WebkitBackgroundClip: "text",
+            fontSize: "2.25rem",
+            color: "transparent",
+            fontWeight: "700",
+          }}
+        >
           Optimization Complete!
         </h1>
-        <p className="text-lg text-muted-foreground">
+        <p style={{ fontSize: "1.125rem", color: "rgba(255, 255, 255, 0.6)" }}>
           Your documents are ready to download
         </p>
       </div>
 
       {/* Quick Stats */}
-      <div className="mb-8 grid gap-4 md:grid-cols-3">
-        <div className="border border-green-500/20 bg-green-500/5 backdrop-blur-sm rounded-xl p-6 text-center">
-          <div className="mb-2 text-3xl font-bold text-green-400">
+      <div
+        style={{
+          marginBottom: "2rem",
+          display: "grid",
+          gap: "1rem",
+          gridTemplateColumns:
+            window.innerWidth >= 768 ? "repeat(3, 1fr)" : "1fr",
+        }}
+      >
+        <div
+          style={{
+            border: "1px solid rgba(34, 197, 94, 0.2)",
+            backgroundColor: "rgba(34, 197, 94, 0.05)",
+            backdropFilter: "blur(12px)",
+            borderRadius: "0.75rem",
+            padding: "1.5rem",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              marginBottom: "0.5rem",
+              fontSize: "1.875rem",
+              fontWeight: "700",
+              color: "#4ade80",
+            }}
+          >
             {ATSScore + 2}%
           </div>
-          <p className="text-sm text-muted-foreground">ATS Score</p>
+          <p
+            style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.6)" }}
+          >
+            ATS Score
+          </p>
         </div>
-        <div className="border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-sm rounded-xl p-6 text-center">
-          <div className="mb-2 text-3xl font-bold text-cyan-400">
+        <div
+          style={{
+            border: "1px solid rgba(6, 182, 212, 0.2)",
+            backgroundColor: "rgba(6, 182, 212, 0.05)",
+            backdropFilter: "blur(12px)",
+            borderRadius: "0.75rem",
+            padding: "1.5rem",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              marginBottom: "0.5rem",
+              fontSize: "1.875rem",
+              fontWeight: "700",
+              color: "#22d3ee",
+            }}
+          >
             {Math.round(matchScore)}%
           </div>
-          <p className="text-sm text-muted-foreground">Match Rate</p>
+          <p
+            style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.6)" }}
+          >
+            Match Rate
+          </p>
         </div>
-        <div className="border border-blue-500/20 bg-blue-500/5 backdrop-blur-sm rounded-xl p-6 text-center">
-          <div className="mb-2 text-3xl font-bold text-blue-400">
+        <div
+          style={{
+            border: "1px solid rgba(59, 130, 246, 0.2)",
+            backgroundColor: "rgba(59, 130, 246, 0.05)",
+            backdropFilter: "blur(12px)",
+            borderRadius: "0.75rem",
+            padding: "1.5rem",
+            textAlign: "center",
+          }}
+        >
+          <div
+            style={{
+              marginBottom: "0.5rem",
+              fontSize: "1.875rem",
+              fontWeight: "700",
+              color: "#60a5fa",
+            }}
+          >
             +{improvementScore}%
           </div>
-          <p className="text-sm text-muted-foreground">Improvement</p>
+          <p
+            style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.6)" }}
+          >
+            Improvement
+          </p>
         </div>
       </div>
 
       {/* Results Tabs */}
-      <div className="space-y-8">
-        <div className="grid w-full grid-cols-3 gap-1 rounded-lg bg-card/50 p-1">
+      <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+        <div
+          style={{
+            display: "grid",
+            width: "100%",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "0.25rem",
+            borderRadius: "0.5rem",
+            backgroundColor: "rgba(255, 255, 255, 0.05)",
+            padding: "0.25rem",
+          }}
+        >
           <button
             onClick={() => setActiveTab("cv")}
-            className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
-              activeTab === "cv"
-                ? "bg-white/10 text-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
+            style={{
+              borderRadius: "0.375rem",
+              paddingLeft: "1rem",
+              paddingRight: "1rem",
+              paddingTop: "0.5rem",
+              paddingBottom: "0.5rem",
+              fontSize: "0.875rem",
+              fontWeight: "500",
+              transition: "all 0.2s",
+              backgroundColor:
+                activeTab === "cv" ? "rgba(255, 255, 255, 0.1)" : "transparent",
+              color: activeTab === "cv" ? "white" : "rgba(255, 255, 255, 0.6)",
+              border: "none",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => {
+              if (activeTab !== "cv") e.currentTarget.style.color = "white";
+            }}
+            onMouseLeave={(e) => {
+              if (activeTab !== "cv")
+                e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)";
+            }}
           >
             Optimized CV
           </button>
           <button
             onClick={() => setActiveTab("cover")}
-            className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
-              activeTab === "cover"
-                ? "bg-white/10 text-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
+            style={{
+              borderRadius: "0.375rem",
+              paddingLeft: "1rem",
+              paddingRight: "1rem",
+              paddingTop: "0.5rem",
+              paddingBottom: "0.5rem",
+              fontSize: "0.875rem",
+              fontWeight: "500",
+              transition: "all 0.2s",
+              backgroundColor:
+                activeTab === "cover"
+                  ? "rgba(255, 255, 255, 0.1)"
+                  : "transparent",
+              color:
+                activeTab === "cover" ? "white" : "rgba(255, 255, 255, 0.6)",
+              border: "none",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => {
+              if (activeTab !== "cover") e.currentTarget.style.color = "white";
+            }}
+            onMouseLeave={(e) => {
+              if (activeTab !== "cover")
+                e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)";
+            }}
           >
             Cover Letter
           </button>
           <button
             onClick={() => setActiveTab("analysis")}
-            className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
-              activeTab === "analysis"
-                ? "bg-white/10 text-foreground"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
+            style={{
+              borderRadius: "0.375rem",
+              paddingLeft: "1rem",
+              paddingRight: "1rem",
+              paddingTop: "0.5rem",
+              paddingBottom: "0.5rem",
+              fontSize: "0.875rem",
+              fontWeight: "500",
+              transition: "all 0.2s",
+              backgroundColor:
+                activeTab === "analysis"
+                  ? "rgba(255, 255, 255, 0.1)"
+                  : "transparent",
+              color:
+                activeTab === "analysis" ? "white" : "rgba(255, 255, 255, 0.6)",
+              border: "none",
+              cursor: "pointer",
+            }}
+            onMouseEnter={(e) => {
+              if (activeTab !== "analysis")
+                e.currentTarget.style.color = "white";
+            }}
+            onMouseLeave={(e) => {
+              if (activeTab !== "analysis")
+                e.currentTarget.style.color = "rgba(255, 255, 255, 0.6)";
+            }}
           >
             Analysis
           </button>
@@ -982,17 +1461,60 @@ function ResultsView({
 
         {/* Optimized CV Tab */}
         {activeTab === "cv" && (
-          <div className="border border-white/5 bg-card/50 backdrop-blur-sm rounded-xl">
-            <div className="flex flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-white/5">
-              <h3 className="font-semibold text-foreground">
+          <div
+            style={{
+              border: "1px solid rgba(255, 255, 255, 0.05)",
+              backgroundColor: "rgba(255, 255, 255, 0.05)",
+              backdropFilter: "blur(12px)",
+              borderRadius: "0.75rem",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingLeft: "1.5rem",
+                paddingRight: "1.5rem",
+                paddingTop: "1.5rem",
+                paddingBottom: "1rem",
+                borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+              }}
+            >
+              <h3 style={{ fontWeight: "600", color: "white" }}>
                 Your Optimized CV
               </h3>
               <button
                 onClick={downloadCVPDF}
-                className="gap-2 inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white"
+                style={{
+                  gap: "0.5rem",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  paddingLeft: "1rem",
+                  paddingRight: "1rem",
+                  paddingTop: "0.5rem",
+                  paddingBottom: "0.5rem",
+                  fontSize: "0.875rem",
+                  fontWeight: "600",
+                  borderRadius: "0.5rem",
+                  backgroundImage:
+                    "linear-gradient(to right, #0891b2, #0e7490)",
+                  color: "white",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.backgroundImage =
+                    "linear-gradient(to right, #0e7490, #155e75)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.backgroundImage =
+                    "linear-gradient(to right, #0891b2, #0e7490)")
+                }
               >
                 <svg
-                  className="h-4 w-4"
+                  style={{ height: "1rem", width: "1rem" }}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1007,14 +1529,39 @@ function ResultsView({
                 Download CV
               </button>
             </div>
-            <div className="p-6 space-y-6">
+            <div
+              style={{
+                padding: "1.5rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "1.5rem",
+              }}
+            >
               {cvPdfData ? (
-                <div className="rounded-lg border border-white/5 bg-white/5 ">
+                <div
+                  style={{
+                    borderRadius: "0.5rem",
+                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  }}
+                >
                   <CV pdfData={cvPdfData} />
                 </div>
               ) : (
-                <div className="rounded-lg border border-white/5 bg-white/5 p-6">
-                  <p className="text-center text-muted-foreground">
+                <div
+                  style={{
+                    borderRadius: "0.5rem",
+                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    padding: "1.5rem",
+                  }}
+                >
+                  <p
+                    style={{
+                      textAlign: "center",
+                      color: "rgba(255, 255, 255, 0.6)",
+                    }}
+                  >
                     Generating your CV PDF...
                   </p>
                 </div>
@@ -1025,35 +1572,112 @@ function ResultsView({
 
         {/* Cover Letter Tab */}
         {activeTab === "cover" && (
-          <div className="border border-white/5 bg-card/50 backdrop-blur-sm rounded-xl">
-            <div className="flex flex-row items-center justify-between px-6 pt-6 pb-4 border-b border-white/5">
+          <div
+            style={{
+              border: "1px solid rgba(255, 255, 255, 0.05)",
+              backgroundColor: "rgba(255, 255, 255, 0.05)",
+              backdropFilter: "blur(12px)",
+              borderRadius: "0.75rem",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingLeft: "1.5rem",
+                paddingRight: "1.5rem",
+                paddingTop: "1.5rem",
+                paddingBottom: "1rem",
+                borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+              }}
+            >
               <div>
-                <h3 className="font-semibold text-foreground mb-1">
+                <h3
+                  style={{
+                    fontWeight: "600",
+                    color: "white",
+                    marginBottom: "0.25rem",
+                  }}
+                >
                   Your Cover Letter
                 </h3>
-                <p className="text-red-400 text-xs">
+                <p style={{ color: "#f87171", fontSize: "0.75rem" }}>
                   Edit your cover letter then download as PDF
                 </p>
               </div>
               <button
                 onClick={handleDownloadCoverLetter}
                 disabled={!editableCoverLetter || isDownloadingCoverLetter}
-                className="gap-2 inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg 
-                  text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 
-                  hover:bg-gradient-to-br focus:outline-none shadow-lg shadow-lime-500/50 
-                  dark:shadow-lg dark:shadow-lime-800/80 disabled:opacity-50 
-                  disabled:cursor-not-allowed active:scale-95 transition-transform"
+                style={{
+                  gap: "0.5rem",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  paddingLeft: "1rem",
+                  paddingRight: "1rem",
+                  paddingTop: "0.5rem",
+                  paddingBottom: "0.5rem",
+                  fontSize: "0.875rem",
+                  fontWeight: "600",
+                  borderRadius: "0.5rem",
+                  color: "#1a1a1a",
+                  backgroundImage:
+                    "linear-gradient(to right, #d9f99d, #a3e635, #84cc16)",
+                  boxShadow:
+                    "0 10px 15px -3px rgba(132, 204, 22, 0.5), 0 4px 6px -4px rgba(132, 204, 22, 0.5)",
+                  opacity:
+                    !editableCoverLetter || isDownloadingCoverLetter
+                      ? "0.5"
+                      : "1",
+                  cursor:
+                    !editableCoverLetter || isDownloadingCoverLetter
+                      ? "not-allowed"
+                      : "pointer",
+                  border: "none",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  if (editableCoverLetter && !isDownloadingCoverLetter) {
+                    e.currentTarget.style.backgroundImage =
+                      "linear-gradient(to bottom right, #a3e635, #84cc16, #65a30d)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundImage =
+                    "linear-gradient(to right, #d9f99d, #a3e635, #84cc16)";
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.outline =
+                    "4px solid rgba(132, 204, 22, 0.5)";
+                  e.currentTarget.style.outlineOffset = "2px";
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.outline = "none";
+                }}
+                onMouseDown={(e) => {
+                  if (editableCoverLetter && !isDownloadingCoverLetter) {
+                    e.currentTarget.style.transform = "scale(0.95)";
+                  }
+                }}
+                onMouseUp={(e) =>
+                  (e.currentTarget.style.transform = "scale(1)")
+                }
               >
                 {isDownloadingCoverLetter ? (
                   <>
                     <svg
-                      className="animate-spin h-5 w-5"
+                      style={{
+                        animation: "spin 1s linear infinite",
+                        height: "1.25rem",
+                        width: "1.25rem",
+                      }}
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
                       <circle
-                        className="opacity-25"
+                        style={{ opacity: "0.25" }}
                         cx="12"
                         cy="12"
                         r="10"
@@ -1061,7 +1685,7 @@ function ResultsView({
                         strokeWidth="4"
                       ></circle>
                       <path
-                        className="opacity-75"
+                        style={{ opacity: "0.75" }}
                         fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
@@ -1076,28 +1700,68 @@ function ResultsView({
                 )}
               </button>
             </div>
-            <div className="p-6">
+            <div style={{ padding: "1.5rem" }}>
               {editableCoverLetter ? (
                 <textarea
                   value={editableCoverLetter}
                   onChange={(e) => setEditableCoverLetter(e.target.value)}
-                  className="w-full min-h-[600px] resize-y rounded-lg border-2 border-white/60 
-                    bg-white/15 px-4 py-4 text-foreground text-sm font-mono leading-relaxed 
-                    placeholder:text-muted-foreground focus:outline-none focus:ring-2 
-                    focus:ring-lime-500/50"
+                  style={{
+                    width: "100%",
+                    minHeight: "600px",
+                    resize: "vertical",
+                    borderRadius: "0.5rem",
+                    border: "2px solid rgba(255, 255, 255, 0.6)",
+                    backgroundColor: "rgba(255, 255, 255, 0.15)",
+                    paddingLeft: "1rem",
+                    paddingRight: "1rem",
+                    paddingTop: "1rem",
+                    paddingBottom: "1rem",
+                    color: "white",
+                    fontSize: "0.875rem",
+                    fontFamily: "monospace",
+                    lineHeight: "1.625",
+                  }}
+                  onFocus={(e) => {
+                    e.currentTarget.style.outline =
+                      "2px solid rgba(132, 204, 22, 0.5)";
+                    e.currentTarget.style.outlineOffset = "2px";
+                  }}
+                  onBlur={(e) => {
+                    e.currentTarget.style.outline = "none";
+                  }}
                   placeholder="Your cover letter will appear here..."
                 />
               ) : (
-                <div className="rounded-lg border border-white/5 bg-white/5 p-12">
-                  <div className="flex flex-col items-center justify-center">
+                <div
+                  style={{
+                    borderRadius: "0.5rem",
+                    border: "1px solid rgba(255, 255, 255, 0.05)",
+                    backgroundColor: "rgba(255, 255, 255, 0.05)",
+                    padding: "3rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
                     <svg
-                      className="animate-spin h-10 w-10 text-cyan-400 mb-4"
+                      style={{
+                        animation: "spin 1s linear infinite",
+                        height: "2.5rem",
+                        width: "2.5rem",
+                        color: "#22d3ee",
+                        marginBottom: "1rem",
+                      }}
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
                       <circle
-                        className="opacity-25"
+                        style={{ opacity: "0.25" }}
                         cx="12"
                         cy="12"
                         r="10"
@@ -1105,12 +1769,18 @@ function ResultsView({
                         strokeWidth="4"
                       ></circle>
                       <path
-                        className="opacity-75"
+                        style={{ opacity: "0.75" }}
                         fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    <p className="text-center text-muted-foreground text-lg">
+                    <p
+                      style={{
+                        textAlign: "center",
+                        color: "rgba(255, 255, 255, 0.6)",
+                        fontSize: "1.125rem",
+                      }}
+                    >
                       Generating your cover letter...
                     </p>
                   </div>
@@ -1120,15 +1790,44 @@ function ResultsView({
           </div>
         )}
 
-        {/* Analysis Tab - UPDATED */}
+        {/* Analysis Tab - I'll continue with the analysis section in the next part due to length */}
         {activeTab === "analysis" && (
-          <div className="space-y-6">
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}
+          >
             {/* Overall Score */}
-            <div className="border border-white/5 bg-card/50 backdrop-blur-sm rounded-xl">
-              <div className="px-6 pt-6 pb-4 border-b border-white/5">
-                <h3 className="flex items-center gap-2 font-semibold text-foreground">
+            <div
+              style={{
+                border: "1px solid rgba(255, 255, 255, 0.05)",
+                backgroundColor: "rgba(255, 255, 255, 0.05)",
+                backdropFilter: "blur(12px)",
+                borderRadius: "0.75rem",
+              }}
+            >
+              <div
+                style={{
+                  paddingLeft: "1.5rem",
+                  paddingRight: "1.5rem",
+                  paddingTop: "1.5rem",
+                  paddingBottom: "1rem",
+                  borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+                }}
+              >
+                <h3
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    fontWeight: "600",
+                    color: "white",
+                  }}
+                >
                   <svg
-                    className="h-5 w-5 text-green-400"
+                    style={{
+                      height: "1.25rem",
+                      width: "1.25rem",
+                      color: "#4ade80",
+                    }}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -1143,47 +1842,148 @@ function ResultsView({
                   Original CV Assessment
                 </h3>
               </div>
-              <div className="p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">
+              <div
+                style={{
+                  padding: "1.5rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "1rem",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>
                     ATS Compatibility
                   </span>
-                  <div className="flex items-center gap-3">
-                    <div className="w-32 h-2 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.75rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "8rem",
+                        height: "0.5rem",
+                        borderRadius: "9999px",
+                        backgroundColor: "rgba(255, 255, 255, 0.1)",
+                        overflow: "hidden",
+                      }}
+                    >
                       <div
-                        className="h-full bg-gradient-to-r from-green-500 to-green-600"
-                        style={{ width: `${ATSScore}%` }}
+                        style={{
+                          height: "100%",
+                          backgroundImage:
+                            "linear-gradient(to right, #22c55e, #16a34a)",
+                          width: `${ATSScore}%`,
+                        }}
                       />
                     </div>
-                    <span className="w-12 text-right text-green-400">
+                    <span
+                      style={{
+                        width: "3rem",
+                        textAlign: "right",
+                        color: "#4ade80",
+                      }}
+                    >
                       {ATSScore + 2}%
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Keyword Match</span>
-                  <div className="flex items-center gap-3">
-                    <div className="w-32 h-2 rounded-full bg-white/10 overflow-hidden">
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>
+                    Keyword Match
+                  </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.75rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "8rem",
+                        height: "0.5rem",
+                        borderRadius: "9999px",
+                        backgroundColor: "rgba(255, 255, 255, 0.1)",
+                        overflow: "hidden",
+                      }}
+                    >
                       <div
-                        className="h-full bg-gradient-to-r from-green-500 to-green-600"
-                        style={{ width: `${keywordMatchScore || 0}%` }}
+                        style={{
+                          height: "100%",
+                          backgroundImage:
+                            "linear-gradient(to right, #22c55e, #16a34a)",
+                          width: `${keywordMatchScore || 0}%`,
+                        }}
                       />
                     </div>
-                    <span className="w-12 text-right text-green-400">
+                    <span
+                      style={{
+                        width: "3rem",
+                        textAlign: "right",
+                        color: "#4ade80",
+                      }}
+                    >
                       {keywordMatchScore || 0}%
                     </span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Role Match</span>
-                  <div className="flex items-center gap-3">
-                    <div className="w-32 h-2 rounded-full bg-white/10 overflow-hidden">
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <span style={{ color: "rgba(255, 255, 255, 0.6)" }}>
+                    Role Match
+                  </span>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.75rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: "8rem",
+                        height: "0.5rem",
+                        borderRadius: "9999px",
+                        backgroundColor: "rgba(255, 255, 255, 0.1)",
+                        overflow: "hidden",
+                      }}
+                    >
                       <div
-                        className="h-full bg-gradient-to-r from-green-500 to-green-600"
-                        style={{ width: `${matchScore}%` }}
+                        style={{
+                          height: "100%",
+                          backgroundImage:
+                            "linear-gradient(to right, #22c55e, #16a34a)",
+                          width: `${matchScore}%`,
+                        }}
                       />
                     </div>
-                    <span className="w-12 text-right  text-green-400">
+                    <span
+                      style={{
+                        width: "3rem",
+                        textAlign: "right",
+                        color: "#4ade80",
+                      }}
+                    >
                       {Math.round(matchScore)}%
                     </span>
                   </div>
@@ -1191,12 +1991,39 @@ function ResultsView({
               </div>
             </div>
 
-            {/* Strengths */}
-            <div className="border border-green-500/20 bg-green-500/5 backdrop-blur-sm rounded-xl">
-              <div className="px-6 pt-6 pb-4 border-b border-green-500/20">
-                <h3 className="flex items-center gap-2 font-semibold text-foreground">
+            {/* Summary */}
+            <div
+              style={{
+                border: "1px solid rgba(34, 197, 94, 0.2)",
+                backgroundColor: "rgba(34, 197, 94, 0.05)",
+                backdropFilter: "blur(12px)",
+                borderRadius: "0.75rem",
+              }}
+            >
+              <div
+                style={{
+                  paddingLeft: "1.5rem",
+                  paddingRight: "1.5rem",
+                  paddingTop: "1.5rem",
+                  paddingBottom: "1rem",
+                  borderBottom: "1px solid rgba(34, 197, 94, 0.2)",
+                }}
+              >
+                <h3
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    fontWeight: "600",
+                    color: "white",
+                  }}
+                >
                   <svg
-                    className="h-5 w-5 text-green-400"
+                    style={{
+                      height: "1.25rem",
+                      width: "1.25rem",
+                      color: "#4ade80",
+                    }}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -1211,11 +2038,31 @@ function ResultsView({
                   Summary
                 </h3>
               </div>
-              <div className="p-6">
-                <ul className="space-y-3">
-                  <li className="flex items-start gap-3">
+              <div style={{ padding: "1.5rem" }}>
+                <ul
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.75rem",
+                    listStyle: "none",
+                    padding: "0",
+                    margin: "0",
+                  }}
+                >
+                  <li
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: "0.75rem",
+                    }}
+                  >
                     <svg
-                      className="h-5 w-5 shrink-0 text-green-400"
+                      style={{
+                        height: "1.25rem",
+                        width: "1.25rem",
+                        flexShrink: 0,
+                        color: "#4ade80",
+                      }}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1228,7 +2075,7 @@ function ResultsView({
                       />
                     </svg>
                     <div>
-                      <p className="text-foreground">{matchReason}</p>
+                      <p style={{ color: "white" }}>{matchReason}</p>
                     </div>
                   </li>
                 </ul>
@@ -1237,11 +2084,38 @@ function ResultsView({
 
             {/* Missing Skills */}
             {missingSkills && missingSkills.length > 0 && (
-              <div className="border border-yellow-500/20 bg-yellow-500/5 backdrop-blur-sm rounded-xl">
-                <div className="px-6 pt-6 pb-4 border-b border-yellow-500/20">
-                  <h3 className="flex items-center gap-2 font-semibold text-foreground">
+              <div
+                style={{
+                  border: "1px solid rgba(234, 179, 8, 0.2)",
+                  backgroundColor: "rgba(234, 179, 8, 0.05)",
+                  backdropFilter: "blur(12px)",
+                  borderRadius: "0.75rem",
+                }}
+              >
+                <div
+                  style={{
+                    paddingLeft: "1.5rem",
+                    paddingRight: "1.5rem",
+                    paddingTop: "1.5rem",
+                    paddingBottom: "1rem",
+                    borderBottom: "1px solid rgba(234, 179, 8, 0.2)",
+                  }}
+                >
+                  <h3
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      fontWeight: "600",
+                      color: "white",
+                    }}
+                  >
                     <svg
-                      className="h-5 w-5 text-yellow-400"
+                      style={{
+                        height: "1.25rem",
+                        width: "1.25rem",
+                        color: "#facc15",
+                      }}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1256,12 +2130,33 @@ function ResultsView({
                     Missing Skills
                   </h3>
                 </div>
-                <div className="p-6">
-                  <ul className="space-y-3">
+                <div style={{ padding: "1.5rem" }}>
+                  <ul
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "0.75rem",
+                      listStyle: "none",
+                      padding: "0",
+                      margin: "0",
+                    }}
+                  >
                     {missingSkills.map((skill, idx) => (
-                      <li key={idx} className="flex items-start gap-3">
+                      <li
+                        key={idx}
+                        style={{
+                          display: "flex",
+                          alignItems: "flex-start",
+                          gap: "0.75rem",
+                        }}
+                      >
                         <svg
-                          className="h-5 w-5 shrink-0 text-yellow-400"
+                          style={{
+                            height: "1.25rem",
+                            width: "1.25rem",
+                            flexShrink: 0,
+                            color: "#facc15",
+                          }}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -1273,12 +2168,18 @@ function ResultsView({
                             d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
                           />
                         </svg>
-                        <div className="flex-1">
-                          <p className="font-semibold text-foreground">
+                        <div style={{ flex: "1" }}>
+                          <p style={{ fontWeight: "600", color: "white" }}>
                             {skill}
                           </p>
                           {gapBridges && gapBridges[skill] && (
-                            <p className="text-sm text-muted-foreground mt-1">
+                            <p
+                              style={{
+                                fontSize: "0.875rem",
+                                color: "rgba(255, 255, 255, 0.6)",
+                                marginTop: "0.25rem",
+                              }}
+                            >
                               {gapBridges[skill].bridge_text}
                             </p>
                           )}
@@ -1290,12 +2191,39 @@ function ResultsView({
               </div>
             )}
 
-            {/* Improvements Made */}
-            <div className="border border-cyan-500/20 bg-cyan-500/5 backdrop-blur-sm rounded-xl">
-              <div className="px-6 pt-6 pb-4 border-b border-cyan-500/20">
-                <h3 className="flex items-center gap-2 font-semibold text-foreground">
+            {/* Key Improvements Made */}
+            <div
+              style={{
+                border: "1px solid rgba(6, 182, 212, 0.2)",
+                backgroundColor: "rgba(6, 182, 212, 0.05)",
+                backdropFilter: "blur(12px)",
+                borderRadius: "0.75rem",
+              }}
+            >
+              <div
+                style={{
+                  paddingLeft: "1.5rem",
+                  paddingRight: "1.5rem",
+                  paddingTop: "1.5rem",
+                  paddingBottom: "1rem",
+                  borderBottom: "1px solid rgba(6, 182, 212, 0.2)",
+                }}
+              >
+                <h3
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    fontWeight: "600",
+                    color: "white",
+                  }}
+                >
                   <svg
-                    className="h-5 w-5 text-cyan-400"
+                    style={{
+                      height: "1.25rem",
+                      width: "1.25rem",
+                      color: "#22d3ee",
+                    }}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -1310,12 +2238,33 @@ function ResultsView({
                   Key Improvements Made
                 </h3>
               </div>
-              <div className="p-6">
-                <ul className="space-y-3">
+              <div style={{ padding: "1.5rem" }}>
+                <ul
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.75rem",
+                    listStyle: "none",
+                    padding: "0",
+                    margin: "0",
+                  }}
+                >
                   {randomImprovements.map((item, index) => (
-                    <li key={index} className="flex items-start gap-3">
+                    <li
+                      key={index}
+                      style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: "0.75rem",
+                      }}
+                    >
                       <svg
-                        className="h-5 w-5 shrink-0 text-cyan-400"
+                        style={{
+                          height: "1.25rem",
+                          width: "1.25rem",
+                          flexShrink: 0,
+                          color: "#22d3ee",
+                        }}
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -1326,8 +2275,13 @@ function ResultsView({
                         />
                       </svg>
                       <div>
-                        <p className="text-foreground">{item.title}</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p style={{ color: "white" }}>{item.title}</p>
+                        <p
+                          style={{
+                            fontSize: "0.875rem",
+                            color: "rgba(255, 255, 255, 0.6)",
+                          }}
+                        >
                           {item.description}
                         </p>
                       </div>
@@ -1339,11 +2293,38 @@ function ResultsView({
 
             {/* CV vs Job Requirements */}
             {evidenceMap && Object.keys(evidenceMap).length > 0 && (
-              <div className="border border-white/5 bg-card/50 backdrop-blur-sm rounded-xl">
-                <div className="px-6 pt-6 pb-4 border-b border-white/5">
-                  <h3 className="flex items-center gap-2 font-semibold text-foreground">
+              <div
+                style={{
+                  border: "1px solid rgba(255, 255, 255, 0.05)",
+                  backgroundColor: "rgba(255, 255, 255, 0.05)",
+                  backdropFilter: "blur(12px)",
+                  borderRadius: "0.75rem",
+                }}
+              >
+                <div
+                  style={{
+                    paddingLeft: "1.5rem",
+                    paddingRight: "1.5rem",
+                    paddingTop: "1.5rem",
+                    paddingBottom: "1rem",
+                    borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
+                  }}
+                >
+                  <h3
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      fontWeight: "600",
+                      color: "white",
+                    }}
+                  >
                     <svg
-                      className="h-5 w-5 text-blue-400"
+                      style={{
+                        height: "1.25rem",
+                        width: "1.25rem",
+                        color: "#60a5fa",
+                      }}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -1358,35 +2339,100 @@ function ResultsView({
                     CV vs Job Requirements
                   </h3>
                 </div>
-                <div className="p-6 space-y-3">
+                <div
+                  style={{
+                    padding: "1.5rem",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0.75rem",
+                  }}
+                >
                   {Object.entries(evidenceMap)
-                    .filter(([, details]) => details?.status !== "absent") // ✅ ADD THIS FILTER
-
+                    .filter(([, details]) => details?.status !== "absent")
                     .map(([skill, details]) => (
                       <div
                         key={skill}
-                        className="border border-white/5 rounded-xl p-4 bg-white/5 hover:bg-white/10 transition-all"
+                        style={{
+                          border: "1px solid rgba(255, 255, 255, 0.05)",
+                          borderRadius: "0.75rem",
+                          padding: "1rem",
+                          backgroundColor: "rgba(255, 255, 255, 0.05)",
+                          transition: "all 0.2s",
+                        }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            "rgba(255, 255, 255, 0.1)")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor =
+                            "rgba(255, 255, 255, 0.05)")
+                        }
                       >
-                        <div className="flex items-start justify-between mb-2 flex-wrap gap-2">
-                          <h5 className="font-semibold text-foreground text-sm flex-1">
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "flex-start",
+                            justifyContent: "space-between",
+                            marginBottom: "0.5rem",
+                            flexWrap: "wrap",
+                            gap: "0.5rem",
+                          }}
+                        >
+                          <h5
+                            style={{
+                              fontWeight: "600",
+                              color: "white",
+                              fontSize: "0.875rem",
+                              flex: "1",
+                            }}
+                          >
                             {skill}
                           </h5>
                           <span
-                            className={`${getEvidenceBadgeColor(
-                              details.status
-                            )} px-3 py-1 rounded-full text-xs font-semibold text-white shadow-sm`}
+                            style={{
+                              backgroundImage: getEvidenceBadgeColor(
+                                details.status
+                              ),
+                              paddingLeft: "0.75rem",
+                              paddingRight: "0.75rem",
+                              paddingTop: "0.25rem",
+                              paddingBottom: "0.25rem",
+                              borderRadius: "9999px",
+                              fontSize: "0.75rem",
+                              fontWeight: "600",
+                              color: "white",
+                              boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+                            }}
                           >
                             {details.status.replace("_", " ").toUpperCase()}
                           </span>
                         </div>
                         {details.evidence && details.evidence.length > 0 ? (
-                          <div className="mt-2 space-y-2">
+                          <div
+                            style={{
+                              marginTop: "0.5rem",
+                              display: "flex",
+                              flexDirection: "column",
+                              gap: "0.5rem",
+                            }}
+                          >
                             {details.evidence.map((item, idx) => (
                               <div
                                 key={idx}
-                                className="text-xs text-muted-foreground pl-3 border-l-2 border-cyan-400/80"
+                                style={{
+                                  fontSize: "0.75rem",
+                                  color: "rgba(255, 255, 255, 0.6)",
+                                  paddingLeft: "0.75rem",
+                                  borderLeft:
+                                    "2px solid rgba(34, 211, 238, 0.8)",
+                                }}
                               >
-                                <span className="font-semibold text-cyan-300">
+                                <span
+                                  style={{
+                                    fontWeight: "600",
+                                    color: "#67e8f9",
+                                  }}
+                                >
                                   {item.section}:
                                 </span>{" "}
                                 {item.bullet}
@@ -1394,7 +2440,14 @@ function ResultsView({
                             ))}
                           </div>
                         ) : (
-                          <p className="text-xs text-muted-foreground italic mt-2">
+                          <p
+                            style={{
+                              fontSize: "0.75rem",
+                              color: "rgba(255, 255, 255, 0.6)",
+                              fontStyle: "italic",
+                              marginTop: "0.5rem",
+                            }}
+                          >
                             No direct evidence found
                           </p>
                         )}
@@ -1408,10 +2461,38 @@ function ResultsView({
       </div>
 
       {/* Action Buttons */}
-      <div className="mt-8 flex justify-center gap-4 pb-10 ">
+      <div
+        style={{
+          marginTop: "2rem",
+          display: "flex",
+          justifyContent: "center",
+          gap: "1rem",
+          paddingBottom: "2.5rem",
+        }}
+      >
         <button
           onClick={onReset}
-          className="px-6 py-3 text-base font-semibold rounded-lg border border-white/10 hover:bg-white/5 text-foreground transition-all"
+          style={{
+            paddingLeft: "1.5rem",
+            paddingRight: "1.5rem",
+            paddingTop: "0.75rem",
+            paddingBottom: "0.75rem",
+            fontSize: "1rem",
+            fontWeight: "600",
+            borderRadius: "0.5rem",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            color: "white",
+            transition: "all 0.2s",
+            backgroundColor: "transparent",
+            cursor: "pointer",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor =
+              "rgba(255, 255, 255, 0.05)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "transparent")
+          }
         >
           Optimize Another CV
         </button>
@@ -1420,12 +2501,34 @@ function ResultsView({
             downloadCVPDF();
             handleDownloadCoverLetter();
           }}
-          className="gap-2 inline-flex items-center px-6 py-3 text-base
-          font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700
-          hover:from-cyan-700 hover:to-cyan-800 text-white transition-all"
+          style={{
+            gap: "0.5rem",
+            display: "inline-flex",
+            alignItems: "center",
+            paddingLeft: "1.5rem",
+            paddingRight: "1.5rem",
+            paddingTop: "0.75rem",
+            paddingBottom: "0.75rem",
+            fontSize: "1rem",
+            fontWeight: "600",
+            borderRadius: "0.5rem",
+            backgroundImage: "linear-gradient(to right, #0891b2, #0e7490)",
+            color: "white",
+            transition: "all 0.2s",
+            border: "none",
+            cursor: "pointer",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundImage =
+              "linear-gradient(to right, #0e7490, #155e75)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundImage =
+              "linear-gradient(to right, #0891b2, #0e7490)")
+          }
         >
           <svg
-            className="h-4 w-4"
+            style={{ height: "1rem", width: "1rem" }}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
