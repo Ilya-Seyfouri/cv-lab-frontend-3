@@ -4,6 +4,8 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function FAQ() {
+  const w = typeof window === "undefined" ? 0 : window.innerWidth;
+
   const faqs = [
     {
       question: "How does it work?",
@@ -56,20 +58,20 @@ export default function FAQ() {
         >
           <div
             style={{
-              paddingTop: window.innerWidth >= 1024 ? "3.75rem" : "7.5rem",
-              paddingBottom: window.innerWidth >= 1024 ? "7.5rem" : "7.5rem",
+              paddingTop: w >= 1024 ? "3.75rem" : "7.5rem",
+              paddingBottom: w >= 1024 ? "7.5rem" : "7.5rem",
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
               alignItems: "center",
-              paddingLeft: window.innerWidth >= 1024 ? "0" : "1rem",
-              paddingRight: window.innerWidth >= 1024 ? "0" : "1rem",
+              paddingLeft: w >= 1024 ? "0" : "1rem",
+              paddingRight: w >= 1024 ? "0" : "1rem",
             }}
           >
             <div style={{ textAlign: "center" }}>
               <h2
                 style={{
-                  fontSize: window.innerWidth >= 1024 ? "3.75rem" : "2.25rem",
+                  fontSize: w >= 1024 ? "3.75rem" : "2.25rem",
                 }}
               >
                 We've got the answers
@@ -77,17 +79,17 @@ export default function FAQ() {
             </div>
             <div
               style={{
-                paddingTop: window.innerWidth >= 1024 ? "2rem" : "1rem",
+                paddingTop: w >= 1024 ? "2rem" : "1rem",
                 textAlign: "center",
               }}
             >
               <p
                 style={{
-                  fontSize: window.innerWidth >= 1024 ? "1.5rem" : "1.125rem",
+                  fontSize: w >= 1024 ? "1.5rem" : "1.125rem",
                   color: "rgba(255, 255, 255, 0.5)",
                   paddingLeft: "1rem",
                   paddingRight: "1rem",
-                  paddingBottom: window.innerWidth >= 1024 ? "1.25rem" : "0",
+                  paddingBottom: w >= 1024 ? "1.25rem" : "0",
                 }}
               >
                 Discover everything you need to know about CV Lab.
@@ -95,14 +97,14 @@ export default function FAQ() {
             </div>
             <div
               style={{
-                marginTop: window.innerWidth >= 1024 ? "3rem" : "2rem",
+                marginTop: w >= 1024 ? "3rem" : "2rem",
                 display: "flex",
                 flexDirection: "column",
-                gap: window.innerWidth >= 1024 ? "1.5rem" : "1rem",
+                gap: w >= 1024 ? "1.5rem" : "1rem",
                 width: "100%",
                 maxWidth: "56rem",
-                paddingLeft: window.innerWidth >= 1024 ? "0" : "1rem",
-                paddingRight: window.innerWidth >= 1024 ? "0" : "1rem",
+                paddingLeft: w >= 1024 ? "0" : "1rem",
+                paddingRight: w >= 1024 ? "0" : "1rem",
               }}
             >
               {faqs.map((faq, index) => (
@@ -110,22 +112,17 @@ export default function FAQ() {
                   key={faq.question}
                   style={{
                     borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-                    paddingBottom:
-                      window.innerWidth >= 1024 ? "1.5rem" : "1rem",
-                    paddingTop:
-                      window.innerWidth >= 1024 ? "1.25rem" : "0.75rem",
-                    paddingLeft:
-                      window.innerWidth >= 1024 ? "1.25rem" : "0.75rem",
-                    paddingRight:
-                      window.innerWidth >= 1024 ? "1.25rem" : "0.75rem",
+                    paddingBottom: w >= 1024 ? "1.5rem" : "1rem",
+                    paddingTop: w >= 1024 ? "1.25rem" : "0.75rem",
+                    paddingLeft: w >= 1024 ? "1.25rem" : "0.75rem",
+                    paddingRight: w >= 1024 ? "1.25rem" : "0.75rem",
                   }}
                 >
                   <div
                     style={{
                       display: "flex",
                       justifyContent: "space-between",
-                      alignItems:
-                        window.innerWidth >= 1024 ? "center" : "flex-start",
+                      alignItems: w >= 1024 ? "center" : "flex-start",
                       gap: "1rem",
                       cursor: "pointer",
                     }}
@@ -136,8 +133,7 @@ export default function FAQ() {
                     <h3
                       style={{
                         fontWeight: "600",
-                        fontSize:
-                          window.innerWidth >= 1024 ? "1.125rem" : "1rem",
+                        fontSize: w >= 1024 ? "1.125rem" : "1rem",
                         textAlign: "left",
                         paddingRight: "0.5rem",
                         color: "white",
@@ -147,8 +143,8 @@ export default function FAQ() {
                     </h3>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width={window.innerWidth >= 1024 ? "24" : "20"}
-                      height={window.innerWidth >= 1024 ? "24" : "20"}
+                      width={w >= 1024 ? "24" : "20"}
+                      height={w >= 1024 ? "24" : "20"}
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
@@ -186,8 +182,7 @@ export default function FAQ() {
                         <p
                           style={{
                             color: "rgba(255, 255, 255, 0.5)",
-                            fontSize:
-                              window.innerWidth >= 1024 ? "1rem" : "0.875rem",
+                            fontSize: w >= 1024 ? "1rem" : "0.875rem",
                             lineHeight: "1.625",
                           }}
                         >

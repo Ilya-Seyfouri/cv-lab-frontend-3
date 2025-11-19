@@ -13,6 +13,7 @@ export default function Account({ onNavigateToOptimizer }) {
 
   const premium_priceID = "price_1SUSl4GTsfq9NWHAdMHCbsz5";
   const career_max = "price_1SUSqmGTsfq9NWHAs88j0NDn";
+  const w = typeof window === "undefined" ? 0 : window.innerWidth;
 
   const checkoutbruh_premium = async () => {
     if (!user1) {
@@ -730,8 +731,7 @@ export default function Account({ onNavigateToOptimizer }) {
                     backgroundColor: "rgba(255, 255, 255, 0.05)",
                     backdropFilter: "blur(12px)",
                     borderRadius: "0.5rem",
-                    gridColumn:
-                      window.innerWidth >= 1024 ? "span 2 / span 2" : "auto",
+                    gridColumn: w >= 1024 ? "span 2 / span 2" : "auto",
                   }}
                 >
                   <div style={{ padding: "1.5rem" }}>

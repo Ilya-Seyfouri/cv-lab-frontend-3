@@ -51,13 +51,14 @@ const plans = [
 
 export default function Pricing2() {
   const router = useRouter();
+  const w = typeof window === "undefined" ? 0 : window.innerWidth;
 
   return (
     <section
       style={{
         position: "relative",
-        paddingTop: window.innerWidth >= 768 ? "2.5rem" : "0",
-        paddingBottom: window.innerWidth >= 768 ? "2.5rem" : "0",
+        paddingTop: w >= 768 ? "2.5rem" : "0",
+        paddingBottom: w >= 768 ? "2.5rem" : "0",
         scrollMarginTop: "7rem",
       }}
       id="pricing"
@@ -89,9 +90,9 @@ export default function Pricing2() {
               WebkitBackgroundClip: "text",
               color: "transparent",
               fontSize:
-                window.innerWidth >= 1024
+                w >= 1024
                   ? "3rem"
-                  : window.innerWidth >= 768
+                  : w >= 768
                   ? "2.25rem"
                   : "1.875rem",
               fontWeight: "600",
@@ -102,7 +103,7 @@ export default function Pricing2() {
           </h2>
           <p
             style={{
-              fontSize: window.innerWidth >= 768 ? "1.125rem" : "1rem",
+              fontSize: w >= 768 ? "1.125rem" : "1rem",
               color: "rgba(255, 255, 255, 0.6)",
             }}
           >
@@ -115,9 +116,9 @@ export default function Pricing2() {
           style={{
             display: "grid",
             gap: "2rem",
-            paddingTop: window.innerWidth >= 1024 ? "2.5rem" : "0",
+            paddingTop: w >= 1024 ? "2.5rem" : "0",
             gridTemplateColumns:
-              window.innerWidth >= 1024 ? "repeat(3, 1fr)" : "1fr",
+              w >= 1024 ? "repeat(3, 1fr)" : "1fr",
           }}
         >
           {plans.map((plan, index) => (
@@ -195,7 +196,7 @@ export default function Pricing2() {
                 <div style={{ marginBottom: "1.5rem" }}>
                   <h3
                     style={{
-                      fontSize: window.innerWidth >= 768 ? "1.5rem" : "1.25rem",
+                      fontSize: w >= 768 ? "1.5rem" : "1.25rem",
                       fontWeight: "600",
                       color: "white",
                     }}
@@ -205,7 +206,7 @@ export default function Pricing2() {
                   <p
                     style={{
                       marginTop: "0.5rem",
-                      fontSize: window.innerWidth >= 768 ? "1rem" : "0.875rem",
+                      fontSize: w >= 768 ? "1rem" : "0.875rem",
                       color: "rgba(255, 255, 255, 0.6)",
                     }}
                   >

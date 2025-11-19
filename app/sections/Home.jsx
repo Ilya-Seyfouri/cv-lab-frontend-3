@@ -1,5 +1,7 @@
 "use client";
 
+
+
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "../lib/supabase/client";
 import { useGeneration } from "../contexts/GenerationContext";
@@ -61,6 +63,8 @@ export default function Home() {
   const [userCredits, setUserCredits] = useState(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loadingCredits, setLoadingCredits] = useState(true);
+  const w = typeof window === "undefined" ? 0 : window.innerWidth;
+
 
   const supabase = createClient();
 
@@ -574,7 +578,7 @@ export default function Home() {
                     "linear-gradient(to right, #67e8f9, #22d3ee, #06b6d4)",
                   backgroundClip: "text",
                   WebkitBackgroundClip: "text",
-                  fontSize: window.innerWidth >= 768 ? "3rem" : "2.25rem",
+                  fontSize: w >= 768 ? "3rem" : "2.25rem",
                   color: "transparent",
                 }}
               >
@@ -597,7 +601,7 @@ export default function Home() {
                 display: "grid",
                 gap: "2rem",
                 gridTemplateColumns:
-                  window.innerWidth >= 1024 ? "repeat(2, 1fr)" : "1fr",
+                  w >= 1024 ? "repeat(2, 1fr)" : "1fr",
               }}
             >
               {/* CV Upload */}
@@ -1273,7 +1277,7 @@ function ResultsView({
           display: "grid",
           gap: "1rem",
           gridTemplateColumns:
-            window.innerWidth >= 768 ? "repeat(3, 1fr)" : "1fr",
+            w >= 1024 ? "repeat(3, 1fr)" : "1fr",
         }}
       >
         <div

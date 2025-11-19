@@ -59,13 +59,15 @@ const testimonials = [
 const repeatedTestimonials = [...testimonials, ...testimonials];
 
 export default function Testimonials() {
+  const w = typeof window === "undefined" ? 0 : window.innerWidth;
+
   return (
     <section
       id="testimonials"
       style={{
         position: "relative",
-        paddingTop: window.innerWidth >= 768 ? "8rem" : "5rem",
-        paddingBottom: window.innerWidth >= 768 ? "8rem" : "5rem",
+        paddingTop: w >= 768 ? "8rem" : "5rem",
+        paddingBottom: w >= 768 ? "8rem" : "5rem",
         scrollMarginTop: "7rem",
       }}
     >
@@ -97,9 +99,9 @@ export default function Testimonials() {
               WebkitBackgroundClip: "text",
               color: "transparent",
               fontSize:
-                window.innerWidth >= 1024
+                w >= 1024
                   ? "3rem"
-                  : window.innerWidth >= 768
+                  : w >= 768
                   ? "2.25rem"
                   : "1.875rem",
               fontWeight: "600",
@@ -109,7 +111,7 @@ export default function Testimonials() {
           </h2>
           <p
             style={{
-              fontSize: window.innerWidth >= 768 ? "1.125rem" : "1rem",
+              fontSize: w >= 768 ? "1.125rem" : "1rem",
               color: "rgba(255, 255, 255, 0.6)",
             }}
           >
@@ -134,8 +136,8 @@ export default function Testimonials() {
               <div
                 key={index}
                 style={{
-                  width: window.innerWidth >= 768 ? "600px" : "350px",
-                  height: window.innerWidth >= 768 ? "280px" : "260px",
+                  width: w >= 768 ? "600px" : "350px",
+                  height: w >= 768 ? "280px" : "260px",
                   flexShrink: 0,
                   borderRadius: "1.5rem",
                   border: "1px solid rgba(255, 255, 255, 0.05)",
@@ -202,7 +204,7 @@ export default function Testimonials() {
                     <p
                       style={{
                         fontSize:
-                          window.innerWidth >= 768 ? "1rem" : "0.875rem",
+                          w >= 768 ? "1rem" : "0.875rem",
                         color: "rgba(255, 255, 255, 0.7)",
                       }}
                     >
