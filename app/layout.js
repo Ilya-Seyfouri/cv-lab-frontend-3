@@ -10,7 +10,8 @@ const inter = Inter({
 
 export const metadata = {
   title: "CV Lab",
-  description: "Your description",
+  description:
+    "Create ATS-friendly CVs and professional cover letters tailored to any job description in seconds.",
 };
 
 export default function RootLayout({ children }) {

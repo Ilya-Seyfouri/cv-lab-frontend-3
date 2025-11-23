@@ -7,10 +7,10 @@ const plans = [
   {
     name: "Free Trial",
     price: "£0",
-    description: "Perfect for testing our service.",
+    description: "Test the core tools with no commitment.",
     features: [
       "5 free tokens",
-      "Access to CV tailor",
+      "Access to CV tailoring",
       "Access to cover letter generator",
       "Keyword Intergration",
       "ATS optimization",
@@ -23,7 +23,7 @@ const plans = [
     description: "For active job hunters.",
     features: [
       "100 tokens / month",
-      "Access to CV tailor",
+      "Access to CV tailoring",
       "Access to cover letter generator",
       "Keyword Intergration",
       "ATS optimization",
@@ -31,14 +31,14 @@ const plans = [
     popular: true,
   },
   {
-    name: "Career Max",
+    name: "Professional",
     price: "£18.99",
-    description: "For serious professionals.",
+    description: "For professionals who want every advantage.",
     features: [
       "Unlimited tokens",
       "Access to CV tailor",
       "Access to cover letter generator",
-      "Access to Interview Simulation",
+      "Interview simulation to practise and prepare.",
       "Keyword Intergration",
       "ATS optimization",
     ],
@@ -58,8 +58,8 @@ export default function Pricing2() {
             Choose Your Plan
           </h2>
           <p className="text-base md:text-lg text-white/60">
-            Choose the perfect plan for your job search. Start free and upgrade
-            whenever you're ready.
+            Choose the perfect plan for your job search.
+            Upgrade anytime for more optimisations and cover letters.
           </p>
         </div>
         <div className="grid gap-8 lg:pt-10 lg:grid-cols-3">
@@ -99,7 +99,7 @@ export default function Pricing2() {
                     {plan.features.map((feature, i) => {
                       const isRed =
                         feature.includes("100 tokens") ||
-                        feature.includes("Interview Simulation") ||
+                        feature.includes("Interview simulation to practise and prepare.") ||
                         feature.includes("Unlimited tokens");
                       return (
                         <li key={i} className="flex items-start gap-3">

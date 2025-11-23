@@ -6,21 +6,21 @@ const steps = [
     step: "#1",
     title: "Upload Your CV & Job Description",
     description:
-      "Drag and drop your existing CV and paste the job description you're applying for. We support PDF, DOCX, and TXT formats.",
+      "Upload your CV and paste the job description you’re applying for. We support PDF, DOCX, and TXT.",
   },
   {
     icon: Sparkles,
     step: "#2",
     title: "AI Analyzes & Optimizes",
     description:
-      "Our AI matches your experience to the role, surfaces the right achievements, and injects the keywords that matter for ATS.",
+      "Our AI compares your CV to the job description, highlights your most relevant experience, and restructures everything so it’s optimised for ATS screening.",
   },
   {
     icon: Download,
     step: "#3",
     title: "Download & Apply",
     description:
-      "Get your optimized CV and tailored cover letter in seconds. Download and apply with confidence.",
+      "Get your optimised CV and tailored cover letter in seconds. Download them and apply knowing you’re ready for ATS and hiring managers.",
   },
 ];
 export default function HowItWorks() {

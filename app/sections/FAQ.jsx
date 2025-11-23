@@ -7,7 +7,7 @@ export default function FAQ() {
     {
       question: "How does it work?",
       answer:
-        "Our AI analyzes your CV and the target job description using natural language processing. It identifies key skills, experience, and phrasing that match the employer's expectations, then rewrites and optimizes your CV and cover letter for maximum alignment.",
+        "Our AI reads your CV and the job description side by side. Unlike general AI tools, it’s purpose-built for CVs and ATS. It understands what the employer is looking for, reshapes your experience to match, and rewrites your CV and cover letter so they’re fully aligned and ready for ATS screening.",
     },
     {
       question: "How is it different from ChatGPT?",
@@ -17,27 +17,27 @@ export default function FAQ() {
     {
       question: "How does the CV tailoring process work?",
       answer:
-        "You upload your existing CV and paste the job description. The AI compares both, highlights gaps, and automatically rewrites your CV to emphasize relevant skills, experience, and keywords while keeping it professional and ATS-friendly.",
+        "You upload your CV and paste the job description. Our AI compares them side by side, spots what matters most for that role, and rewrites your CV to highlight your most relevant skills and experience while keeping it professional and ATS-friendly.",
     },
     {
       question: "How does the Cover Letter feature work?",
       answer:
-        "The AI drafts a personalized cover letter based on your CV and the job description. It ensures your tone, achievements, and motivation match the company's culture and role requirements. You can fine-tune the letter manually afterward.",
+        "Our AI uses your CV and the job description to draft a tailored cover letter for that specific role. It highlights your most relevant experience, explains why you’re a strong fit, and keeps the tone professional. You can review and edit the letter before sending.",
     },
     {
       question: "How does the mock interview feature work?",
       answer:
-        "The mock interview tool simulates real interview scenarios using AI-generated questions based on the role and industry. You can answer verbally or in writing, and the AI provides instant feedback on your responses, confidence, and structure.",
+        "We simulate a real interview with AI-generated questions tailored to the role. You answer, then get instant feedback on what you said and how you said it, so you can refine your answers before speaking to a real recruiter.",
     },
     {
       question: "What industries or job markets does it support?",
       answer:
-        "Our AI supports a wide range of industries — from tech, finance, and healthcare to creative roles and academia. It's trained on thousands of job postings and adapts automatically to different sectors and seniority levels.",
+        "Our AI works across a wide range of industries – from tech, finance and healthcare to creative roles and academia. It’s trained on real job postings and adapts to different sectors and seniority levels, so whether you’re applying for an internship or a senior role, it can tailor your CV accordingly.",
     },
     {
       question: "Is there a free version?",
       answer:
-        "Yes. You can try the platform for free with limited features such as one CV and cover letter optimization. Premium plans unlock unlimited tailoring, advanced analytics, and full mock interview simulations.",
+        "Yes. You can start with a free plan that lets you try CV and cover letter optimisation on a limited number of applications. When you’re ready, paid plans unlock more tokens, full access to mock interviews, and ongoing ATS-focused optimisation for every role you apply for.",
     },
   ];
   const [selectedIndex, setSelectedIndex] = useState(null);

@@ -36,9 +36,9 @@ export default function Hero2() {
           </div>
           {/* Subheading */}
           <p className="mx-auto pt-10 mb-8 max-w-5xl text-md md:text-2xl text-white/60">
-            Drop your CV and enter a Job Description to get a perfectly tailored
-            Resume and Cover Letter in seconds. Beat ATS filters and stand out
-            from the crowd.
+            Upload your CV and the job description. In seconds, our AI reshapes
+            your resume and cover letter so they pass ATS checks and land in
+            front of real hiring managers.
           </p>
           {/* CTA buttons – your original buttons, unchanged */}
           <div className="flex flex-row items-center justify-center gap-4 sm:flex-row sm:gap-6 py-2">

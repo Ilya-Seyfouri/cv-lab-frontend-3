@@ -59,13 +59,13 @@ export default function Testimonials() {
     <section id="testimonials" className="relative py-20 md:py-32 scroll-mt-28">
       <div className="container mx-auto max-w-6xl px-4">
         {/* Header */}
-        <div className="mx-auto mb-16 max-w-3xl text-center">
+        <div className="mx-auto mb-16 max-w-2xl text-center">
           <h2 className="mb-4 bg-gradient-to-b from-white to-white/60 bg-clip-text text-transparent text-3xl md:text-4xl lg:text-5xl font-semibold">
             Success Stories
           </h2>
           <p className="text-base md:text-lg text-white/60">
-            Join thousands of job seekers who landed their dream roles with our
-            AI-powered applications.
+            From first applications to final offers – see how our optimised
+            resumes helped candidates stand out.
           </p>
         </div>
         {/* Conveyor belt */}
