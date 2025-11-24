@@ -5,12 +5,15 @@ import photo from "../../public/avatar-lula-meyers.jpg";
 import button from "../../public/BUTTON_1.png";
 import xxx from "../../public/x1.png";
 import { Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+
+
 export default function Hero2() {
   const router = useRouter();
   return (
     <section className="relative overflow-hidden py-10 scroll-mt-15 " id="home">
       <div className="container mx-auto max-w-5xl px-4">
-        <div className="mx-auto max-w-6xl text-center">
+        <div className="mx-auto max-w-4xl text-center">
           {/* Top pill */}
           {/* Heading */}
           <h1
@@ -19,7 +22,7 @@ export default function Hero2() {
              text-4xl md:text-6xl font-semibold 
              leading-tight"
           >
-            Your Resume, Perfectly Matched to Every{" "}
+            Your Resume, Perfectly Matched to Any{" "}
             <span className="whitespace-nowrap">Job.</span>
           </h1>
           <div className="pt-2 justify-center flex">
@@ -36,10 +39,11 @@ export default function Hero2() {
           </div>
           {/* Subheading */}
           <p className="mx-auto pt-10 mb-8 max-w-5xl text-md md:text-2xl text-white/60">
-            Upload your CV and the job description. In seconds, our AI reshapes
-            your resume and cover letter so they pass ATS checks and land in
-            front of real hiring managers.
+            Instantly turn your CV into a ATS-optimized, role-specific resume,
+            tailored to each job description and aligned with each employer’s
+            desired candidate profile.
           </p>
+
           {/* CTA buttons – your original buttons, unchanged */}
           <div className="flex flex-row items-center justify-center gap-4 sm:flex-row sm:gap-6 py-2">
             <div className="flex items-center gap-3">

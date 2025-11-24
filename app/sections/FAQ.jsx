@@ -25,10 +25,9 @@ export default function FAQ() {
         "Our AI uses your CV and the job description to draft a tailored cover letter for that specific role. It highlights your most relevant experience, explains why you’re a strong fit, and keeps the tone professional. You can review and edit the letter before sending.",
     },
     {
-      question: "How does the mock interview feature work?",
+      question: "How does the skills analysis feature work?",
       answer:
-        "We simulate a real interview with AI-generated questions tailored to the role. You answer, then get instant feedback on what you said and how you said it, so you can refine your answers before speaking to a real recruiter.",
-    },
+      "Our AI reviews your CV against the job description and generates a detailed skills-match assessment. You’ll receive metrics such as ATS Compatibility, Keyword Match, and Role Match, along with a breakdown of missing or under-represented skills. For each gap, we provide clear, role-specific guidance on how to strengthen your CV, highlight transferable experience, and improve keyword alignment. You’ll also receive a structured summary, key improvements made, and a side-by-side comparison of your CV against the job’s core requirements."    },
     {
       question: "What industries or job markets does it support?",
       answer:
@@ -37,7 +36,7 @@ export default function FAQ() {
     {
       question: "Is there a free version?",
       answer:
-        "Yes. You can start with a free plan that lets you try CV and cover letter optimisation on a limited number of applications. When you’re ready, paid plans unlock more tokens, full access to mock interviews, and ongoing ATS-focused optimisation for every role you apply for.",
+        "Yes. You can start with a free plan that lets you try CV and cover letter optimisation on a limited number of applications. When you’re ready, paid plans unlock more tokens, and ongoing ATS-focused optimisation for every role you apply for.",
     },
   ];
   const [selectedIndex, setSelectedIndex] = useState(null);

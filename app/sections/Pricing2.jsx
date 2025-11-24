@@ -11,7 +11,7 @@ const plans = [
     features: [
       "5 free tokens",
       "Access to CV tailoring",
-      "Access to cover letter generator",
+      "Access to Cover Letter Generator",
       "Keyword Intergration",
       "ATS optimization",
     ],
@@ -24,7 +24,7 @@ const plans = [
     features: [
       "100 tokens / month",
       "Access to CV tailoring",
-      "Access to cover letter generator",
+      "Access to Cover Letter Generator",
       "Keyword Intergration",
       "ATS optimization",
     ],
@@ -37,8 +37,7 @@ const plans = [
     features: [
       "Unlimited tokens",
       "Access to CV tailor",
-      "Access to cover letter generator",
-      "Interview simulation to practise and prepare.",
+      "Access to Cover Letter Generator",
       "Keyword Intergration",
       "ATS optimization",
     ],
@@ -99,7 +98,6 @@ export default function Pricing2() {
                     {plan.features.map((feature, i) => {
                       const isRed =
                         feature.includes("100 tokens") ||
-                        feature.includes("Interview simulation to practise and prepare.") ||
                         feature.includes("Unlimited tokens");
                       return (
                         <li key={i} className="flex items-start gap-3">

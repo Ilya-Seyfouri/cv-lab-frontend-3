@@ -1013,7 +1013,7 @@ export default function Account({ onNavigateToOptimizer }) {
                             d="M5 13l4 4L19 7"
                           />
                         </svg>
-                        <span>Access to Interview Simulator</span>
+                        <span>AI Undetectable</span>
                       </li>
                       <li className="flex items-start gap-2 text-muted-foreground">
                         <svg

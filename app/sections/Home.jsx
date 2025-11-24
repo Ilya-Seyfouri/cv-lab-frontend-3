@@ -251,60 +251,40 @@ export default function Home() {
       });
       return;
     }
+
     updateGenerationState({
       isCompilingAll: true,
       processingStep: "uploading",
       cvProgress: 0,
       coverLetterProgress: 0,
-      error1: "", // ✅ Reset cover letter progress
+      error1: "",
     });
+
     const progressTimer = startOptimizeProgress(updateGenerationState);
+
     try {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      // ✅ STEP 1: Generate CV (no longer returns skills_report)
-      const cvResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_KEY}/generate-cv`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify({
-            job_description: jobDescription,
-            user_cv: userCV,
-          }),
-        }
-      );
-      const cvData = await cvResponse.json();
-      if (cvResponse.status === 403) {
-        clearInterval(progressTimer);
-        updateGenerationState({
-          error1:
-            cvData.detail?.message ||
-            "You're out of credits! Upgrade to Premium to continue.",
-          processingStep: "idle",
-          isCompilingAll: false,
-          cvProgress: 0,
-        });
-        return;
-      }
-      // ✅ CV data only contains the CV itself now
-      if (cvData && cvData.cv) {
-        updateGenerationState({
-          generatedCV: cvData.cv,
-          cvProgress: 100,
-          // ❌ DON'T set processingStep to "complete" yet
-        });
-        await compileCVToPDF(cvData.cv);
-      }
+
+      // ✅ DEMO MODE: Just use the uploaded PDF directly (no API call, no compilation)
+      const base64 = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(",")[1]);
+        reader.readAsDataURL(cvFile);
+      });
+
+      updateGenerationState({
+        cvPdfData: base64,
+        cvProgress: 100,
+      });
+
       // ✅ Update progress for cover letter generation
       updateGenerationState({
         coverLetterProgress: 25,
         processingStep: "generating_cover_letter",
       });
+
       // ✅ STEP 2: Generate Cover Letter (NOW returns skills_report)
       const coverLetterResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter`,
@@ -320,9 +300,12 @@ export default function Home() {
           }),
         }
       );
+
       const coverLetterData = await coverLetterResponse.json();
+
       // ✅ Update progress
       updateGenerationState({ coverLetterProgress: 75 });
+
       // ✅ Extract BOTH cover letter AND skills_report from this response
       if (coverLetterData) {
         // Set the cover letter
@@ -333,9 +316,11 @@ export default function Home() {
           });
           await compileCoverLetterToPDF(coverLetterData.cover_letter);
         }
+
         // ✅ IMPORTANT: Extract skills_report from cover letter response
         if (coverLetterData.skills_report) {
           const report = JSON.parse(coverLetterData.skills_report);
+
           // Calculate keyword match percentage
           let keywordMatchScore = 0;
           if (
@@ -352,6 +337,7 @@ export default function Home() {
               (matchedKeywords / totalKeywords) * 100
             );
           }
+
           // Update state with analysis data
           updateGenerationState({
             missingSkills: report.missing_skills,
@@ -365,10 +351,11 @@ export default function Home() {
           });
         }
       }
+
       await fetchUserCredits();
       clearInterval(progressTimer);
       updateGenerationState({
-        cvProgress: 100, // progress bar hits 100%
+        cvProgress: 100,
         processingStep: "complete",
         isCompilingAll: false,
       });
@@ -381,6 +368,7 @@ export default function Home() {
       });
     }
   };
+  
   const compileCVToPDF = async (latexCode) => {
     if (!latexCode) return;
     updateGenerationState({ isCompilingCV: true });

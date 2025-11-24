@@ -12,7 +12,7 @@ const navLinks = [
   { label: "Features", href: "#features" },
   { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
-  { label: "Contact", href: "#contact" },
+  { label: "Blog", href: "/blog" },
 ];
 export default function Navbar2() {
   const router = useRouter();
