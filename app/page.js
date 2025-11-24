@@ -1,11 +1,7 @@
-import Image from "next/image";
-import Navbar from "./sections/Navbar";
 import Hero2 from "./sections/Hero2";
-import Hero from "./sections/Hero";
 import Testimonials from "./sections/Test";
 
 import Pricing2 from "./sections/Pricing2";
-import Features from "./sections/Features";
 import FAQ from "./sections/FAQ";
 import HowItWorks from "./sections/HowItWorks";
 import Footer2 from "./sections/Footer2";

@@ -83,7 +83,7 @@ export default function Sidebar({ selectedTab, onSelect }) {
                     type="button"
                     onClick={() => handleClick(link.value)}
                     className={twMerge(
-                      "text-md transition-colors",
+                      "text-md transition-colors cursor-pointer",
                       selectedTab === link.value
                         ? "text-cyan-500 font-semibold"
                         : "text-white/50 hover:text-white"

@@ -678,7 +678,7 @@ export default function Home() {
                 }
                 onClick={handleOptimize}
                 type="button"
-                className="text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 
+                className="text-white cursor-pointer bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 
              hover:bg-gradient-to-br focus:ring-4 focus:outline-none 
              focus:ring-cyan-300 dark:focus:ring-cyan-800 
              shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 
@@ -887,7 +887,7 @@ function ResultsView({
               </h3>
               <button
                 onClick={downloadCVPDF}
-                className="gap-2 inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white"
+                className="gap-2 cursor-pointer inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white"
               >
                 <svg
                   className="h-4 w-4"
@@ -935,7 +935,7 @@ function ResultsView({
               <button
                 onClick={handleDownloadCoverLetter}
                 disabled={!editableCoverLetter || isDownloadingCoverLetter}
-                className="gap-2 inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg 
+                className="gap-2 cursor-pointer inline-flex items-center px-4 py-2 text-sm font-semibold rounded-lg 
                   text-gray-900 bg-gradient-to-r from-lime-200 via-lime-400 to-lime-500 
                   hover:bg-gradient-to-br focus:outline-none shadow-lg shadow-lime-500/50 
                   dark:shadow-lg dark:shadow-lime-800/80 disabled:opacity-50 
@@ -1301,7 +1301,7 @@ function ResultsView({
       <div className="mt-8 flex justify-center gap-4 pb-10 ">
         <button
           onClick={onReset}
-          className="px-6 py-3 text-base font-semibold rounded-lg border border-white/10 hover:bg-white/5 text-foreground transition-all"
+          className="px-6 cursor-pointer py-3 text-base font-semibold rounded-lg border border-white/10 hover:bg-white/5 text-foreground transition-all"
         >
           Optimize Another CV
         </button>
@@ -1310,7 +1310,7 @@ function ResultsView({
             downloadCVPDF();
             handleDownloadCoverLetter();
           }}
-          className="gap-2 inline-flex items-center px-6 py-3 text-base
+          className="gap-2 cursor-pointer inline-flex items-center px-6 py-3 text-base
           font-semibold rounded-lg bg-gradient-to-r from-cyan-600 to-cyan-700
           hover:from-cyan-700 hover:to-cyan-800 text-white transition-all"
         >

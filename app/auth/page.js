@@ -91,7 +91,7 @@ export default function Auth() {
           {/* Google sign in */}
           <button
             onClick={signInWithGoogle}
-            className="w-full mb-6 h-12 inline-flex items-center justify-center gap-3 rounded-lg border border-white/20 bg-transparent hover:border-cyan-400/60 hover:bg-white/5 transition-all duration-200 text-sm font-medium text-white"
+            className=" cursor-pointer w-full mb-6 h-12 inline-flex items-center justify-center gap-3 rounded-lg border border-white/20 bg-transparent hover:border-cyan-400/60 hover:bg-white/5 transition-all duration-200 text-sm font-medium text-white"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -158,7 +158,7 @@ export default function Auth() {
                   <Image
                     src={showPassword ? EyeClosed : EyeOpen}
                     alt="toggle password visibility"
-                    className="w-auto h-4"
+                    className="w-auto h-4 cursor-pointer"
                   />
                 </button>
               </div>
@@ -176,14 +176,14 @@ export default function Auth() {
             {/* Buttons row */}
             <div className="pt-2 flex flex-col sm:flex-row gap-3">
               <button
-                className="flex-1 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br active:scale-95 transition-transform shadow-lg shadow-cyan-500/40 py-2.5"
+                className="flex-1 cursor-pointer rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br active:scale-95 transition-transform shadow-lg shadow-cyan-500/40 py-2.5"
                 onClick={signupFunc}
                 type="button"
               >
                 Sign Up
               </button>
               <button
-                className="flex-1 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br active:scale-95 transition-transform shadow-lg shadow-green-500/40 py-2.5"
+                className="flex-1 cursor-pointer rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br active:scale-95 transition-transform shadow-lg shadow-green-500/40 py-2.5"
                 onClick={loginFunc}
                 type="button"
               >

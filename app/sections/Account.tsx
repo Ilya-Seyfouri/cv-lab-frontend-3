@@ -371,7 +371,7 @@ export default function Account({ onNavigateToOptimizer }) {
               <div className="inline-flex h-10 items-center justify-center   rounded-md bg-muted p-1 text-muted-foreground">
                 <button
                   onClick={() => setActiveTab("profile")}
-                  className={`inline-flex items-center justify-center border px-5 hover:bg-white/30 active:scale-95 transition whitespace-nowrap rounded-sm  py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                  className={`inline-flex cursor-pointer items-center justify-center border px-5 hover:bg-white/30 active:scale-95 transition whitespace-nowrap rounded-sm  py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
                     activeTab === "profile"
                       ? "bg-background text-foreground shadow-sm"
                       : ""
@@ -382,7 +382,7 @@ export default function Account({ onNavigateToOptimizer }) {
                 <div className="px-1.5"></div>
                 <button
                   onClick={() => setActiveTab("history")}
-                  className={`inline-flex items-center justify-center whitespace-nowrap border hover:bg-white/30 active:scale-95 transition  rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                  className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap border hover:bg-white/30 active:scale-95 transition  rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
                     activeTab === "history"
                       ? "bg-background text-foreground shadow-sm"
                       : ""
@@ -455,7 +455,7 @@ export default function Account({ onNavigateToOptimizer }) {
                       {(currentPlan === "Premium" ||
                         currentPlan === "Career Max") && (
                         <button
-                          className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800  active:scale-95 transition px-4 py-2 rounded-lg text-white inline-flex items-center gap-2"
+                          className="bg-gradient-to-r  from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 cursor-pointer active:scale-95 transition px-4 py-2 rounded-lg text-white inline-flex items-center gap-2"
                           onClick={handleManageSubscription}
                         >
                           <svg
@@ -483,7 +483,7 @@ export default function Account({ onNavigateToOptimizer }) {
                       )}
                       <button
                         onClick={signOutFunc}
-                        className="border-white/10 border hover:text-red-400 active:scale-95 transition px-4 py-2 rounded-lg hover:bg-white/5 transition-colors text-white inline-flex items-center gap-2"
+                        className="border-white/10 cursor-pointer border hover:text-red-400 active:scale-95 transition px-4 py-2 rounded-lg hover:bg-white/5 transition-colors text-white inline-flex items-center gap-2"
                       >
                         <svg
                           className="h-4 w-4"
@@ -637,7 +637,7 @@ export default function Account({ onNavigateToOptimizer }) {
                           </div>
                         </div>
                         <div className="flex gap-2">
-                          <button className="border-white/10 border px-3 py-2 rounded text-sm hover:bg-white/5 transition-colors inline-flex items-center gap-2">
+                          <button className="border-white/10 cursor-pointer border px-3 py-2 rounded text-sm hover:bg-white/5 transition-colors inline-flex items-center gap-2">
                             <svg
                               className="h-4 w-4"
                               fill="none"
@@ -654,7 +654,7 @@ export default function Account({ onNavigateToOptimizer }) {
                             </svg>
                             View
                           </button>
-                          <button className="bg-cyan-600 hover:bg-cyan-700 px-3 py-2 rounded text-sm text-white inline-flex items-center gap-2">
+                          <button className="cursor-pointer bg-cyan-600 hover:bg-cyan-700 px-3 py-2 rounded text-sm text-white inline-flex items-center gap-2">
                             <svg
                               className="h-4 w-4"
                               fill="none"
@@ -823,7 +823,7 @@ export default function Account({ onNavigateToOptimizer }) {
                           <div className="flex shrink-0 flex-col gap-3">
                             <button
                               onClick={checkoutbruh_premium}
-                              className="gap-2 bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-6 py-3 rounded-lg text-white font-semibold inline-flex items-center justify-center"
+                              className="gap-2 cursor-pointer bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-6 py-3 rounded-lg text-white font-semibold inline-flex items-center justify-center"
                             >
                               Upgrade to Premium
                               <svg
@@ -941,7 +941,7 @@ export default function Account({ onNavigateToOptimizer }) {
                     </ul>
                     <button
                       onClick={checkoutbruh_premium}
-                      className="w-full bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-4 py-2 rounded-lg text-white"
+                      className="w-full  cursor-pointer bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-4 py-2 rounded-lg text-white"
                     >
                       Choose Plan
                     </button>
@@ -1035,7 +1035,7 @@ export default function Account({ onNavigateToOptimizer }) {
                     </ul>
                     <button
                       onClick={checkoutbruh_career_max}
-                      className="w-full border-white/10 hover:bg-white/5 border px-4 py-2 rounded-lg text-white"
+                      className="w-full cursor-pointer border-white/10 hover:bg-white/5 border px-4 py-2 rounded-lg text-white"
                     >
                       Choose Plan
                     </button>
