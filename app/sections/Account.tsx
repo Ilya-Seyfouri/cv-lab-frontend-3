@@ -259,7 +259,7 @@ export default function Account({ onNavigateToOptimizer }) {
               Account Dashboard
             </h1>
             <p className="text-muted-foreground">
-              Manage your profile, credits, and view your application history
+              Manage your profile, credits, and view your application history.
             </p>
           </div>
           {/* Quick Stats */}
