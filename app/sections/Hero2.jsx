@@ -67,7 +67,7 @@ hover:bg-gradient-to-br focus:outline-none active:scale-95
 transition-transform shadow-lg shadow-gray-500/50 dark:shadow-lg 
 dark:shadow-gray-800/80 rounded-lg text-sm md:px-5 md:py-2.5 px-3 py-1.5 text-center 
 me-2 mb-2"
-                onClick={() => router.push("https://x.com/zenifi99")}
+                onClick={() => router.push("https://x.com/cvlabltd")}
               >
                 <p className="text-lg">Contact us</p>
                 <Image src={xxx} alt="logo" className="h-8 w-auto" />
