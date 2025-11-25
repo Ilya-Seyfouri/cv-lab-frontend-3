@@ -16,14 +16,44 @@ export default function Hero2() {
         <div className="mx-auto max-w-4xl text-center">
           {/* Top pill */}
           {/* Heading */}
-          <h1
-            className="mb-6 bg-gradient-to-b from-white via-white to-white/60 
-             bg-clip-text text-transparent 
-             text-4xl md:text-6xl font-semibold 
-             leading-tight"
-          >
-            Your Resume, Perfectly Matched to Any{" "}
-            <span className="whitespace-nowrap">Job.</span>
+          <h1 className="mb-6 text-4xl md:text-6xl font-semibold leading-tight">
+            <span className="bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent">
+              Your Resume,{" "}
+            </span>
+            <motion.span
+              className="relative inline-block bg-gradient-to-r from-cyan-600 via-cyan-200 to-cyan-600 bg-clip-text text-transparent font-semibold"
+              animate={{
+                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+              style={{
+                backgroundSize: "200% 200%",
+              }}
+            >
+              Perfectly
+            </motion.span>
+            <br />
+            <motion.span
+              className="relative inline-block bg-gradient-to-r from-cyan-600 via-cyan-200 to-cyan-600 bg-clip-text text-transparent font-semibold"
+              animate={{
+                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+              }}
+              transition={{
+                duration: 5,
+                repeat: Infinity,
+                ease: "linear",
+              }}
+              style={{
+                backgroundSize: "200% 200%",
+              }}
+            >
+              Matched to Any Job.
+            </motion.span>
+            
           </h1>
           <div className="pt-2 justify-center flex">
             <div className="inline-flex items-center gap-2 border border-white/20 rounded-full">
