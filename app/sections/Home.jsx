@@ -267,17 +267,43 @@ export default function Home() {
         data: { session },
       } = await supabase.auth.getSession();
 
-      // ✅ DEMO MODE: Just use the uploaded PDF directly (no API call, no compilation)
-      const base64 = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result.split(",")[1]);
-        reader.readAsDataURL(cvFile);
-      });
-
-      updateGenerationState({
-        cvPdfData: base64,
-        cvProgress: 100,
-      });
+      // ✅ STEP 1: Generate CV (no longer returns skills_report)
+      const cvResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/generate-cv`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            job_description: jobDescription,
+            user_cv: userCV,
+          }),
+        }
+      );
+      const cvData = await cvResponse.json();
+      if (cvResponse.status === 403) {
+        clearInterval(progressTimer);
+        updateGenerationState({
+          error1:
+            cvData.detail?.message ||
+            "You're out of credits! Upgrade to Premium to continue.",
+          processingStep: "idle",
+          isCompilingAll: false,
+          cvProgress: 0,
+        });
+        return;
+      }
+      // ✅ CV data only contains the CV itself now
+      if (cvData && cvData.cv) {
+        updateGenerationState({
+          generatedCV: cvData.cv,
+          cvProgress: 100,
+          // ❌ DON'T set processingStep to "complete" yet
+        });
+        await compileCVToPDF(cvData.cv);
+      }
 
       // ✅ Update progress for cover letter generation
       updateGenerationState({
