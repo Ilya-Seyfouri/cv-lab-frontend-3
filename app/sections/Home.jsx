@@ -290,7 +290,7 @@ export default function Home() {
             cvData.detail?.message ||
             "You're out of credits! Upgrade to Premium to continue.",
           processingStep: "idle",
-          isCompilingAll: false,
+          isCompiling: false,
           cvProgress: 0,
         });
         return;

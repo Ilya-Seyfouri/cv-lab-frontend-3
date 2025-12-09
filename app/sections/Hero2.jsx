@@ -53,7 +53,6 @@ export default function Hero2() {
             >
               Matched to Any Job.
             </motion.span>
-            
           </h1>
           <div className="pt-2 justify-center flex">
             <div className="inline-flex items-center gap-2 border border-white/20 rounded-full">
@@ -109,7 +108,7 @@ me-2 mb-2"
             <div className="w-full max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-black/40 shadow-xl">
               <div className="aspect-video">
                 <iframe
-                  src="https://www.youtube.com/embed/BjW-P1JNfc8"
+                  src="https://www.youtube.com/embed/POeX6GtkL1M"
                   title="YouTube video player"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
