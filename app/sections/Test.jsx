@@ -8,31 +8,39 @@ import photo3 from "../../public/photo3.jpg";
 import photo4 from "../../public/photo4.jpg";
 import photo5 from "../../public/avatar-owen-garcia.jpg";
 import photo6 from "../../public/avatar-ashwin-santiago.jpg";
+import photo7 from "../../images/A.avif"
+import photo8 from "../../images/ape.webp";
+import photo9 from "../../images/bob.jpg"
+import photo10 from "../../images/linkedin.jpg";
+import photo11 from "../../images/kelly.jpg"
+
+
+
 const testimonials = [
   {
-    name: "Reece S",
-    role: "Software Engineer",
-    avatar: photo1,
+    name: "Olivia K",
+    role: "Marketing Manager",
+    avatar: photo11,
     content:
       "CV Lab helped me stand out in a crowded job market. Since I started using it, I’ve received way more callbacks.",
   },
   {
-    name: "Jessica T",
-    role: "Marketing Manager",
-    avatar: photo2,
+    name: "Amy T",
+    role: "Student",
+    avatar: photo7,
     content:
-      "This AI turned my CV into a job-winning tool. I finally started getting interviews for the opportunities I’ve always dreamed of.",
+      "This AI turned my CV into a job-winning tool. I finally started getting interviews for the internships I’ve always dreamed of.",
   },
   {
-    name: "Bernie S",
+    name: "Sarah S",
     role: "Project Manager",
-    avatar: photo3,
+    avatar: photo9,
     content:
       "This tool is a game-changer! It let me generate a tailored CV and cover letter in seconds. I applied to 10× more jobs than usual, and at a much higher quality.",
   },
   {
     name: "James H",
-    role: "Business Analyst",
+    role: "Software Engineer",
     avatar: photo4,
     content:
       "Thanks to CV Lab, I got past the ATS filters for a position I thought was out of reach. Highly recommend it!",
@@ -40,14 +48,14 @@ const testimonials = [
   {
     name: "Dânik T",
     role: "Data Analyst",
-    avatar: photo5,
+    avatar: photo8,
     content:
       "The detailed skills analysis is impressive! I used it like a tutor to understand exactly which skills I needed to learn to land a specific job.",
   },
   {
-    name: "Prageth K",
-    role: "AI Engineer",
-    avatar: photo6,
+    name: "Reza K",
+    role: "Student",
+    avatar: photo10,
     content:
       "CV Lab helped me get noticed for my dream role. The tailored CV was spot-on—I landed an interview within a week!",
   },

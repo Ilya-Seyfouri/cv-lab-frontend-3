@@ -3,6 +3,9 @@
 import { motion } from "framer-motion";
 import { ChevronRight, Calendar, Clock } from "lucide-react";
 import Link from "next/link";
+import CVLOGO from "../../images/logo.png";
+import Image from "next/image";
+import Navbar2 from "../sections/NavBar2";
 
 // Blog posts data - add new blogs here
 const blogPosts = [
@@ -88,93 +91,108 @@ const blogPosts = [
 
 export default function BlogListingPage() {
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Background gradient effects */}
-      <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute top-0 left-1/4 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-cyan-500/5 blur-3xl" />
-        <div className="absolute top-1/3 right-0 h-[500px] w-[500px] rounded-full bg-blue-500/5 blur-3xl" />
-        <div className="absolute bottom-1/4 left-0 h-[400px] w-[400px] rounded-full bg-cyan-400/5 blur-3xl" />
-      </div>
+    <>
+      <Navbar2 />
+      <div className="min-h-screen bg-black text-white pt-15">
+        {/* Background gradient effects */}
+        <div className="pointer-events-none fixed inset-0 -z-10">
+          <div className="absolute top-0 left-1/4 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-cyan-500/5 blur-3xl" />
+          <div className="absolute top-1/3 right-0 h-[500px] w-[500px] rounded-full bg-blue-500/5 blur-3xl" />
+          <div className="absolute bottom-1/4 left-0 h-[400px] w-[400px] rounded-full bg-cyan-400/5 blur-3xl" />
+        </div>
 
-      <div className="container mx-auto max-w-6xl px-4 py-12 lg:py-20">
-        {/* Header */}
-        <motion.header
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-16 text-center"
-        >
-          <h1 className="mb-4 bg-gradient-to-b from-white to-white/60 bg-clip-text text-4xl font-semibold text-transparent md:text-5xl lg:text-6xl">
-            Blog
-          </h1>
-          <p className="mx-auto max-w-2xl text-base text-white/60 md:text-lg">
-            Expert tips, guides, and insights to help you land your dream job
-            with an optimized resume.
-          </p>
-        </motion.header>
+        <div className="container mx-auto max-w-6xl px-4 py-12 lg:py-20">
+          <motion.header
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-16"
+          >
+            {/* Top row */}
+            <div className="relative flex items-center h-16">
+              <div className="pt-20 "></div>
 
-        {/* Blog Grid */}
-        <div className="grid gap-8 md:grid-cols-2">
-          {blogPosts.map((post, index) => (
-            <motion.article
-              key={post.slug}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-            >
-              <Link href={`/blog/${post.slug}`} className="group block h-full">
-                <div className="relative h-full rounded-3xl border border-white/5 bg-white/5 p-[1px] backdrop-blur-sm transition-all duration-300 hover:border-cyan-500/40 hover:bg-white/10">
-                  <div className="flex h-full flex-col rounded-3xl bg-black/60 p-6 md:p-8">
-                    {/* Category badge */}
-                    <div className="mb-4">
-                      <span className="inline-flex rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-300">
-                        {post.category}
-                      </span>
-                    </div>
+              {/* Blog — true center */}
+              <h1 className="absolute left-1/2 -translate-x-1/2 bg-gradient-to-b from-white to-white/60 bg-clip-text text-4xl font-semibold  md:text-5xl lg:text-6xl text-center">
+                Blog
+              </h1>
+            </div>
 
-                    {/* Title */}
-                    <h2 className="mb-3 bg-gradient-to-b from-white to-white/80 bg-clip-text text-xl font-semibold text-transparent transition-all group-hover:from-cyan-300 group-hover:to-cyan-100 md:text-2xl">
-                      {post.title}
-                    </h2>
+            {/* Subtitle */}
+            <p className="mx-auto mt-6 max-w-2xl text-center text-base text-white/60 md:text-lg">
+              Expert tips, guides, and insights to help you land your dream job
+              with an optimized resume.
+            </p>
+          </motion.header>
 
-                    {/* Excerpt */}
-                    <p className="mb-6 flex-1 text-sm text-white/50 md:text-base">
-                      {post.excerpt}
-                    </p>
-
-                    {/* Meta info */}
-                    <div className="flex items-center justify-between border-t border-white/5 pt-4">
-                      <div className="flex items-center gap-4 text-xs text-white/40">
-                        <span className="flex items-center gap-1">
-                          <Calendar className="h-3.5 w-3.5" />
-                          {post.date}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3.5 w-3.5" />
-                          {post.readTime}
+          {/* Blog Grid */}
+          <div className="grid gap-8 md:grid-cols-2">
+            {blogPosts.map((post, index) => (
+              <motion.article
+                key={post.slug}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Link
+                  href={`/blog/${post.slug}`}
+                  className="group block h-full"
+                >
+                  <div className="relative h-full rounded-3xl border border-white/5 bg-white/5 p-[1px] backdrop-blur-sm transition-all duration-300 hover:border-cyan-500/40 hover:bg-white/10">
+                    <div className="flex h-full flex-col rounded-3xl bg-black/60 p-6 md:p-8">
+                      {/* Category badge */}
+                      <div className="mb-4">
+                        <span className="inline-flex rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-300">
+                          {post.category}
                         </span>
                       </div>
 
-                      {/* Read more arrow */}
-                      <span className="flex items-center gap-1 text-sm font-medium text-cyan-300 opacity-0 transition-all group-hover:opacity-100">
-                        Read
-                        <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </span>
+                      {/* Title */}
+                      <h2 className="mb-3 bg-gradient-to-b from-white to-white/80 bg-clip-text text-xl font-semibold text-transparent transition-all group-hover:from-cyan-300 group-hover:to-cyan-100 md:text-2xl">
+                        {post.title}
+                      </h2>
+
+                      {/* Excerpt */}
+                      <p className="mb-6 flex-1 text-sm text-white/50 md:text-base">
+                        {post.excerpt}
+                      </p>
+
+                      {/* Meta info */}
+                      <div className="flex items-center justify-between border-t border-white/5 pt-4">
+                        <div className="flex items-center gap-4 text-xs text-white/40">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3.5 w-3.5" />
+                            {post.date}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3.5 w-3.5" />
+                            {post.readTime}
+                          </span>
+                        </div>
+
+                        {/* Read more arrow */}
+                        <span className="flex items-center gap-1 text-sm font-medium text-cyan-300 opacity-0 transition-all group-hover:opacity-100">
+                          Read
+                          <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            </motion.article>
-          ))}
-        </div>
-
-        {/* Empty state for when more blogs come */}
-        {blogPosts.length === 0 && (
-          <div className="py-20 text-center">
-            <p className="text-white/40">No blog posts yet. Check back soon!</p>
+                </Link>
+              </motion.article>
+            ))}
           </div>
-        )}
+
+          {/* Empty state for when more blogs come */}
+          {blogPosts.length === 0 && (
+            <div className="py-20 text-center">
+              <p className="text-white/40">
+                No blog posts yet. Check back soon!
+              </p>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

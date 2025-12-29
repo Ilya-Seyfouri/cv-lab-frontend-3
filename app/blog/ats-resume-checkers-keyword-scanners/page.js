@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight, Menu, X, ArrowLeft, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
+import image32 from "../../../images/maintain_cv_formatting_with_ai.png";
+import Image from "next/image";
 
 // Blog content structure
 const blogContent = {
@@ -296,7 +298,7 @@ export default function BlogPost() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white pt-5">
       {/* Background gradient effects */}
       <div className="pointer-events-none fixed inset-0 -z-10">
         <div className="absolute top-0 left-1/4 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-cyan-500/5 blur-3xl" />
@@ -426,6 +428,14 @@ export default function BlogPost() {
               <h1 className="mb-6 bg-gradient-to-b from-white to-white/60 bg-clip-text text-3xl font-semibold leading-tight text-transparent md:text-4xl lg:text-5xl">
                 {blogContent.title}
               </h1>
+              
+              <div className="mb-8 overflow-hidden rounded-2xl border border-white/10">
+                <Image
+                  src={image32}
+                  alt="ATS resume formatting and keyword scanning illustration"
+                  className="w-full h-120 object-cover"
+                />
+              </div>
               <p className="text-base text-white/60 md:text-lg">
                 {blogContent.intro}
               </p>
@@ -433,9 +443,9 @@ export default function BlogPost() {
                 {blogContent.subtitle}
               </p>
               <p className="mt-6 text-base text-white/60 md:text-lg">
-                This guide explains what ATS checkers do, how they work, what they
-                get right, what they miss, and how to use them properly to increase
-                your interview chances.
+                This guide explains what ATS checkers do, how they work, what
+                they get right, what they miss, and how to use them properly to
+                increase your interview chances.
               </p>
             </motion.header>
 

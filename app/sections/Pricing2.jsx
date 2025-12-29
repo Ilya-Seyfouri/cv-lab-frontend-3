@@ -18,7 +18,7 @@ const plans = [
     popular: false,
   },
   {
-    name: "Premium",
+    name: "Standard",
     price: "£7.29",
     description: "For active job hunters.",
     features: [
@@ -31,7 +31,7 @@ const plans = [
     popular: true,
   },
   {
-    name: "Professional",
+    name: "Premium",
     price: "£18.99",
     description: "For professionals who want every advantage.",
     features: [

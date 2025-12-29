@@ -765,7 +765,7 @@ export default function Account({ onNavigateToOptimizer }) {
                                     d="M5 13l4 4L19 7"
                                   />
                                 </svg>
-                                <span>100 tokens / month</span>
+                                <span>50 tokens / month</span>
                               </div>
                               <div className="flex items-center gap-2 text-cyan-300">
                                 <svg
@@ -825,7 +825,7 @@ export default function Account({ onNavigateToOptimizer }) {
                               onClick={checkoutbruh_premium}
                               className="gap-2 cursor-pointer bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-6 py-3 rounded-lg text-white font-semibold inline-flex items-center justify-center"
                             >
-                              Upgrade to Premium
+                              Upgrade to Standard
                               <svg
                                 className="h-4 w-4"
                                 fill="none"
@@ -855,7 +855,7 @@ export default function Account({ onNavigateToOptimizer }) {
                   <div className="border-white/5 bg-card/50 backdrop-blur-sm transition-all hover:border-cyan-500/30 rounded-lg border p-6">
                     <div className="mb-4 flex items-center justify-between">
                       <div>
-                        <h4 className="mb-1 text-foreground">Premium</h4>
+                        <h4 className="mb-1 text-foreground">Standard</h4>
                         <p className="text-2xl">
                           <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                             £7.29
@@ -885,7 +885,7 @@ export default function Account({ onNavigateToOptimizer }) {
                             d="M5 13l4 4L19 7"
                           />
                         </svg>
-                        <span>100 tokens per month</span>
+                        <span>50 tokens per month</span>
                       </li>
                       <li className="flex items-start gap-2 text-muted-foreground">
                         <svg
@@ -949,7 +949,7 @@ export default function Account({ onNavigateToOptimizer }) {
                   <div className="border-white/5 bg-card/50 backdrop-blur-sm transition-all hover:border-cyan-500/30 rounded-lg border p-6">
                     <div className="mb-4 flex items-center justify-between">
                       <div>
-                        <h4 className="mb-1 text-foreground">Career Max</h4>
+                        <h4 className="mb-1 text-foreground">Premium</h4>
                         <p className="text-2xl">
                           <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
                             £18.99
@@ -996,7 +996,7 @@ export default function Account({ onNavigateToOptimizer }) {
                             d="M5 13l4 4L19 7"
                           />
                         </svg>
-                        <span>Everything in Premium</span>
+                        <span>Everything in Standard</span>
                       </li>
                       <li className="flex items-start gap-2 text-muted-foreground">
                         <svg
