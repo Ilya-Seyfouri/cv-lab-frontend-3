@@ -259,21 +259,23 @@ me-2 mb-2"
           </div>
 
           {/* Logos marquee - with animation on desktop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-            className="overflow-x-clip hidden md:block"
-          >
-            <div className="mt-12 flex overflow-hidden py-8 [mask-imge:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+          <div className="overflow-x-clip hidden md:block">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+              className="mt-12 flex overflow-hidden py-8 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]"
+            >
               <motion.div
-                animate={{ x: ["0%", "-50%"] }}
+                initial={{ x: "0%" }}
+                animate={{ x: "-50%" }}
                 transition={{
                   duration: 25,
                   ease: "linear",
                   repeat: Infinity,
                 }}
-                className="flex flex-none items-center gap-10 pr-10 will-change-transform"
+                className="flex flex-none items-center gap-10 pr-10"
+                style={{ willChange: "transform" }}
               >
                 {marqueeLogos.map((logo, i) => (
                   <div
@@ -289,8 +291,8 @@ me-2 mb-2"
                   </div>
                 ))}
               </motion.div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
 
           {/* Video - no animation on mobile */}
           <div className="mt-12 flex justify-center md:hidden">
