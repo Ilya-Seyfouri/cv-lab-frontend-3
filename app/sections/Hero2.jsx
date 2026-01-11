@@ -261,36 +261,42 @@ me-2 mb-2"
           {/* Logos marquee - with animation on desktop */}
           <div className="overflow-x-clip hidden md:block">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-              className="mt-12 flex overflow-hidden py-8 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]"
+              className="mt-12"
             >
-              <motion.div
-                initial={{ x: "0%" }}
-                animate={{ x: "-50%" }}
-                transition={{
-                  duration: 25,
-                  ease: "linear",
-                  repeat: Infinity,
-                }}
-                className="flex flex-none items-center gap-10 pr-10"
-                style={{ willChange: "transform" }}
-              >
-                {marqueeLogos.map((logo, i) => (
-                  <div
-                    key={`${logo.id}-${i}`}
-                    className="flex h-16 w-auto items-center justify-center rounded-xl bg-white/5 px-4 ring-1 ring-white/10"
-                  >
-                    <Image
-                      src={logo.src}
-                      alt={logo.alt}
-                      className="h-16 w-auto opacity-85 hover:opacity-100 transition-opacity"
-                      priority={i < 6}
-                    />
-                  </div>
-                ))}
-              </motion.div>
+              <div className="flex overflow-hidden py-8">
+                <motion.div
+                  animate={{ x: "-50%" }}
+                  transition={{
+                    duration: 25,
+                    ease: "linear",
+                    repeat: Infinity,
+                  }}
+                  className="flex flex-none items-center gap-10 pr-10"
+                  style={{
+                    willChange: "transform",
+                    transform: "translateZ(0)", // Force GPU acceleration
+                  }}
+                >
+                  {marqueeLogos.map((logo, i) => (
+                    <div
+                      key={`${logo.id}-${i}`}
+                      className="flex h-16 w-auto items-center justify-center rounded-xl bg-white/5 px-4 ring-1 ring-white/10"
+                      style={{ transform: "translateZ(0)" }} // Isolate each card's layer
+                    >
+                      <Image
+                        src={logo.src}
+                        alt={logo.alt}
+                        className="h-16 w-auto opacity-85 hover:opacity-100 transition-opacity"
+                        priority={i < 6}
+                        unoptimized={i >= 6} // Don't optimize duplicates
+                      />
+                    </div>
+                  ))}
+                </motion.div>
+              </div>
             </motion.div>
           </div>
 
