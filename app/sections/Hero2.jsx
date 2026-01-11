@@ -22,29 +22,44 @@ import visa from "../../images/how_to_get_a_job_at_visa.png";
 
 import { motion } from "framer-motion";
 
+// Container with sequential stagger
 const containerVariants = {
   hidden: {},
   show: {
     transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.15,
+      staggerChildren: 0.12,
     },
   },
 };
 
-const itemVariants = {
+// Hero title: scale from 80% to 100% with fade (matches reference video)
+const titleVariants = {
   hidden: {
     opacity: 0,
-    y: 24,
-    filter: "blur(4px)",
+    scale: 0.85,
   },
   show: {
     opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
+    scale: 1,
     transition: {
-      duration: 0.5,
-      ease: "easeOut",
+      duration: 0.7,
+      ease: [0.16, 1, 0.3, 1], // Expo-out easing for smooth deceleration
+    },
+  },
+};
+
+// Secondary elements: subtle scale with fade (no blur for Safari compatibility)
+const itemVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 0.96,
+  },
+  show: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.6,
+      ease: [0.16, 1, 0.3, 1],
     },
   },
 };
@@ -72,7 +87,10 @@ export default function Hero2() {
   const marqueeLogos = [...logos, ...logos];
 
   return (
-    <section className="relative overflow-hidden py-10 scroll-mt-15 pt-20" id="home">
+    <section
+      className="relative overflow-hidden py-10 scroll-mt-15 pt-20"
+      id="home"
+    >
       <div className="container mx-auto max-w-5xl px-4">
         <motion.div
           className="mx-auto max-w-4xl text-center"
@@ -80,10 +98,15 @@ export default function Hero2() {
           initial="hidden"
           animate="show"
         >
-          {/* Heading */}
+          {/* Heading with scale-up animation (primary element) */}
           <motion.h1
-            variants={itemVariants}
+            variants={titleVariants}
             className="mb-6 text-4xl md:text-6xl font-semibold leading-tight"
+            style={{
+              willChange: "transform, opacity",
+              backfaceVisibility: "hidden",
+              WebkitFontSmoothing: "antialiased",
+            }}
           >
             <span className="bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent">
               Your Resume,{" "}
@@ -93,7 +116,10 @@ export default function Hero2() {
               className="relative inline-block bg-gradient-to-r from-cyan-600 via-cyan-200 to-cyan-600 bg-clip-text text-transparent font-semibold"
               animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
               transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-              style={{ backgroundSize: "200% 200%" }}
+              style={{
+                backgroundSize: "200% 200%",
+                willChange: "background-position",
+              }}
             >
               Perfectly
             </motion.span>
@@ -104,16 +130,23 @@ export default function Hero2() {
               className="relative inline-block bg-gradient-to-r from-cyan-600 via-cyan-200 to-cyan-600 bg-clip-text text-transparent font-semibold"
               animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
               transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-              style={{ backgroundSize: "200% 200%" }}
+              style={{
+                backgroundSize: "200% 200%",
+                willChange: "background-position",
+              }}
             >
               Matched to Any Job.
             </motion.span>
           </motion.h1>
 
-          {/* Social proof pill */}
+          {/* Social proof pill - second element */}
           <motion.div
             variants={itemVariants}
             className="pt-2 justify-center flex"
+            style={{
+              willChange: "transform, opacity",
+              backfaceVisibility: "hidden",
+            }}
           >
             <div className="inline-flex items-center gap-2 border border-white/20 rounded-full">
               <Image
@@ -127,20 +160,28 @@ export default function Hero2() {
             </div>
           </motion.div>
 
-          {/* Subheading */}
+          {/* Subheading - third element */}
           <motion.p
             variants={itemVariants}
             className="mx-auto pt-10 mb-8 max-w-5xl text-md md:text-2xl text-white/60"
+            style={{
+              willChange: "transform, opacity",
+              backfaceVisibility: "hidden",
+            }}
           >
             Instantly turn your CV into a ATS-optimized, role-specific resume,
-            tailored to each job description and aligned with each employer’s
+            tailored to each job description and aligned with each employer's
             desired candidate profile.
           </motion.p>
 
-          {/* CTA buttons */}
+          {/* CTA buttons - fourth element */}
           <motion.div
             variants={itemVariants}
             className="flex flex-row items-center justify-center gap-4 sm:gap-6 py-2"
+            style={{
+              willChange: "transform, opacity",
+              backfaceVisibility: "hidden",
+            }}
           >
             <div className="flex items-center gap-3">
               <button
@@ -172,8 +213,15 @@ me-2 mb-2"
             </div>
           </motion.div>
 
-          {/* Logos marquee */}
-          <motion.div variants={itemVariants} className="overflow-x-clip">
+          {/* Logos marquee - fifth element */}
+          <motion.div
+            variants={itemVariants}
+            className="overflow-x-clip"
+            style={{
+              willChange: "transform, opacity",
+              backfaceVisibility: "hidden",
+            }}
+          >
             <div className="mt-12 flex overflow-hidden py-8 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
               <motion.div
                 animate={{ x: ["0%", "-50%"] }}
@@ -183,6 +231,10 @@ me-2 mb-2"
                   repeat: Infinity,
                 }}
                 className="flex flex-none items-center gap-10 pr-10"
+                style={{
+                  willChange: "transform",
+                  backfaceVisibility: "hidden",
+                }}
               >
                 {marqueeLogos.map((logo, i) => (
                   <div
@@ -201,10 +253,14 @@ me-2 mb-2"
             </div>
           </motion.div>
 
-          {/* Video */}
+          {/* Video - sixth element */}
           <motion.div
             variants={itemVariants}
             className="mt-12 flex justify-center"
+            style={{
+              willChange: "transform, opacity",
+              backfaceVisibility: "hidden",
+            }}
           >
             <div className="w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-black/40 shadow-xl">
               <div className="aspect-video">
