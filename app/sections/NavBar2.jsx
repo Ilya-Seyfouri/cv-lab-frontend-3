@@ -20,7 +20,7 @@ export default function Navbar2() {
   const [isOpen, setIsOpen] = useState(false);
   
   return (
-    <header className="sticky top-0 z-50 border-b border-white/5 bg-background/80 backdrop-blur-xl">
+    <header className="fixed w-full top-0 z-50 border-b border-white/5 bg-background/80 backdrop-blur-xl">
       <div className="container mx-auto px-4">
         {/* Top row */}
         <div className="flex h-16 items-center justify-between relative">
@@ -80,7 +80,7 @@ focus:outline-none focus:ring-2 focus:ring-cyan-500/70 active:scale-95 cursor-po
               onClick={() => setIsOpen((prev) => !prev)}
               aria-label="Toggle navigation menu"
               aria-expanded={isOpen}
-              className="inline-flex items-center justify-center rounded-md p-2 md:hidden focus:outline-none focus:ring-2 focus:ring-cyan-500/60"
+              className="inline-flex items-center justify-center rounded-md p-2 md:hidden focus:outline-none "
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -131,14 +131,13 @@ focus:outline-none focus:ring-2 focus:ring-cyan-500/70 active:scale-95 cursor-po
           {isOpen && (
             <motion.div
               key="mobile-menu"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
+              initial={{ height: 0}}
+              animate={{ height: "auto"}}
+              exit={{ height: 0}}
               className="overflow-hidden md:hidden"
             >
-              <nav
-                className="flex flex-col gap-3 pb-4 pt-2"
+              <div
+                className="flex flex-col gap-6 py-4 px-4 max-w-full"
                 aria-label="Mobile navigation"
               >
                 {navLinks.map((link) => (
@@ -146,31 +145,32 @@ focus:outline-none focus:ring-2 focus:ring-cyan-500/70 active:scale-95 cursor-po
                     key={link.label}
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="text-sm text-muted-foreground pl-4 transition-colors hover:text-foreground"
+                    className="text-md text-muted-foreground  transition-colors hover:text-foreground"
                   >
                     {link.label}
                   </a>
                 ))}
 
                 {/* Mobile login CTA */}
+
                 <button
                   onClick={() => {
                     setIsOpen(false);
                     router.push("/auth");
                   }}
-                  className="mt-2 inline-flex items-center gap-2 rounded-lg bg-gradient-to-r 
-                    from-cyan-500 to-cyan-600 px-4 py-2 text-sm font-semibold text-white 
+                  className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r 
+                    from-cyan-500 to-cyan-600 text-center px-45 text-md py-2 text-sm font-semibold text-white 
                     shadow-lg shadow-cyan-500/30 transition hover:from-cyan-700 hover:to-cyan-800 
                     focus:outline-none focus:ring-2 focus:ring-cyan-500/70 active:scale-95"
                 >
-                  <span>Login</span>
+                  <span className="text-lg">Login</span>
                   <Image
                     src={buttonImg}
                     alt="login button icon"
-                    className="h-6 w-auto"
+                    className="h-8 w-auto"
                   />
                 </button>
-              </nav>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

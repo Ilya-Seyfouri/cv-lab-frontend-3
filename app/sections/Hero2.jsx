@@ -44,7 +44,7 @@ export default function Hero2() {
   const marqueeLogos = [...logos, ...logos];
 
   return (
-    <section className="relative overflow-hidden py-10 scroll-mt-15" id="home">
+    <section className="relative overflow-hidden py-10 pt-25 scroll-mt-15" id="home">
       <div className="container mx-auto max-w-5xl px-4">
         <div className="mx-auto max-w-4xl text-center">
           {/* Heading - simple fade in */}
