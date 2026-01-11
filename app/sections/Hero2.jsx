@@ -267,14 +267,15 @@ me-2 mb-2"
               className="mt-12 flex overflow-hidden py-8 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]"
             >
               <motion.div
+                initial={{ x: "0%" }}
                 animate={{ x: "-50%" }}
                 transition={{
                   duration: 25,
                   ease: "linear",
                   repeat: Infinity,
-                  delay: 1, // Wait for fade-in to complete
                 }}
                 className="flex flex-none items-center gap-10 pr-10"
+                style={{ willChange: "transform" }}
               >
                 {marqueeLogos.map((logo, i) => (
                   <div
