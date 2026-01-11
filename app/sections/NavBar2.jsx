@@ -18,7 +18,7 @@ const navLinks = [
 export default function Navbar2() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  
+
   return (
     <header className="fixed w-full top-0 z-50 border-b border-white/5 bg-background/80 backdrop-blur-xl">
       <div className="container mx-auto px-4">
@@ -54,7 +54,7 @@ export default function Navbar2() {
             {/* Desktop "Login" — ghost style */}
             <button
               onClick={() => router.push("/auth")}
-              className="hidden rounded-md px-3 py-2 cursor-pointer text-md font-medium hover:bg-gradient-to-r hover:from-cyan-400 hover:via-cyan-500 hover:to-cyan-600 hover:bg-clip-text hover:text-transparent hover:font-semibold active:scale-95 text-muted-foreground transition-colors  md:inline-flex focus:outline-none focus:ring-2 focus:ring-cyan-500/60"
+              className="hidden rounded-md px-3 py-2 cursor-pointer text-md font-medium hover:bg-gradient-to-r hover:from-cyan-400 hover:via-cyan-500 hover:to-cyan-600 hover:bg-clip-text hover:text-transparent hover:font-semibold active:scale-95 text-muted-foreground transition-colors  md:inline-flex focus:outline-none "
             >
               Login
             </button>
@@ -131,13 +131,13 @@ focus:outline-none focus:ring-2 focus:ring-cyan-500/70 active:scale-95 cursor-po
           {isOpen && (
             <motion.div
               key="mobile-menu"
-              initial={{ height: 0}}
-              animate={{ height: "auto"}}
-              exit={{ height: 0}}
+              initial={{ height: 0 }}
+              animate={{ height: "auto" }}
+              exit={{ height: 0 }}
               className="overflow-hidden md:hidden"
             >
               <div
-                className="flex flex-col gap-6 py-4 px-4 max-w-full"
+                className="flex flex-col gap-6 py-4"
                 aria-label="Mobile navigation"
               >
                 {navLinks.map((link) => (
@@ -145,29 +145,25 @@ focus:outline-none focus:ring-2 focus:ring-cyan-500/70 active:scale-95 cursor-po
                     key={link.label}
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="text-md text-muted-foreground  transition-colors hover:text-foreground"
+                    className="text-md text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {link.label}
                   </a>
                 ))}
 
-                {/* Mobile login CTA */}
-
+                {/* Mobile login button - same style as nav links */}
                 <button
                   onClick={() => {
                     setIsOpen(false);
                     router.push("/auth");
                   }}
-                  className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r 
-                    from-cyan-500 to-cyan-600 text-center px-45 text-md py-2 text-sm font-semibold text-white 
-                    shadow-lg shadow-cyan-500/30 transition hover:from-cyan-700 hover:to-cyan-800 
-                    focus:outline-none focus:ring-2 focus:ring-cyan-500/70 active:scale-95"
+                  className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-cyan-500 to-cyan-600 px-4 py-2 text-lg font-semibold text-white shadow-lg shadow-cyan-500/30 transition hover:from-cyan-700 hover:to-cyan-800 focus:outline-none active:scale-95 w-fit"
                 >
-                  <span className="text-lg">Login</span>
+                  <span>Login</span>
                   <Image
                     src={buttonImg}
                     alt="login button icon"
-                    className="h-8 w-auto"
+                    className="h-6 w-auto"
                   />
                 </button>
               </div>
