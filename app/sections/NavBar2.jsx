@@ -140,16 +140,18 @@ focus:outline-none focus:ring-2 focus:ring-cyan-500/70 active:scale-95 cursor-po
                 className="flex flex-col gap-6 py-4"
                 aria-label="Mobile navigation"
               >
-                {navLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className="text-md text-muted-foreground transition-colors hover:text-foreground"
-                  >
-                    {link.label}
-                  </a>
-                ))}
+                {navLinks
+                  .filter((link) => link.label !== "Home")
+                  .map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      onClick={() => setIsOpen(false)}
+                      className="text-md text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                      {link.label}
+                    </a>
+                  ))}
 
                 {/* Mobile login button - same style as nav links */}
                 <button

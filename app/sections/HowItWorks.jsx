@@ -31,7 +31,7 @@ export default function HowItWorks() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
-  const intervalMs = 2000;
+  const intervalMs = 2500;
 
   useEffect(() => {
     if (paused) return;

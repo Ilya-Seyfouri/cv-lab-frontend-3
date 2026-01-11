@@ -83,8 +83,8 @@ export default function Hero2() {
     { id: "visa", src: visa, alt: "Visa" },
   ];
 
-  // Triple duplicate for seamless infinite loop
-  const marqueeLogos = [...logos, ...logos, ...logos];
+  // Double duplicate for seamless infinite loop
+  const marqueeLogos = [...logos, ...logos];
 
   return (
     <section
@@ -270,11 +270,11 @@ export default function Hero2() {
         <div className="absolute right-1/4 top-24 h-80 w-80 rounded-full bg-blue-500/25 blur-3xl" />
       </div>
 
-      {/* Pure CSS Marquee Styles */}
+      {/* Pure CSS Marquee Styles - PIXEL PERFECT */}
       <style jsx>{`
         .marquee-content {
           display: flex;
-          animation: marquee 15s linear infinite;
+          animation: marquee 20s linear infinite;
           gap: 2.5rem;
           will-change: transform;
           backface-visibility: hidden;
@@ -283,14 +283,19 @@ export default function Hero2() {
 
         .marquee-item {
           flex-shrink: 0;
+          width: 100px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
+        /* Pixel-perfect: 13 logos × (100px width + 2.5rem gap) */
         @keyframes marquee {
           0% {
             transform: translate3d(0, 0, 0);
           }
           100% {
-            transform: translate3d(-33.333%, 0, 0);
+            transform: translate3d(calc(-100px * 13 - 2.5rem * 13), 0, 0);
           }
         }
 
