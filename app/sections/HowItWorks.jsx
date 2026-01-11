@@ -116,7 +116,7 @@ export default function HowItWorks() {
 
                   {/* Connector line on desktop (between cards) */}
                   {index < steps.length - 1 && (
-                    <div className="absolute -right-4 top-1/2 hidden h-px w-8 -translate-y-1/2 bg-gradient-to-r from-cyan-500/50 to-transparent md:block" />
+                    <div className="absolute -right-9 top-1/2 hidden h-px w-8 -translate-y-1/2 bg-gradient-to-r from-cyan-500/50 to-transparent md:block" />
                   )}
                 </div>
               </div>

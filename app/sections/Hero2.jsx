@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import photo from "../../public/avatar-lula-meyers.jpg";
 import button from "../../public/BUTTON_1.png";
-import xxx from "../../public/x1.png";
+import xxx from "../../images/insta.png";
 
 import goldman from "../../images/how_to_get_a_job_at_Goldman_sachs.png";
 import nike from "../../images/how_to_get_a_job_at_Nike.png";
@@ -21,33 +21,6 @@ import twitch from "../../images/how_to_get_a_job_at_twitch.png";
 import visa from "../../images/how_to_get_a_job_at_visa.png";
 
 import { motion } from "framer-motion";
-
-const containerVariants = {
-  hidden: {},
-  show: {
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.15,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: {
-    opacity: 0,
-    y: 24,
-    filter: "blur(4px)",
-  },
-  show: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: {
-      duration: 0.5,
-      ease: "easeOut",
-    },
-  },
-};
 
 export default function Hero2() {
   const router = useRouter();
@@ -68,21 +41,17 @@ export default function Hero2() {
     { id: "visa", src: visa, alt: "Visa" },
   ];
 
-  // Duplicate for seamless marquee loop
   const marqueeLogos = [...logos, ...logos];
 
   return (
     <section className="relative overflow-hidden py-10 scroll-mt-15" id="home">
       <div className="container mx-auto max-w-5xl px-4">
-        <motion.div
-          className="mx-auto max-w-4xl text-center"
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-        >
-          {/* Heading */}
+        <div className="mx-auto max-w-4xl text-center">
+          {/* Heading - simple fade in */}
           <motion.h1
-            variants={itemVariants}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             className="mb-6 text-4xl md:text-6xl font-semibold leading-tight"
           >
             <span className="bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent">
@@ -112,7 +81,9 @@ export default function Hero2() {
 
           {/* Social proof pill */}
           <motion.div
-            variants={itemVariants}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
             className="pt-2 justify-center flex"
           >
             <div className="inline-flex items-center gap-2 border border-white/20 rounded-full">
@@ -129,17 +100,21 @@ export default function Hero2() {
 
           {/* Subheading */}
           <motion.p
-            variants={itemVariants}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
             className="mx-auto pt-10 mb-8 max-w-5xl text-md md:text-2xl text-white/60"
           >
             Instantly turn your CV into a ATS-optimized, role-specific resume,
-            tailored to each job description and aligned with each employer’s
+            tailored to each job description and aligned with each employer's
             desired candidate profile.
           </motion.p>
 
           {/* CTA buttons */}
           <motion.div
-            variants={itemVariants}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
             className="flex flex-row items-center justify-center gap-4 sm:gap-6 py-2"
           >
             <div className="flex items-center gap-3">
@@ -162,19 +137,30 @@ text-sm md:px-5 md:py-2.5 px-3 py-1.5 text-center me-2 mb-2 font-semibold"
 bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 
 hover:bg-gradient-to-br focus:outline-none active:scale-95 
 transition-transform shadow-lg shadow-gray-500/50 dark:shadow-lg 
-dark:shadow-gray-800/80 rounded-lg text-sm md:px-5 md:py-2.5 px-3 py-1.5 text-center 
+dark:shadow-gray-800/80 rounded-lg text-sm md:px-5 md:py-2.5 px-3 py-1.5 lg:py-3 text-center 
 me-2 mb-2"
-                onClick={() => router.push("https://x.com/cvlabltd")}
+                onClick={() =>
+                  window.open(
+                    "https://www.instagram.com/cvlab.ltd/",
+                    "_blank",
+                    "noopener,noreferrer"
+                  )
+                }
               >
                 <p className="text-lg">Contact us</p>
-                <Image src={xxx} alt="x icon" className="h-8 w-auto" />
+                <Image src={xxx} alt="x icon" className="h-6 w-auto px-2" />
               </button>
             </div>
           </motion.div>
 
           {/* Logos marquee */}
-          <motion.div variants={itemVariants} className="overflow-x-clip">
-            <div className="mt-12 flex overflow-hidden py-8 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
+            className="overflow-x-clip"
+          >
+            <div className="mt-12 flex overflow-hidden py-8 [mask-imge:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
               <motion.div
                 animate={{ x: ["0%", "-50%"] }}
                 transition={{
@@ -182,7 +168,7 @@ me-2 mb-2"
                   ease: "linear",
                   repeat: Infinity,
                 }}
-                className="flex flex-none items-center gap-10 pr-10"
+                className="flex flex-none items-center gap-10 pr-10 will-change-transform"
               >
                 {marqueeLogos.map((logo, i) => (
                   <div
@@ -203,10 +189,11 @@ me-2 mb-2"
 
           {/* Video */}
           <motion.div
-            variants={itemVariants}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
             className="mt-12 flex justify-center"
           >
-            
             <div className="w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-black/40 shadow-xl">
               <div className="aspect-video">
                 <iframe
@@ -220,7 +207,7 @@ me-2 mb-2"
               </div>
             </div>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Decorative gradients */}

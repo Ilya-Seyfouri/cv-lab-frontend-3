@@ -1,91 +1,57 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChevronRight, Calendar, Clock } from "lucide-react";
+import { Calendar, Clock } from "lucide-react";
 import Link from "next/link";
-import CVLOGO from "../../images/logo.png";
 import Image from "next/image";
 import Navbar2 from "../sections/NavBar2";
 
-// Blog posts data - add new blogs here
+// Import blog images
+import graduateJobMarketImage from "../../images/graduate_job_market_2026_what_students_need_to_know.png";
+import demandedSkillsImage from "../../images/the_most_demanded_graduate_skills_in_the_uk_2026.png";
+import oneCVImage from "../../images/graduate_job_market_2026_what_students_need_to_know.png";
+import aiDetectionImage from "../../images/graduate_job_market_2026_what_students_need_to_know.png";
+// Blog posts data
 const blogPosts = [
   {
-    slug: "ats-resume-checkers-keyword-scanners",
-    title: "ATS Resume Checkers and Keyword Scanners: Do They Really Work?",
+    slug: "graduate_job_market_2026_what_students_need_to_know",
+    title: "Graduate Job Market 2026: What Students Need to Know",
     excerpt:
-      "If you're applying for jobs online, you've already gone through an ATS. Learn what ATS checkers and keyword scanners do, how they work, what they get right, and how to use them to increase your interview chances.",
-    date: "January 2025",
-    readTime: "9 min read",
-    category: "Tools & Reviews",
-    featured: true,
-  },
-  {
-    slug: "ai-resume-matchers-explained",
-    title:
-      "AI Resume Matchers Explained: How Job Description–Resume Matching Really Works",
-    excerpt:
-      "Most job seekers send the same resume to every application, then wonder why they aren't getting interviews. Learn how AI resume matchers analyse your resume, calculate job match scores, and help you tailor your application in minutes.",
-    date: "January 2025",
-    readTime: "10 min read",
-    category: "Guides & Tutorials",
-  },
-  {
-    slug: "top-5-resume-optimizers-ai-ats-2025",
-    title:
-      "Top 5 Resume Optimizers in 2025 (Best AI & ATS Resume Tools Ranked)",
-    excerpt:
-      "Most resumes never reach a human recruiter. ATS filter out applications that don't use the right keywords, skills, or formatting. Discover the best AI resume optimizers to increase your interview rate.",
-    date: "January 2025",
-    readTime: "11 min read",
-    category: "Tools & Reviews",
-  },
-  {
-    slug: "top-5-cv-resume-optimizers-2025",
-    title:
-      "Top 5 CV/Resume Optimizers in 2025 (Best ATS Optimization Tools Ranked)",
-    excerpt:
-      "Most resumes fail before a human sees them. Applicant Tracking Systems (ATS) filter out applications that lack the right keywords, skills, or structure. Discover the best resume optimizers to boost your ATS score.",
+      "For students graduating in 2026, the UK job market is both full of opportunity and more competitive than ever. Learn what's really happening in the graduate market.",
     date: "January 2025",
     readTime: "8 min read",
-    category: "Tools & Reviews",
+    category: "Career Insights",
+    image: graduateJobMarketImage,
   },
   {
-    slug: "how-to-tailor-resume-ai-2025",
-    title:
-      "How to Tailor Your Resume to Any Job Description Using AI (2025 Guide)",
+    slug: "the_most_demanded_graduate_skills_in_the_uk_2026",
+    title: "The Most Demanded Graduate Skills in the UK in 2026",
     excerpt:
-      "Most job seekers send the same resume to every role, and ATS systems filter them out instantly. Learn how AI makes tailoring your resume fast, accurate, and stress-free.",
+      "Graduate roles are changing, and employer expectations are evolving. Understand the skills employers are really looking for and how to present them effectively.",
     date: "January 2025",
-    readTime: "10 min read",
+    readTime: "8 min read",
+    category: "Career Insights",
+    image: demandedSkillsImage,
+  },
+  {
+    slug: "one_cv_or_multiple_how_to_tailor_applications_efficiently",
+    title: "One CV or Multiple? How to Tailor Applications Efficiently",
+    excerpt:
+      "Do you really need a different CV for every role? Learn the smart approach to CV tailoring that saves time while improving your interview chances.",
+    date: "January 2025",
+    readTime: "6 min read",
     category: "Guides & Tutorials",
+    image: oneCVImage,
   },
   {
-    slug: "resume-skills-analysis-ai-gaps-keywords",
-    title:
-      "Resume Skills Analysis: How AI Finds Gaps, Keywords and ATS Requirements",
+    slug: "are_recruiters_using_ai_to_detect_AI-written_cvs",
+    title: "Are Recruiters Using AI to Detect AI-Written CVs?",
     excerpt:
-      "Most resumes fail because they don't showcase the right skills. Learn how AI scans your resume, identifies missing skills, highlights keyword gaps, and detects ATS issues.",
+      "Yes — and it's becoming more common. Learn how AI detection tools work, why generic AI CVs get rejected, and how to use AI smartly without getting flagged.",
     date: "January 2025",
-    readTime: "11 min read",
-    category: "Guides & Tutorials",
-  },
-  {
-    slug: "improve-cv-bullet-points-ai-examples",
-    title: "Improve Your CV Bullet Points: Real Before-and-After AI Examples",
-    excerpt:
-      "Most CVs fail for one simple reason: the bullet points are weak. See real before-and-after examples of how AI transforms vague duties into powerful, measurable achievements.",
-    date: "January 2025",
-    readTime: "12 min read",
-    category: "Examples & Tips",
-  },
-  {
-    slug: "maintain-cv-formatting-ai",
-    title: "Maintain CV Formatting With AI: Fix Content, Not Your Layout",
-    excerpt:
-      "Most AI CV tools fix your writing but destroy your formatting. Learn how modern AI can rewrite and optimise your CV without touching the structure.",
-    date: "January 2025",
-    readTime: "9 min read",
-    category: "Guides & Tutorials",
+    readTime: "6 min read",
+    category: "Career Insights",
+    image: aiDetectionImage,
   },
 ];
 
@@ -101,79 +67,72 @@ export default function BlogListingPage() {
           <div className="absolute bottom-1/4 left-0 h-[400px] w-[400px] rounded-full bg-cyan-400/5 blur-3xl" />
         </div>
 
-        <div className="container mx-auto max-w-6xl px-4 py-12 lg:py-20">
+        <div className="container mx-auto max-w-7xl px-4 py-12 lg:py-16">
+          {/* Header */}
           <motion.header
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-16"
+            transition={{ duration: 0.5 }}
+            className="mb-12 text-center"
           >
-            {/* Top row */}
-            <div className="relative flex items-center h-16">
-              <div className="pt-20 "></div>
-
-              {/* Blog — true center */}
-              <h1 className="absolute left-1/2 -translate-x-1/2 bg-gradient-to-b from-white to-white/60 bg-clip-text text-4xl font-semibold  md:text-5xl lg:text-6xl text-center">
-                Blog
-              </h1>
-            </div>
-
-            {/* Subtitle */}
-            <p className="mx-auto mt-6 max-w-2xl text-center text-base text-white/60 md:text-lg">
-              Expert tips, guides, and insights to help you land your dream job
+            <h1 className="mb-4 bg-gradient-to-b from-white to-white/60 bg-clip-text text-4xl font-semibold text-transparent md:text-5xl lg:text-6xl">
+              Our Latest Articles
+            </h1>
+            <p className="mx-auto max-w-2xl text-base text-white/60 md:text-lg">
+              Discover tips and insights to help you land your dream job
               with an optimized resume.
             </p>
           </motion.header>
 
           {/* Blog Grid */}
-          <div className="grid gap-8 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2  lg:grid-cols-3">
             {blogPosts.map((post, index) => (
               <motion.article
                 key={post.slug}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
               >
                 <Link
                   href={`/blog/${post.slug}`}
                   className="group block h-full"
                 >
-                  <div className="relative h-full rounded-3xl border border-white/5 bg-white/5 p-[1px] backdrop-blur-sm transition-all duration-300 hover:border-cyan-500/40 hover:bg-white/10">
-                    <div className="flex h-full flex-col rounded-3xl bg-black/60 p-6 md:p-8">
-                      {/* Category badge */}
-                      <div className="mb-4">
-                        <span className="inline-flex rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-300">
-                          {post.category}
-                        </span>
-                      </div>
+                  <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm transition-all duration-300 hover:border-cyan-500/30 hover:bg-white/10">
+                    {/* Image */}
+                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-gradient-to-br from-cyan-500/10 to-blue-500/10">
+                      <Image
+                        src={post.image}
+                        alt={post.title}
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex flex-1 flex-col p-6">
+                      {/* Category */}
+                      <span className="mb-3 inline-flex w-fit rounded-full bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-300">
+                        {post.category}
+                      </span>
 
                       {/* Title */}
-                      <h2 className="mb-3 bg-gradient-to-b from-white to-white/80 bg-clip-text text-xl font-semibold text-transparent transition-all group-hover:from-cyan-300 group-hover:to-cyan-100 md:text-2xl">
+                      <h2 className="mb-3 line-clamp-2 text-lg font-semibold text-white transition-colors group-hover:text-cyan-300 md:text-xl">
                         {post.title}
                       </h2>
 
                       {/* Excerpt */}
-                      <p className="mb-6 flex-1 text-sm text-white/50 md:text-base">
+                      <p className="mb-4 flex-1 line-clamp-3 text-sm text-white/60">
                         {post.excerpt}
                       </p>
 
-                      {/* Meta info */}
-                      <div className="flex items-center justify-between border-t border-white/5 pt-4">
-                        <div className="flex items-center gap-4 text-xs text-white/40">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-3.5 w-3.5" />
-                            {post.date}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3.5 w-3.5" />
-                            {post.readTime}
-                          </span>
-                        </div>
-
-                        {/* Read more arrow */}
-                        <span className="flex items-center gap-1 text-sm font-medium text-cyan-300 opacity-0 transition-all group-hover:opacity-100">
-                          Read
-                          <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      {/* Meta */}
+                      <div className="flex items-center gap-4 border-t border-white/5 pt-4 text-xs text-white/40">
+                        <span className="flex items-center gap-1.5">
+                          <Calendar className="h-3.5 w-3.5" />
+                          {post.date}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <Clock className="h-3.5 w-3.5" />
+                          {post.readTime}
                         </span>
                       </div>
                     </div>
@@ -182,15 +141,6 @@ export default function BlogListingPage() {
               </motion.article>
             ))}
           </div>
-
-          {/* Empty state for when more blogs come */}
-          {blogPosts.length === 0 && (
-            <div className="py-20 text-center">
-              <p className="text-white/40">
-                No blog posts yet. Check back soon!
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </>
