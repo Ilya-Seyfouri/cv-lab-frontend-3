@@ -44,15 +44,32 @@ export default function Hero2() {
   const marqueeLogos = [...logos, ...logos];
 
   return (
-    <section className="relative overflow-hidden py-10 pt-25 scroll-mt-15" id="home">
+    <section
+      className="relative overflow-hidden py-10 pt-25 scroll-mt-15"
+      id="home"
+    >
       <div className="container mx-auto max-w-5xl px-4">
         <div className="mx-auto max-w-4xl text-center">
-          {/* Heading - simple fade in */}
+          {/* Heading - no animation on mobile */}
+          <h1 className="mb-6 text-4xl md:text-6xl font-semibold leading-tight md:hidden">
+            <span className="bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent">
+              Your Resume,{" "}
+            </span>
+            <span className="relative inline-block bg-gradient-to-r from-cyan-600 via-cyan-200 to-cyan-600 bg-clip-text text-transparent font-semibold">
+              Perfectly
+            </span>
+            <br />
+            <span className="relative inline-block bg-gradient-to-r from-cyan-600 via-cyan-200 to-cyan-600 bg-clip-text text-transparent font-semibold">
+              Matched to Any Job.
+            </span>
+          </h1>
+
+          {/* Heading - with animation on desktop */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="mb-6 text-4xl md:text-6xl font-semibold leading-tight"
+            className="mb-6 text-4xl md:text-6xl font-semibold leading-tight hidden md:block"
           >
             <span className="bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent">
               Your Resume,{" "}
@@ -79,12 +96,26 @@ export default function Hero2() {
             </motion.span>
           </motion.h1>
 
-          {/* Social proof pill */}
+          {/* Social proof pill - no animation on mobile */}
+          <div className="pt-2 justify-center flex md:hidden">
+            <div className="inline-flex items-center gap-2 border border-white/20 rounded-full">
+              <Image
+                src={photo}
+                alt="avatar"
+                className="h-9 w-auto border-3 border-black rounded-full"
+              />
+              <p className="text-base font-semibold text-white/80 pr-2.5">
+                4500+ CV&apos;s generated
+              </p>
+            </div>
+          </div>
+
+          {/* Social proof pill - with animation on desktop */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-            className="pt-2 justify-center flex"
+            className="pt-2 justify-center hidden md:flex"
           >
             <div className="inline-flex items-center gap-2 border border-white/20 rounded-full">
               <Image
@@ -98,24 +129,69 @@ export default function Hero2() {
             </div>
           </motion.div>
 
-          {/* Subheading */}
+          {/* Subheading - no animation on mobile */}
+          <p className="mx-auto pt-10 mb-8 max-w-5xl text-md md:text-2xl text-white/60 md:hidden">
+            Instantly turn your CV into a ATS-optimized, role-specific resume,
+            tailored to each job description and aligned with each employer's
+            desired candidate profile.
+          </p>
+
+          {/* Subheading - with animation on desktop */}
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-            className="mx-auto pt-10 mb-8 max-w-5xl text-md md:text-2xl text-white/60"
+            className="mx-auto pt-10 mb-8 max-w-5xl text-md md:text-2xl text-white/60 hidden md:block"
           >
             Instantly turn your CV into a ATS-optimized, role-specific resume,
             tailored to each job description and aligned with each employer's
             desired candidate profile.
           </motion.p>
 
-          {/* CTA buttons */}
+          {/* CTA buttons - no animation on mobile */}
+          <div className="flex flex-row items-center justify-center gap-4 sm:gap-6 py-2 md:hidden">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => router.push("/auth")}
+                className="flex items-center gap-2 cursor-pointer text-white bg-gradient-to-r 
+from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br 
+focus:outline-none active:scale-95 transition-transform shadow-lg 
+shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 rounded-lg 
+text-sm md:px-5 md:py-2.5 px-3 py-1.5 text-center me-2 mb-2 font-semibold"
+              >
+                <p className="text-lg">Get Started</p>
+                <Image src={button} alt="button icon" className="h-8 w-auto" />
+              </button>
+            </div>
+
+            <div>
+              <button
+                className="flex items-center gap-2 cursor-pointer text-white font-semibold 
+bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 
+hover:bg-gradient-to-br focus:outline-none active:scale-95 
+transition-transform shadow-lg shadow-gray-500/50 dark:shadow-lg 
+dark:shadow-gray-800/80 rounded-lg text-sm md:px-5 md:py-2.5 px-3 py-1.5 lg:py-3 text-center 
+me-2 mb-2"
+                onClick={() =>
+                  window.open(
+                    "https://www.instagram.com/cvlab.ltd/",
+                    "_blank",
+                    "noopener,noreferrer"
+                  )
+                }
+              >
+                <p className="text-lg">Contact us</p>
+                <Image src={xxx} alt="x icon" className="h-6 w-auto px-2" />
+              </button>
+            </div>
+          </div>
+
+          {/* CTA buttons - with animation on desktop */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3, ease: "easeOut" }}
-            className="flex flex-row items-center justify-center gap-4 sm:gap-6 py-2"
+            className="hidden md:flex flex-row items-center justify-center gap-4 sm:gap-6 py-2"
           >
             <div className="flex items-center gap-3">
               <button
@@ -153,12 +229,41 @@ me-2 mb-2"
             </div>
           </motion.div>
 
-          {/* Logos marquee */}
+          {/* Logos marquee - no animation on mobile */}
+          <div className="overflow-x-clip md:hidden">
+            <div className="mt-12 flex overflow-hidden py-8 [mask-imge:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+              <motion.div
+                animate={{ x: ["0%", "-50%"] }}
+                transition={{
+                  duration: 25,
+                  ease: "linear",
+                  repeat: Infinity,
+                }}
+                className="flex flex-none items-center gap-10 pr-10 will-change-transform"
+              >
+                {marqueeLogos.map((logo, i) => (
+                  <div
+                    key={`${logo.id}-${i}`}
+                    className="flex h-16 w-auto items-center justify-center rounded-xl bg-white/5 px-4 ring-1 ring-white/10"
+                  >
+                    <Image
+                      src={logo.src}
+                      alt={logo.alt}
+                      className="h-16 w-auto opacity-85 hover:opacity-100 transition-opacity"
+                      priority={i < 6}
+                    />
+                  </div>
+                ))}
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Logos marquee - with animation on desktop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-            className="overflow-x-clip"
+            className="overflow-x-clip hidden md:block"
           >
             <div className="mt-12 flex overflow-hidden py-8 [mask-imge:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
               <motion.div
@@ -187,12 +292,28 @@ me-2 mb-2"
             </div>
           </motion.div>
 
-          {/* Video */}
+          {/* Video - no animation on mobile */}
+          <div className="mt-12 flex justify-center md:hidden">
+            <div className="w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-black/40 shadow-xl">
+              <div className="aspect-video">
+                <iframe
+                  src="https://www.youtube.com/embed/POeX6GtkL1M"
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="h-full w-full border-0"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Video - with animation on desktop */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5, ease: "easeOut" }}
-            className="mt-12 flex justify-center"
+            className="mt-12 hidden md:flex justify-center"
           >
             <div className="w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-black/40 shadow-xl">
               <div className="aspect-video">
