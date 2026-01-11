@@ -43,12 +43,12 @@ const titleVariants = {
     scale: 1,
     transition: {
       duration: 0.7,
-      ease: [0.16, 1, 0.3, 1], // Expo-out easing for smooth deceleration
+      ease: [0.16, 1, 0.3, 1],
     },
   },
 };
 
-// Secondary elements: subtle scale with fade (no blur for Safari compatibility)
+// Secondary elements: subtle scale with fade
 const itemVariants = {
   hidden: {
     opacity: 0,
@@ -83,8 +83,8 @@ export default function Hero2() {
     { id: "visa", src: visa, alt: "Visa" },
   ];
 
-  // Duplicate for seamless marquee loop
-  const marqueeLogos = [...logos, ...logos];
+  // Triple duplicate for seamless infinite loop
+  const marqueeLogos = [...logos, ...logos, ...logos];
 
   return (
     <section
@@ -98,7 +98,7 @@ export default function Hero2() {
           initial="hidden"
           animate="show"
         >
-          {/* Heading with scale-up animation (primary element) */}
+          {/* Heading with scale-up animation */}
           <motion.h1
             variants={titleVariants}
             className="mb-6 text-4xl md:text-6xl font-semibold leading-tight"
@@ -139,7 +139,7 @@ export default function Hero2() {
             </motion.span>
           </motion.h1>
 
-          {/* Social proof pill - second element */}
+          {/* Social proof pill */}
           <motion.div
             variants={itemVariants}
             className="pt-2 justify-center flex"
@@ -160,7 +160,7 @@ export default function Hero2() {
             </div>
           </motion.div>
 
-          {/* Subheading - third element */}
+          {/* Subheading */}
           <motion.p
             variants={itemVariants}
             className="mx-auto pt-10 mb-8 max-w-5xl text-md md:text-2xl text-white/60"
@@ -174,7 +174,7 @@ export default function Hero2() {
             desired candidate profile.
           </motion.p>
 
-          {/* CTA buttons - fourth element */}
+          {/* CTA buttons */}
           <motion.div
             variants={itemVariants}
             className="flex flex-row items-center justify-center gap-4 sm:gap-6 py-2"
@@ -186,11 +186,7 @@ export default function Hero2() {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => router.push("/auth")}
-                className="flex items-center gap-2 cursor-pointer text-white bg-gradient-to-r 
-from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br 
-focus:outline-none active:scale-95 transition-transform shadow-lg 
-shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 rounded-lg 
-text-sm md:px-5 md:py-2.5 px-3 py-1.5 text-center me-2 mb-2 font-semibold"
+                className="flex items-center gap-2 cursor-pointer text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:outline-none active:scale-95 transition-transform shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 rounded-lg text-sm md:px-5 md:py-2.5 px-3 py-1.5 text-center me-2 mb-2 font-semibold"
               >
                 <p className="text-lg">Get Started</p>
                 <Image src={button} alt="button icon" className="h-8 w-auto" />
@@ -199,12 +195,7 @@ text-sm md:px-5 md:py-2.5 px-3 py-1.5 text-center me-2 mb-2 font-semibold"
 
             <div>
               <button
-                className="flex items-center gap-2 cursor-pointer text-white font-semibold 
-bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 
-hover:bg-gradient-to-br focus:outline-none active:scale-95 
-transition-transform shadow-lg shadow-gray-500/50 dark:shadow-lg 
-dark:shadow-gray-800/80 rounded-lg text-sm md:px-5 md:py-2.5 px-3 py-1.5 text-center 
-me-2 mb-2"
+                className="flex items-center gap-2 cursor-pointer text-white font-semibold bg-gradient-to-r from-gray-400 via-gray-500 to-gray-600 hover:bg-gradient-to-br focus:outline-none active:scale-95 transition-transform shadow-lg shadow-gray-500/50 dark:shadow-lg dark:shadow-gray-800/80 rounded-lg text-sm md:px-5 md:py-2.5 px-3 py-1.5 text-center me-2 mb-2"
                 onClick={() => router.push("https://x.com/cvlabltd")}
               >
                 <p className="text-lg">Contact us</p>
@@ -213,7 +204,7 @@ me-2 mb-2"
             </div>
           </motion.div>
 
-          {/* Logos marquee - fifth element */}
+          {/* Logos marquee - PURE CSS ANIMATION FOR MAXIMUM PERFORMANCE */}
           <motion.div
             variants={itemVariants}
             className="overflow-x-clip"
@@ -223,23 +214,12 @@ me-2 mb-2"
             }}
           >
             <div className="mt-12 flex overflow-hidden py-8 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-              <motion.div
-                animate={{ x: ["0%", "-50%"] }}
-                transition={{
-                  duration: 25,
-                  ease: "linear",
-                  repeat: Infinity,
-                }}
-                className="flex flex-none items-center gap-10 pr-10"
-                style={{
-                  willChange: "transform",
-                  backfaceVisibility: "hidden",
-                }}
-              >
+              {/* Pure CSS marquee - no JavaScript animation */}
+              <div className="marquee-content">
                 {marqueeLogos.map((logo, i) => (
                   <div
                     key={`${logo.id}-${i}`}
-                    className="flex h-16 w-auto items-center justify-center rounded-xl bg-white/5 px-4 ring-1 ring-white/10"
+                    className="marquee-item flex h-16 w-auto items-center justify-center rounded-xl bg-white/5 px-4 ring-1 ring-white/10"
                   >
                     <Image
                       src={logo.src}
@@ -249,11 +229,11 @@ me-2 mb-2"
                     />
                   </div>
                 ))}
-              </motion.div>
+              </div>
             </div>
           </motion.div>
 
-          {/* Video - sixth element */}
+          {/* Video */}
           <motion.div
             variants={itemVariants}
             className="mt-12 flex justify-center"
@@ -283,6 +263,42 @@ me-2 mb-2"
         <div className="absolute left-1/4 top-0 h-80 w-80 rounded-full bg-cyan-500/30 blur-3xl" />
         <div className="absolute right-1/4 top-24 h-80 w-80 rounded-full bg-blue-500/25 blur-3xl" />
       </div>
+
+      {/* Pure CSS Marquee Styles */}
+      <style jsx>{`
+        .marquee-content {
+          display: flex;
+          animation: marquee 15s linear infinite;
+          gap: 2.5rem;
+          will-change: transform;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+
+        .marquee-item {
+          flex-shrink: 0;
+        }
+
+    
+
+        @keyframes marquee {
+          0% {
+            transform: translate3d(0, 0, 0);
+          }
+          100% {
+            transform: translate3d(-33.333%, 0, 0);
+          }
+        }
+
+        /* Optimize for Safari */
+        @media not all and (min-resolution: 0.001dpcm) {
+          @supports (-webkit-appearance: none) {
+            .marquee-content {
+              -webkit-transform: translate3d(0, 0, 0);
+            }
+          }
+        }
+      `}</style>
     </section>
   );
 }
