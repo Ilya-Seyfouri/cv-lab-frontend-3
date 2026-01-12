@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { ChevronRight, Menu, X, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import heroImage from "../../../images/graduate_job_market_2026_what_students_need_to_know.png";
+import heroImage from "../../../images/why_your_cv_is_the_reason_your_not_getting_interviews.jpg";
 
 // Blog content structure
 const blogContent = {

@@ -5,130 +5,151 @@ import { motion } from "framer-motion";
 import { ChevronRight, Menu, X, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import heroImage from "../../../images/are_recruiters_using_AI_to_detect_ai-written_cvs.jpg";
- // Replace with your actual image path
+import heroImage from "../../../images/how_to_tailor_applications_efficiently.jpg";
 
 // Blog content structure
 const blogContent = {
-  title: "One CV or Multiple? How to Tailor Applications Efficiently",
+  title: "Why Your CV Is the Reason You're Not Getting Interviews",
   date: "January 2025",
-  category: "Guides & Tutorials",
-  readTime: "6 min read",
+  category: "Career Insights",
+  readTime: "7 min read",
 
   intro: [
-    "If you've been applying for jobs for more than a week, you've probably asked yourself this question already: do I really need a different CV for every role?",
-    "It's a fair question and an exhausting one. Between job boards, cover letters, and follow-ups, the idea of rewriting your CV again and again can feel overwhelming. But using the same CV for every application doesn't work either.",
-    "So what's the right balance?",
+    "If you're applying for jobs, meeting the requirements, and still hearing nothing back, it's easy to assume the market is broken or that employers are ignoring you.",
+    "In reality, the most common reason candidates don't get interviews is much simpler.",
+    "Your CV isn't doing its job.",
+    "In the UK job market, especially for graduates and early-career roles, your CV is often the only thing standing between you and an interview. And for most candidates, it's the weakest part of the application.",
   ],
 
   sections: [
     {
-      id: "generic-cv",
-      title: "Why One Generic CV Rarely Gets Results",
+      id: "numbers-dont-lie",
+      title: "The Numbers Don't Lie: Competition Is Brutal",
       content: [
-        "A single CV for every role feels efficient, but in practice, it often holds candidates back.",
-        "Recruiters aren't reading CVs line by line. They're scanning. They're looking for familiar keywords, relevant experience, and quick proof that you match the role. If your CV feels broad or unfocused, it's easy to skip.",
-        "On top of that, most companies use Applicant Tracking Systems (ATS). These systems compare your CV to the job description before a human ever sees it. If the match is weak, your application may be filtered out automatically.",
-        "A generic CV isn't 'bad' it's just not specific enough.",
+        "According to the Institute of Student Employers (ISE), UK employers received over 1.2 million applications for roughly 17,000 graduate roles in a single recruitment cycle.",
+        "Source: https://ise.org.uk/knowledge/insights/410/record_graduate_job_applications/",
+        'That means recruiters are rejecting the vast majority of CVs, often after just 6 to 8 seconds of scanning. In that time, they\'re not asking "Is this person talented?"',
+        'They\'re asking "Is this CV clearly relevant to this role?"',
+        "If the answer isn't obvious, the CV is gone.",
       ],
     },
     {
-      id: "rewriting-problem",
-      title: "Why Rewriting Your CV for Every Job Isn't Sustainable",
+      id: "never-reach-human",
+      title: "Most CVs Never Reach a Human",
       content: [
-        "At the other extreme, some candidates try to create a brand-new CV for each application.",
-        "While this can improve relevance, it quickly becomes:",
+        "One of the biggest misconceptions job seekers have is that recruiters read every CV.",
+        "They don't.",
+        "Research consistently shows that over 75 percent of large UK employers use Applicant Tracking Systems (ATS) to filter applications before a recruiter sees them. These systems score CVs based on how closely they match the job description, including skills, keywords, structure, and clarity.",
+        "If your CV doesn't align, it's rejected automatically, regardless of your potential.",
+        "This is one of the main reasons qualified candidates never get interviews.",
       ],
-      list: ["Time-consuming", "Mentally draining", "Easy to mess up"],
-      afterList:
-        "You end up copying the same content, tweaking wording, second-guessing yourself, and spending hours on small changes. Over time, this slows your job search and leads to burnout.",
-      afterList2: "There has to be a better way.",
     },
     {
-      id: "approach-that-works",
-      title: "The Approach That Actually Works",
+      id: "generic-cvs-fail",
+      title: "Generic CVs Are Designed to Fail",
       content: [
-        "The most effective strategy is surprisingly simple:",
-        "One strong master CV, tailored for each role.",
-        "Your master CV is your complete career story. It includes all your experience, skills, achievements, and everything you might need.",
-        "From there, you tailor, not rewrite.",
-        "That means:",
+        "One CV sent to every job might feel efficient, but it's one of the fastest ways to get rejected.",
+        "Employer research highlighted by Wonkhe shows that UK employers are increasingly focused on skills-based and role-specific hiring, rather than broad academic profiles.",
+        "Source: https://wonkhe.com/blogs/employers-will-increasingly-focus-on-graduates-skills-over-technical-knowledge/",
+        "Yet many CVs still:",
       ],
       list: [
-        "Highlighting the experience that matters most for the role",
-        "Adjusting wording to reflect the job description",
-        "Prioritizing skills the employer is actively looking for",
+        "Use vague, generic skill descriptions",
+        "Fail to mirror job description language",
+        "Emphasise responsibilities instead of outcomes",
       ],
       afterList:
-        "You're still you. You're just presenting the most relevant version of yourself for each job, making you the ideal candidate.",
+        "In a market where hundreds of applicants meet the minimum criteria, generic CVs simply blend into the background.",
     },
     {
-      id: "what-recruiters-want",
-      title: "What Recruiters Are Really Looking For",
+      id: "degrees-over-featured",
+      title: "Degrees Are Over-Featured, Skills Are Under-Explained",
       content: [
-        "Recruiters aren't expecting a completely different CV every time. What they want is relevance.",
-        "A tailored CV shows that:",
+        "UK government data shows that 87.6 percent of graduates are employed, compared to 68 percent of non-graduates.",
+        "Source: https://explore-education-statistics.service.gov.uk/find-statistics/graduate-labour-markets/2024",
+        "But employers are clear. Having a degree is expected. It's not impressive on its own.",
+        "Employer perception research from HE Professional consistently shows that recruiters prioritise communication, problem-solving, adaptability, and digital confidence over academic detail.",
+        "Source: https://heprofessional.co.uk/edition/employers-perceptions-of-the-employability-skills-of-new-graduates-in-the-uk-release",
+        "CVs that focus heavily on modules, grades, and theory without showing real-world application fail to answer the employer's key question:",
+        '"What can you actually do?"',
       ],
-      list: [
-        "You've read the job description",
-        "You understand what the role involves",
-        "Your experience clearly aligns with their needs",
-      ],
-      afterList:
-        "Even small changes like matching the language used in the job description can make a big difference in how your CV is received.",
     },
     {
-      id: "how-to-tailor",
-      title: "How to Tailor Your CV Without Burning Out",
+      id: "poor-structure",
+      title: "Poor Structure Signals Poor Communication",
       content: [
-        "Tailoring your CV manually works, but it's slow and repetitive.",
-        "That's why many job seekers now use tools that automate the process. With an automated CV tailoring platform, you can:",
+        "Communication is one of the most demanded skills in the UK job market, yet many CVs demonstrate the opposite.",
+        "Surveys by the Chartered Management Institute (CMI) show that 36 percent of employers cite communication as a major skills gap, while 58 percent point to a lack of resilience.",
+        "Source: https://www.managers.org.uk/knowledge-and-insights/article/do-graduates-lack-the-skills-to-be-work-ready/",
+        "Long paragraphs, cluttered layouts, irrelevant detail, and unclear sections all signal weak communication before an interview even begins. Recruiters don't have time to figure out your CV. They move on.",
       ],
-      list: [
-        "Upload your master CV once",
-        "Add a job description",
-        "Instantly generate a tailored version for that role",
-      ],
-      afterList:
-        "The system highlights relevant experience, adjusts keywords for ATS, and keeps your formatting clean—all without you starting from scratch every time.",
     },
     {
-      id: "the-answer",
-      title: "So… One CV or Multiple?",
-      content: ["Here's the honest answer:"],
-      list: [
-        "One generic CV → not targeted enough",
-        "A brand-new CV every time → too much work",
-        "One master CV, tailored efficiently → the sweet spot",
-      ],
-      afterList:
-        "If you're applying to multiple jobs, this approach lets you stay consistent, relevant, and sane.",
-    },
-    {
-      id: "cvlab-solution",
-      title: "How CVLab Makes Tailoring Effortless",
+      id: "listing-skills",
+      title: "Listing Skills Without Evidence Is a Silent Killer",
       content: [
-        "This is exactly where CVLab comes in.",
-        "Instead of rewriting your CV again and again, CVLab lets you:",
+        "One of the most common CV mistakes is listing skills with no proof.",
+        'Saying you have "teamwork" or "problem-solving" skills means very little without evidence. Employers want to see:',
+      ],
+      list: ["What you did", "How you did it", "What changed as a result"],
+      afterList:
+        "This applies whether your experience comes from internships, university projects, part-time work, or volunteering.\n\nWithout evidence, your CV reads like everyone else's.",
+    },
+    {
+      id: "tailoring-not-optional",
+      title: "Why Tailoring Is No Longer Optional",
+      content: [
+        "In today's market, relevance beats volume. A CV that's closely aligned to a job description is far more likely to:",
       ],
       list: [
-        "Upload your master CV once",
-        "Paste a job description",
-        "Instantly generate a tailored CV in one click",
+        "Pass ATS screening",
+        "Be understood quickly by recruiters",
+        "Lead to interviews",
       ],
       afterList:
-        "The platform automatically aligns your experience with the role, optimizes keywords for ATS, and keeps everything clean and professional.",
-      afterList2: "No guesswork. No copy-pasting. No wasted hours.",
-      highlight: true,
+        "Even small changes, such as adjusting skill wording or re-prioritising experience, can dramatically improve results. Yet many candidates skip tailoring because it's time-consuming.",
+    },
+    {
+      id: "cvlab-fixes",
+      title: "How CVLab Fixes the Real Problem",
+      content: [
+        "This is exactly the issue CVLab is designed to solve.",
+        "CVLab allows you to upload your CV once and automatically tailor it to each job description. Instead of sending the same generic CV everywhere, your application is optimised for:",
+      ],
+      list: [
+        "Job-specific skills and keywords",
+        "ATS compatibility",
+        "Clear, recruiter-friendly structure",
+      ],
+      afterList:
+        'This means your CV answers the employer\'s question immediately: "Is this person right for this role?"',
+    },
+    {
+      id: "one-click-cover-letters",
+      title: "One-Click Cover Letters That Support Your CV",
+      content: [
+        "A strong CV alone isn't always enough. Many UK roles still expect a cover letter, but writing one for every application is time-consuming.",
+        "CVLab generates tailored cover letters in one click, ensuring your message aligns with both the job description and your CV. This consistency strengthens your application rather than weakening it with generic statements.",
+      ],
     },
   ],
 
   conclusion: {
-    title: "Apply Smarter, Not Harder",
+    title: "Final Thoughts",
     content: [
-      "Job hunting is demanding enough. Your CV process shouldn't slow you down.",
-      "By automatically tailoring your CV and generating matching cover letters in one click, CVLab helps you apply faster, stay consistent, and show up as the right candidate for every role.",
-      "Spend less time editing—and more time landing interviews.",
+      "If you're not getting interviews, it's rarely because you're unqualified.",
+      "It's because your CV:",
+    ],
+    list: [
+      "Isn't tailored",
+      "Isn't clear",
+      "Isn't aligned with how employers hire today",
+    ],
+    afterList: [
+      "In a market where competition is intense and screening is automated, your CV has to work harder than ever.",
+      "With the right structure, clear evidence, and targeted tailoring, supported by tools like CVLab, you give your experience the chance it deserves.",
+      "Your CV isn't just a document.",
+      "It's your first interview.",
     ],
   },
 };
@@ -139,7 +160,7 @@ const tocItems = blogContent.sections.map((section) => ({
   title: section.title,
 }));
 
-export default function OneCVOrMultiple() {
+export default function WhyCVReason() {
   const [activeSection, setActiveSection] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -305,7 +326,7 @@ export default function OneCVOrMultiple() {
               <div className="mb-8 overflow-hidden rounded-2xl border border-white/10">
                 <Image
                   src={heroImage}
-                  alt="One CV or Multiple CVs"
+                  alt="Why Your CV Is the Reason You're Not Getting Interviews"
                   className="w-full h-100 object-cover"
                 />
               </div>
@@ -330,11 +351,7 @@ export default function OneCVOrMultiple() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.5 }}
-                  className={`scroll-mt-24 ${
-                    section.highlight
-                      ? "rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6 md:p-8"
-                      : ""
-                  }`}
+                  className="scroll-mt-24"
                 >
                   <h2 className="mb-4 bg-gradient-to-b from-white to-white/60 bg-clip-text text-2xl font-semibold text-transparent md:text-3xl">
                     {section.title}
@@ -368,11 +385,6 @@ export default function OneCVOrMultiple() {
                             {section.afterList}
                           </p>
                         )}
-                        {section.afterList2 && (
-                          <p className="text-base text-white/60 md:text-lg leading-relaxed">
-                            {section.afterList2}
-                          </p>
-                        )}
                       </>
                     )}
                   </div>
@@ -399,6 +411,28 @@ export default function OneCVOrMultiple() {
                       {paragraph}
                     </p>
                   ))}
+                  {blogContent.conclusion.list && (
+                    <ul className="my-4 space-y-2 pl-1">
+                      {blogContent.conclusion.list.map((item, itemIndex) => (
+                        <li
+                          key={itemIndex}
+                          className="flex items-start gap-3 text-base text-white/60 md:text-lg"
+                        >
+                          <ChevronRight className="mt-1 h-5 w-5 flex-shrink-0 text-cyan-500" />
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {blogContent.conclusion.afterList &&
+                    blogContent.conclusion.afterList.map((paragraph, index) => (
+                      <p
+                        key={`after-${index}`}
+                        className="text-base text-white/60 md:text-lg leading-relaxed"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
                 </div>
               </motion.section>
 

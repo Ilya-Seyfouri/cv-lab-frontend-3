@@ -8,10 +8,10 @@ import CVLOGO from "../../public/logo_text.png";
 import buttonImg from "../../public/BUTTON_1.png";
 
 const navLinks = [
-  { label: "Home", href: "#home" },
-  { label: "Features", href: "#features" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "FAQ", href: "#faq" },
+  { label: "Home", href: "/#home" },
+  { label: "Features", href: "/#features" },
+  { label: "Pricing", href: "/#pricing" },
+  { label: "FAQ", href: "/#faq" },
   { label: "Blog", href: "/blog" },
 ];
 

@@ -33,8 +33,7 @@ export function GenerationProvider({ children }) {
     matchScore: 0,
     matchReason: "",
     ATSScore: 0,
-    keywordMatchScore: 0,// ✅ ADD THIS
-
+    keywordMatchScore: 0,
     evidenceMap: {},
     missingSkills: [],
     gapBridges: {},
@@ -44,9 +43,17 @@ export function GenerationProvider({ children }) {
     error1: "",
   });
 
+  // ✅ NEW: Track when a new generation is saved
+  const [lastGenerationTime, setLastGenerationTime] = useState(null);
+
   // Update function with merge behavior
   const updateGenerationState = useCallback((updates) => {
     setGenerationState((prev) => ({ ...prev, ...updates }));
+  }, []);
+
+  // ✅ NEW: Call this after saving a generation to trigger refetch in Account
+  const markNewGeneration = useCallback(() => {
+    setLastGenerationTime(Date.now());
   }, []);
 
   // Reset function to clear all generation data
@@ -86,6 +93,8 @@ export function GenerationProvider({ children }) {
         generationState,
         updateGenerationState,
         resetGenerationState,
+        lastGenerationTime, // ✅ NEW
+        markNewGeneration, // ✅ NEW
       }}
     >
       {children}

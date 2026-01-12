@@ -4,6 +4,11 @@ import { createClient } from "../lib/supabase/client";
 import { useGeneration } from "../contexts/GenerationContext";
 import CV from "./CV";
 import CoverLetter from "./CoverLetter";
+import generic from "../../images/generic.png";
+import finance from "../../images/finance.png";
+import tech from "../../images/tech.png";
+import Image from "next/image";
+
 const improvements = [
   {
     title: "Enhanced Technical Keywords",
@@ -60,6 +65,10 @@ export default function Home() {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loadingCredits, setLoadingCredits] = useState(true);
   const supabase = createClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalImage, setModalImage] = useState(null);
+  const [selectedCV, setSelectedCV] = useState("generic");
+
   useEffect(() => {
     getUser();
     fetchUserCredits(); // ✅ Add this
@@ -68,6 +77,11 @@ export default function Home() {
     getUser();
     fetchUserCredits(); // ✅ Add this
   }, []);
+
+  const openModal = (image) => {
+    setModalImage(image);
+    setIsModalOpen(true);
+  };
   // ✅ Add this function
   const fetchUserCredits = async () => {
     try {
@@ -96,6 +110,10 @@ export default function Home() {
     } finally {
       setLoadingCredits(false);
     }
+  };
+
+  const selectCV = (cvType) => {
+    setSelectedCV(cvType);
   };
   // Get generation state from context
   const { generationState, updateGenerationState, resetGenerationState } =
@@ -242,13 +260,69 @@ export default function Home() {
     }, 1300); // 1% per second
     return timer; // so we can clear it when we're done
   };
-  // Updated handleOptimize function with keyword match calculation
+
+  // NEW: Function to save generation to database
+  const saveGenerationToDatabase = async (
+    roleTitle,
+    companyName,
+    atsScore,
+    matchScore,
+    cvPdfBase64,
+    coverLetterPdfBase64,
+    cvTemplate
+  ) => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        console.error("No session found for saving generation");
+        return;
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/save-generation`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            role_title: roleTitle,
+            company_name: companyName,
+            ats_score: atsScore,
+            match_score: matchScore,
+            cv_pdf_base64: cvPdfBase64,
+            cover_letter_pdf_base64: coverLetterPdfBase64,
+            cv_template: cvTemplate,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        console.log("✅ Generation saved to database:", data.generation_id);
+      } else {
+        console.error("Failed to save generation:", data);
+      }
+    } catch (error) {
+      console.error("Error saving generation to database:", error);
+    }
+  };
+
   const handleOptimize = async () => {
     if (!cvFile || !jobDescription) return;
     if (!isSubscribed && userCredits <= 0) {
       updateGenerationState({
         error1: "You're out of credits! Upgrade to Premium to continue.",
       });
+      return;
+    }
+    if (!selectedCV) {
+      updateGenerationState({});
       return;
     }
 
@@ -261,15 +335,20 @@ export default function Home() {
     });
 
     const progressTimer = startOptimizeProgress(updateGenerationState);
+    let extractedRoleTitle = "";
+    let extractedAtsScore = null;
+    let extractedMatchScore = null;
+    let finalCvPdfData = null;
+    let finalCoverLetterPdfData = null;
 
     try {
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
-      // ✅ STEP 1: Generate CV (no longer returns skills_report)
+      // ✅ STEP 1: Generate CV
       const cvResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_API_KEY}/generate-cv`,
+        `${process.env.NEXT_PUBLIC_API_KEY}/generate-${selectedCV}-cv`,
         {
           method: "POST",
           headers: {
@@ -282,7 +361,9 @@ export default function Home() {
           }),
         }
       );
+
       const cvData = await cvResponse.json();
+
       if (cvResponse.status === 403) {
         clearInterval(progressTimer);
         updateGenerationState({
@@ -295,23 +376,21 @@ export default function Home() {
         });
         return;
       }
-      // ✅ CV data only contains the CV itself now
+
       if (cvData && cvData.cv) {
         updateGenerationState({
           generatedCV: cvData.cv,
           cvProgress: 100,
-          // ❌ DON'T set processingStep to "complete" yet
         });
-        await compileCVToPDF(cvData.cv);
+        finalCvPdfData = await compileCVToPDF(cvData.cv);
       }
 
-      // ✅ Update progress for cover letter generation
+      // ✅ STEP 2: Generate Cover Letter
       updateGenerationState({
         coverLetterProgress: 25,
         processingStep: "generating_cover_letter",
       });
 
-      // ✅ STEP 2: Generate Cover Letter (NOW returns skills_report)
       const coverLetterResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_KEY}/generate-cover-letter`,
         {
@@ -329,10 +408,8 @@ export default function Home() {
 
       const coverLetterData = await coverLetterResponse.json();
 
-      // ✅ Update progress
       updateGenerationState({ coverLetterProgress: 75 });
 
-      // ✅ Extract BOTH cover letter AND skills_report from this response
       if (coverLetterData) {
         // Set the cover letter
         if (coverLetterData.cover_letter) {
@@ -340,12 +417,26 @@ export default function Home() {
             generatedCoverLetter: coverLetterData.cover_letter,
             coverLetterProgress: 100,
           });
-          await compileCoverLetterToPDF(coverLetterData.cover_letter);
+          finalCoverLetterPdfData = await compileCoverLetterToPDF(
+            coverLetterData.cover_letter
+          );
         }
 
-        // ✅ IMPORTANT: Extract skills_report from cover letter response
+        // ✅ Extract role_title from job_info (from extract_job)
+        if (coverLetterData.job_info) {
+          extractedRoleTitle = coverLetterData.job_info.role_title || "";
+        }
+
+        // ✅ Extract skills analysis data
         if (coverLetterData.skills_report) {
           const report = JSON.parse(coverLetterData.skills_report);
+
+          // Extract ATS and match scores
+          if (report.role_alignment) {
+            extractedAtsScore = report.role_alignment.ats_score;
+            extractedMatchScore =
+              parseFloat(report.role_alignment.match_score) * 100;
+          }
 
           // Calculate keyword match percentage
           let keywordMatchScore = 0;
@@ -367,10 +458,10 @@ export default function Home() {
           // Update state with analysis data
           updateGenerationState({
             missingSkills: report.missing_skills,
-            matchScore: parseFloat(report.role_alignment.match_score) * 100,
-            ATSScore: report.role_alignment.ats_score,
+            matchScore: extractedMatchScore,
+            ATSScore: extractedAtsScore,
             keywordMatchScore: keywordMatchScore,
-            matchReason: report.role_alignment.reason,
+            matchReason: report.role_alignment?.reason || "",
             evidenceMap: report.evidence_map,
             gapBridges: report.gap_bridges,
             showAnalysis: true,
@@ -387,16 +478,30 @@ export default function Home() {
       });
     } catch (error) {
       console.error("Error:", error);
+      clearInterval(progressTimer);
       updateGenerationState({
         error1: "Error generating documents. Please try again.",
         processingStep: "idle",
         isCompilingAll: false,
       });
     }
+
+    // ✅ Save generation with extracted role title
+    if (finalCvPdfData || finalCoverLetterPdfData) {
+      await saveGenerationToDatabase(
+        extractedRoleTitle, // "Backend Engineer at Visa"
+        null, // company_name - we're putting it in role_title
+        extractedAtsScore,
+        extractedMatchScore,
+        finalCvPdfData,
+        finalCoverLetterPdfData,
+        selectedCV
+      );
+    }
   };
-  
+
   const compileCVToPDF = async (latexCode) => {
-    if (!latexCode) return;
+    if (!latexCode) return null;
     updateGenerationState({ isCompilingCV: true });
     try {
       const response = await fetch(
@@ -410,9 +515,12 @@ export default function Home() {
       const data = await response.json();
       if (data.success) {
         updateGenerationState({ cvPdfData: data.pdf });
+        return data.pdf; // ADD THIS LINE
       }
+      return null; // ADD THIS LINE
     } catch (error) {
       console.error("Error compiling PDF:", error);
+      return null; // ADD THIS LINE
     } finally {
       updateGenerationState({ isCompilingCV: false });
     }
@@ -458,10 +566,12 @@ export default function Home() {
       const data = await response.json();
       if (data.success) {
         updateGenerationState({ error1: "", coverLetterPdfData: data.pdf });
+        return data.pdf;
       } else {
         updateGenerationState({
           error1: "Error creating PDF: " + (data.error || data.detail),
         });
+        return null; // Move after state update
       }
     } catch (error) {
       console.error("Error creating cover letter PDF:", error);
@@ -688,6 +798,7 @@ export default function Home() {
                 </div>
               </div>
             )}
+
             {/* Action Button */}
             {!canOptimize && (
               <p className="pt-8 text-center text-sm text-muted-foreground">
@@ -696,7 +807,50 @@ export default function Home() {
                 {!jobDescription && "Paste a Job Description."}
               </p>
             )}
-            <div className=" pt-8 flex justify-center">
+            <div className="flex flex-col">
+              <div className="flex flex-row pt-10 justify-between gap-20">
+                <div className="px-2 text-center flex-1">
+                  <div
+                    className={`border rounded-xl px-4 py-1 inline-block active:scale-95 cursor-pointer transition-colors ${
+                      selectedCV === "tech"
+                        ? "bg-cyan-400 border-2 border-cyan-600 text-white"
+                        : "border-cyan-400 border-2 hover:bg-white/50"
+                    }`}
+                    onClick={() => setSelectedCV("tech")}
+                  >
+                    💻 Tech
+                  </div>
+                </div>
+
+                <div className="px-2 text-center flex-1">
+                  <div
+                    className={`border rounded-xl px-4 py-1 inline-block active:scale-95 cursor-pointer transition-colors ${
+                      selectedCV === "finance"
+                        ? "bg-cyan-400 border-2 border-cyan-600 text-white"
+                        : "border-cyan-400 border-2 hover:bg-white/50"
+                    }`}
+                    onClick={() => setSelectedCV("finance")}
+                  >
+                    💰 Finance
+                  </div>
+                </div>
+
+                <div className="px-2 text-center flex-1">
+                  <div
+                    className={`rounded-xl active:scale-95 px-4 py-1 inline-block cursor-pointer transition-colors ${
+                      selectedCV === "generic"
+                        ? "bg-cyan-400 border-2 border-cyan-600 text-white"
+                        : "border-cyan-400 border-2 hover:bg-white/50"
+                    }`}
+                    onClick={() => setSelectedCV("generic")}
+                  >
+                    ✍️ Generic
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className=" pt-15 flex justify-center">
               <button
                 disabled={
                   !canOptimize ||
@@ -705,8 +859,7 @@ export default function Home() {
                 onClick={handleOptimize}
                 type="button"
                 className="text-white cursor-pointer bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 
-             hover:bg-gradient-to-br focus:ring-4 focus:outline-none 
-             focus:ring-cyan-300 dark:focus:ring-cyan-800 
+             hover:bg-gradient-to-br 
              shadow-lg shadow-cyan-500/50 dark:shadow-lg dark:shadow-cyan-800/80 
              font-medium rounded-base text-sm px-6 py-3 text-center leading-5 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >

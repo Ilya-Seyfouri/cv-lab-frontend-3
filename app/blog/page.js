@@ -9,8 +9,11 @@ import Navbar2 from "../sections/NavBar2";
 // Import blog images
 import graduateJobMarketImage from "../../images/graduate_job_market_2026_what_students_need_to_know.png";
 import demandedSkillsImage from "../../images/the_most_demanded_graduate_skills_in_the_uk_2026.png";
-import oneCVImage from "../../images/graduate_job_market_2026_what_students_need_to_know.png";
-import aiDetectionImage from "../../images/graduate_job_market_2026_what_students_need_to_know.png";
+import oneCVImage from  "../../images/are_recruiters_using_AI_to_detect_ai-written_cvs.jpg";
+import aiDetectionImage from "../../images/how_to_tailor_applications_efficiently.jpg";
+import AiCVS from "../../images/the_10_skills_that_get_uk_graduates_interviews.jpg"
+import skills from "../../images/why_your_cv_is_the_reason_your_not_getting_interviews.jpg"
+
 // Blog posts data
 const blogPosts = [
   {
@@ -29,7 +32,7 @@ const blogPosts = [
     excerpt:
       "Graduate roles are changing, and employer expectations are evolving. Understand the skills employers are really looking for and how to present them effectively.",
     date: "January 2025",
-    readTime: "8 min read",
+    readTime: "9 min read",
     category: "Career Insights",
     image: demandedSkillsImage,
   },
@@ -48,6 +51,27 @@ const blogPosts = [
     title: "Are Recruiters Using AI to Detect AI-Written CVs?",
     excerpt:
       "Yes — and it's becoming more common. Learn how AI detection tools work, why generic AI CVs get rejected, and how to use AI smartly without getting flagged.",
+    date: "January 2025",
+    readTime: "5 min read",
+    category: "Career Insights",
+    image: skills,
+  },
+  {
+    slug: "the_10_skills_that_get_uk_graduates_interviews",
+    title: "The 10 Skills That Get Uk Graduates Interviews",
+    excerpt:
+      "With over 1.2 million applications for just 17,000 graduate roles, having a degree isn't enough. Discover the 10 evidence-backed skills that get UK graduates shortlisted in 2026 — and how to show them on your CV.",
+    date: "January 2025",
+    readTime: "4 min read",
+    category: "Career Insights",
+    image: AiCVS,
+  },
+
+  {
+    slug: "why_your_cv_is_the_reason_your_not_getting_interviews",
+    title: "Why Your CV Is The Reason Your Not Getting Interviews",
+    excerpt:
+      "Qualified but getting no responses? The problem isn't the market — it's your CV. Learn why most CVs get rejected in seconds, how ATS filters work, and what actually gets candidates through to interviews.",
     date: "January 2025",
     readTime: "6 min read",
     category: "Career Insights",

@@ -5,130 +5,140 @@ import { motion } from "framer-motion";
 import { ChevronRight, Menu, X, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import heroImage from "../../../images/are_recruiters_using_AI_to_detect_ai-written_cvs.jpg";
- // Replace with your actual image path
+import heroImage from "../../../images/the_10_skills_that_get_uk_graduates_interviews.jpg";
 
 // Blog content structure
 const blogContent = {
-  title: "One CV or Multiple? How to Tailor Applications Efficiently",
+  title: "The 10 Skills That Get UK Graduates Interviews",
   date: "January 2025",
-  category: "Guides & Tutorials",
-  readTime: "6 min read",
+  category: "Career Insights",
+  readTime: "8 min read",
 
   intro: [
-    "If you've been applying for jobs for more than a week, you've probably asked yourself this question already: do I really need a different CV for every role?",
-    "It's a fair question and an exhausting one. Between job boards, cover letters, and follow-ups, the idea of rewriting your CV again and again can feel overwhelming. But using the same CV for every application doesn't work either.",
-    "So what's the right balance?",
+    "In today's UK graduate job market, having a degree is no longer enough to secure interviews. With some graduate roles receiving hundreds of applications per vacancy, employers are filtering candidates faster and more ruthlessly than ever.",
+    "According to the Institute of Student Employers (ISE), UK employers received over 1.2 million applications for around 17,000 graduate roles in a recent recruitment cycle (Source: https://ise.org.uk/knowledge/insights/410/record_graduate_job_applications/).",
+    "So what actually gets graduates shortlisted?",
+    "Across employer surveys, labour market data, and recruiter insights, the same skills appear again and again. Below are the 10 skills most likely to get UK graduates interviews in 2026, backed by evidence and guidance on how to show them effectively.",
   ],
 
   sections: [
     {
-      id: "generic-cv",
-      title: "Why One Generic CV Rarely Gets Results",
+      id: "communication-skills",
+      title: "Communication Skills",
       content: [
-        "A single CV for every role feels efficient, but in practice, it often holds candidates back.",
-        "Recruiters aren't reading CVs line by line. They're scanning. They're looking for familiar keywords, relevant experience, and quick proof that you match the role. If your CV feels broad or unfocused, it's easy to skip.",
-        "On top of that, most companies use Applicant Tracking Systems (ATS). These systems compare your CV to the job description before a human ever sees it. If the match is weak, your application may be filtered out automatically.",
-        "A generic CV isn't 'bad' it's just not specific enough.",
+        "Communication remains the most consistently demanded graduate skill in the UK. Research published by HE Professional shows that employers rank communication above technical knowledge when assessing graduate employability (Source:https://heprofessional.co.uk/edition/employers-perceptions-of-the-employability-skills-of-new-graduates-in-the-uk-release).",
+        "Graduates who can write clearly, explain ideas, and communicate professionally especially in hybrid environments, stand out immediately. Poor communication is also one of the most common reasons candidates fail at an interview.",
       ],
     },
     {
-      id: "rewriting-problem",
-      title: "Why Rewriting Your CV for Every Job Isn't Sustainable",
+      id: "problem-solving",
+      title: "Problem-Solving Ability",
       content: [
-        "At the other extreme, some candidates try to create a brand-new CV for each application.",
-        "While this can improve relevance, it quickly becomes:",
+        "UK employers increasingly value how graduates think, not just what they know. Problem-solving appears in the top five skills across most graduate employer surveys.",
+        "Recruiters look for evidence that candidates can analyse situations, make decisions, and adapt when faced with uncertainty skills that translate across industries.",
       ],
-      list: ["Time-consuming", "Mentally draining", "Easy to mess up"],
-      afterList:
-        "You end up copying the same content, tweaking wording, second-guessing yourself, and spending hours on small changes. Over time, this slows your job search and leads to burnout.",
-      afterList2: "There has to be a better way.",
     },
     {
-      id: "approach-that-works",
-      title: "The Approach That Actually Works",
+      id: "digital-confidence",
+      title: "Digital Confidence",
       content: [
-        "The most effective strategy is surprisingly simple:",
-        "One strong master CV, tailored for each role.",
-        "Your master CV is your complete career story. It includes all your experience, skills, achievements, and everything you might need.",
-        "From there, you tailor, not rewrite.",
-        "That means:",
+        "Digital skills are now expected across almost all graduate roles. A report from techUK estimates that around 3 million UK jobs require digital skills, many of them non-technical (Source: https://www.techuk.org/shaping-policy/fast-forward-for-digital-jobs-report.html).",
+        "Graduates don't need to code but they do need to show confidence using digital tools, platforms, and increasingly, AI-assisted workflows.",
+      ],
+    },
+    {
+      id: "teamwork",
+      title: "Teamwork and Collaboration",
+      content: [
+        "Modern workplaces are collaborative by default. Employers want graduates who can work effectively in teams often across departments or remotely.",
+        "This skill is frequently assessed through group interviews, assessment centres, and CV evidence from university projects, placements, or part-time work.",
+      ],
+    },
+    {
+      id: "adaptability",
+      title: "Adaptability and Willingness to Learn",
+      content: [
+        "Career paths are no longer linear, and employers know it. Research from the Chartered Management Institute (CMI) found that 58% of employers believe graduates lack resilience, closely linked to adaptability (Source:https://www.managers.org.uk/knowledge-and-insights/article/do-graduates-lack-the-skills-to-be-work-ready/).",
+        "Graduates who show they can learn quickly, handle change, and stay productive under pressure are far more likely to be shortlisted.",
+      ],
+    },
+    {
+      id: "commercial-awareness",
+      title: "Commercial Awareness",
+      content: [
+        "Employers consistently say they want graduates who understand how organisations operate not just their specific role.",
+        "Commercial awareness includes understanding customers, markets, competition, and how your work contributes to business goals. It's especially important for graduate schemes and corporate roles.",
+      ],
+    },
+    {
+      id: "time-management",
+      title: "Time Management and Organisation",
+      content: [
+        "With tight deadlines and multiple responsibilities, employers want graduates who can manage their time effectively.",
+        "Evidence of balancing studies with work, extracurriculars, or leadership roles helps demonstrate this skill, particularly for fast-paced industries.",
+      ],
+    },
+    {
+      id: "data-awareness",
+      title: "Data Awareness",
+      content: [
+        "You don't need to be a data analyst, but basic data literacy is increasingly valuable. Government labour market forecasts show digital and data-related skills growing faster than most other areas through 2030 (Source:https://www.gov.uk/government/publications/assessment-of-priority-skills-to-2030/assessment-of-priority-skills-to-2030).",
+        "Graduates who can interpret simple metrics, reports, or dashboards are seen as more confident and decision-ready.",
+      ],
+    },
+    {
+      id: "initiative",
+      title: "Initiative and Proactivity",
+      content: [
+        "Employers want graduates who don't wait to be told what to do. Initiative signals motivation, confidence, and leadership potential.",
+        "This skill often comes through experiences like internships, volunteering, student societies, or self-led projects.",
+      ],
+    },
+    {
+      id: "self-awareness",
+      title: "Self-Awareness and Professionalism",
+      content: [
+        "Graduates who understand their strengths and can communicate them clearly perform better in applications and interviews.",
+        "Professionalism includes tone, presentation, honesty, and clarity. Recruiters often say this is noticeable within seconds of reviewing a CV.",
+      ],
+    },
+    {
+      id: "showing-skills",
+      title: "The Real Challenge: Showing These Skills on Your CV",
+      content: [
+        "Most graduates already have many of these skills. The problem is how they're presented.",
+        "Common mistakes include:",
       ],
       list: [
-        "Highlighting the experience that matters most for the role",
-        "Adjusting wording to reflect the job description",
-        "Prioritizing skills the employer is actively looking for",
+        "Listing skills without evidence",
+        "Using generic phrases",
+        "Sending the same CV to every employer",
       ],
-      afterList:
-        "You're still you. You're just presenting the most relevant version of yourself for each job, making you the ideal candidate.",
+      afterList: "In a competitive market, relevance is what gets interviews.",
     },
     {
-      id: "what-recruiters-want",
-      title: "What Recruiters Are Really Looking For",
+      id: "cvlab-helps",
+      title: "How CVLab Helps Graduates Get Interview-Ready",
       content: [
-        "Recruiters aren't expecting a completely different CV every time. What they want is relevance.",
-        "A tailored CV shows that:",
+        "This is where CVLab gives graduates a real advantage.",
+        "CVLab allows you to upload your CV once and automatically tailor it to each job description. Instead of guessing which skills matter most, your CV highlights the exact competencies employers are asking for.",
       ],
-      list: [
-        "You've read the job description",
-        "You understand what the role involves",
-        "Your experience clearly aligns with their needs",
-      ],
-      afterList:
-        "Even small changes like matching the language used in the job description can make a big difference in how your CV is received.",
     },
     {
-      id: "how-to-tailor",
-      title: "How to Tailor Your CV Without Burning Out",
+      id: "cover-letters",
+      title: "One-Click Cover Letters That Reinforce Your Skills",
       content: [
-        "Tailoring your CV manually works, but it's slow and repetitive.",
-        "That's why many job seekers now use tools that automate the process. With an automated CV tailoring platform, you can:",
+        "Cover letters still matter, especially for graduate roles—but writing a new one for every application is time-consuming. CVLab's one-click cover letter feature generates tailored letters that align with your CV and the job description, reinforcing your suitability rather than repeating generic statements.",
       ],
-      list: [
-        "Upload your master CV once",
-        "Add a job description",
-        "Instantly generate a tailored version for that role",
-      ],
-      afterList:
-        "The system highlights relevant experience, adjusts keywords for ATS, and keeps your formatting clean—all without you starting from scratch every time.",
-    },
-    {
-      id: "the-answer",
-      title: "So… One CV or Multiple?",
-      content: ["Here's the honest answer:"],
-      list: [
-        "One generic CV → not targeted enough",
-        "A brand-new CV every time → too much work",
-        "One master CV, tailored efficiently → the sweet spot",
-      ],
-      afterList:
-        "If you're applying to multiple jobs, this approach lets you stay consistent, relevant, and sane.",
-    },
-    {
-      id: "cvlab-solution",
-      title: "How CVLab Makes Tailoring Effortless",
-      content: [
-        "This is exactly where CVLab comes in.",
-        "Instead of rewriting your CV again and again, CVLab lets you:",
-      ],
-      list: [
-        "Upload your master CV once",
-        "Paste a job description",
-        "Instantly generate a tailored CV in one click",
-      ],
-      afterList:
-        "The platform automatically aligns your experience with the role, optimizes keywords for ATS, and keeps everything clean and professional.",
-      afterList2: "No guesswork. No copy-pasting. No wasted hours.",
-      highlight: true,
     },
   ],
 
   conclusion: {
-    title: "Apply Smarter, Not Harder",
+    title: "Final Thoughts",
     content: [
-      "Job hunting is demanding enough. Your CV process shouldn't slow you down.",
-      "By automatically tailoring your CV and generating matching cover letters in one click, CVLab helps you apply faster, stay consistent, and show up as the right candidate for every role.",
-      "Spend less time editing—and more time landing interviews.",
+      "Getting interviews in the UK graduate job market isn't about being perfect, it's about being relevant, clear, and well-prepared.",
+      "The graduates who secure interviews are the ones who can demonstrate strong communication, adaptability, digital confidence, and problem-solving and tailor their applications to each role.",
+      "With competition at record levels, tools like CVLab help turn strong potential into interview-ready applications giving graduates the best possible chance to be seen, shortlisted, and hired.",
     ],
   },
 };
@@ -139,7 +149,7 @@ const tocItems = blogContent.sections.map((section) => ({
   title: section.title,
 }));
 
-export default function OneCVOrMultiple() {
+export default function TenSkillsGraduates() {
   const [activeSection, setActiveSection] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -305,7 +315,7 @@ export default function OneCVOrMultiple() {
               <div className="mb-8 overflow-hidden rounded-2xl border border-white/10">
                 <Image
                   src={heroImage}
-                  alt="One CV or Multiple CVs"
+                  alt="The 10 Skills That Get UK Graduates Interviews"
                   className="w-full h-100 object-cover"
                 />
               </div>
@@ -330,11 +340,7 @@ export default function OneCVOrMultiple() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.5 }}
-                  className={`scroll-mt-24 ${
-                    section.highlight
-                      ? "rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-6 md:p-8"
-                      : ""
-                  }`}
+                  className="scroll-mt-24"
                 >
                   <h2 className="mb-4 bg-gradient-to-b from-white to-white/60 bg-clip-text text-2xl font-semibold text-transparent md:text-3xl">
                     {section.title}
@@ -366,11 +372,6 @@ export default function OneCVOrMultiple() {
                         {section.afterList && (
                           <p className="text-base text-white/60 md:text-lg leading-relaxed">
                             {section.afterList}
-                          </p>
-                        )}
-                        {section.afterList2 && (
-                          <p className="text-base text-white/60 md:text-lg leading-relaxed">
-                            {section.afterList2}
                           </p>
                         )}
                       </>

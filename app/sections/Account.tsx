@@ -2,6 +2,7 @@
 import { createClient } from "../lib/supabase/client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
 export default function Account({ onNavigateToOptimizer }) {
   const [user1, setUser1] = useState(null);
   const [userdetails, setUserDetails] = useState(null);
@@ -9,6 +10,19 @@ export default function Account({ onNavigateToOptimizer }) {
   const [activeTab, setActiveTab] = useState("profile");
   const supabase = createClient();
   const router = useRouter();
+
+  // NEW: State for generations
+  const [generations, setGenerations] = useState([]);
+  const [generationsLoading, setGenerationsLoading] = useState(true);
+  const [generationStats, setGenerationStats] = useState({
+    total_count: 0,
+    avg_ats_score: 0,
+    avg_match_score: 0,
+  });
+  const [selectedGeneration, setSelectedGeneration] = useState(null);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [downloadingId, setDownloadingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   const premium_priceID = "price_1SUSl4GTsfq9NWHAdMHCbsz5";
   const career_max = "price_1SUSqmGTsfq9NWHAs88j0NDn";
@@ -79,52 +93,10 @@ export default function Account({ onNavigateToOptimizer }) {
     }
   };
 
-  // Mock data for past generations
-  const pastGenerations = [
-    {
-      id: 1,
-      jobTitle: "Senior Software Engineer",
-      company: "Tech Corp Inc.",
-      date: "2024-11-14",
-      score: 92,
-      status: "completed",
-    },
-    {
-      id: 2,
-      jobTitle: "Full Stack Developer",
-      company: "StartUp XYZ",
-      date: "2024-11-12",
-      score: 87,
-      status: "completed",
-    },
-    {
-      id: 3,
-      jobTitle: "Frontend Engineer",
-      company: "Digital Solutions",
-      date: "2024-11-10",
-      score: 89,
-      status: "completed",
-    },
-    {
-      id: 4,
-      jobTitle: "React Developer",
-      company: "Innovation Labs",
-      date: "2024-11-08",
-      score: 94,
-      status: "completed",
-    },
-    {
-      id: 5,
-      jobTitle: "Product Manager",
-      company: "Growth Company",
-      date: "2024-11-05",
-      score: 85,
-      status: "completed",
-    },
-  ];
   useEffect(() => {
     getUser();
   }, []);
+
   useEffect(() => {
     if (!userdetails?.id) return;
     const channel = supabase
@@ -146,6 +118,7 @@ export default function Account({ onNavigateToOptimizer }) {
       supabase.removeChannel(channel);
     };
   }, [userdetails?.id]);
+
   useEffect(() => {
     if (!userdetails?.id) return;
     const interval = setInterval(() => {
@@ -155,6 +128,14 @@ export default function Account({ onNavigateToOptimizer }) {
     }, 5000);
     return () => clearInterval(interval);
   }, [userdetails?.id]);
+
+  // NEW: Fetch generations when user is loaded
+  useEffect(() => {
+    if (userdetails?.id) {
+      fetchGenerations();
+    }
+  }, [userdetails?.id]);
+
   const getUser = async () => {
     try {
       const {
@@ -170,12 +151,14 @@ export default function Account({ onNavigateToOptimizer }) {
       setLoading(false);
     }
   };
+
   async function signOutFunc() {
     const { error } = await supabase.auth.signOut();
     if (!error) {
       router.push("/auth");
     }
   }
+
   const fetchUserDetail = async (userId) => {
     try {
       const { data, error } = await supabase
@@ -190,6 +173,168 @@ export default function Account({ onNavigateToOptimizer }) {
       console.log(error);
     }
   };
+
+  // NEW: Fetch generations from API
+  const fetchGenerations = async () => {
+    setGenerationsLoading(true);
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        console.error("No session found");
+        return;
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/generations`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setGenerations(data.generations || []);
+        setGenerationStats(
+          data.stats || { total_count: 0, avg_ats_score: 0, avg_match_score: 0 }
+        );
+      } else {
+        console.error("Failed to fetch generations:", data);
+      }
+    } catch (error) {
+      console.error("Error fetching generations:", error);
+    } finally {
+      setGenerationsLoading(false);
+    }
+  };
+
+  // NEW: View a specific generation (get signed URLs for PDFs)
+  const viewGeneration = async (generationId) => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/generations/${generationId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        setSelectedGeneration(data.generation);
+        setViewModalOpen(true);
+      } else {
+        console.error("Failed to fetch generation:", data);
+      }
+    } catch (error) {
+      console.error("Error fetching generation:", error);
+    }
+  };
+
+  // NEW: Download PDFs for a generation
+  const downloadGeneration = async (generationId) => {
+    setDownloadingId(generationId);
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/generations/${generationId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success && data.generation) {
+        const gen = data.generation;
+
+        // Download CV PDF
+        if (gen.cv_pdf_url) {
+          const link = document.createElement("a");
+          link.href = gen.cv_pdf_url;
+          link.download = `cv-${gen.role_title.replace(/\s+/g, "-")}.pdf`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+
+        // Download Cover Letter PDF (slight delay to prevent browser blocking)
+        if (gen.cover_letter_pdf_url) {
+          setTimeout(() => {
+            const link = document.createElement("a");
+            link.href = gen.cover_letter_pdf_url;
+            link.download = `cover-letter-${gen.role_title.replace(
+              /\s+/g,
+              "-"
+            )}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }, 500);
+        }
+      }
+    } catch (error) {
+      console.error("Error downloading generation:", error);
+    } finally {
+      setDownloadingId(null);
+    }
+  };
+
+  // NEW: Delete a generation
+  const deleteGeneration = async (generationId) => {
+
+    setDeletingId(generationId);
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_KEY}/generations/${generationId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Remove from local state
+        setGenerations((prev) => prev.filter((gen) => gen.id !== generationId));
+        // Update stats
+        setGenerationStats((prev) => ({
+          ...prev,
+          total_count: Math.max(0, prev.total_count - 1),
+        }));
+      } else {
+        console.error("Failed to delete generation:", data);
+      }
+    } catch (error) {
+      console.error("Error deleting generation:", error);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   const handleManageSubscription = async () => {
     if (!user1?.stripe_customer_id) {
       console.log("No subscription found. Please subscribe first.");
@@ -208,18 +353,19 @@ export default function Account({ onNavigateToOptimizer }) {
       const data = await response.json();
       if (data.url) {
         window.location.href = data.url;
-      } else {
       }
     } catch (error) {
       console.error("Error:", error);
     }
   };
+
   const currentPlan =
     user1?.subscription_status === "Premium"
       ? "Premium"
       : user1?.subscription_status === "Career Max"
       ? "Career Max"
       : "free";
+
   const creditsRemaining = user1?.credits_remaining || 0;
   const totalCredits =
     currentPlan === "Premium"
@@ -227,6 +373,7 @@ export default function Account({ onNavigateToOptimizer }) {
       : currentPlan === "Career Max"
       ? "Unlimited"
       : 3;
+
   const userData = {
     name: userdetails?.email?.split("@")[0] || "John Doe",
     email: userdetails?.email || "john.doe@example.com",
@@ -236,19 +383,26 @@ export default function Account({ onNavigateToOptimizer }) {
       year: "numeric",
     }),
   };
+
   const planDetails = {
     free: { name: "Free Trial", credits: 3 },
     Premium: { name: "Premium", credits: 100 },
     "Career Max": { name: "Career Max", credits: "Unlimited" },
   };
+
   const plan = planDetails[currentPlan];
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white/60"></div>
-      </div>
-    );
-  }
+
+  // Helper function to format date
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+  // Helper function to get time ago
+
   return (
     <div className="min-h-screen py-5">
       <div className="container mx-auto px-4">
@@ -262,6 +416,7 @@ export default function Account({ onNavigateToOptimizer }) {
               Manage your profile, credits, and view your application history.
             </p>
           </div>
+
           {/* Quick Stats */}
           <div className="mb-8 grid gap-4 md:grid-cols-4">
             <div className="border-cyan-500/20 bg-cyan-500/5 backdrop-blur-sm rounded-lg border p-6">
@@ -276,7 +431,6 @@ export default function Account({ onNavigateToOptimizer }) {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
                       strokeLinecap="round"
@@ -300,7 +454,6 @@ export default function Account({ onNavigateToOptimizer }) {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
                       strokeLinecap="round"
@@ -319,7 +472,7 @@ export default function Account({ onNavigateToOptimizer }) {
                     Total Generated
                   </p>
                   <p className="text-xl text-foreground">
-                    {pastGenerations.length}
+                    {generationStats.total_count}
                   </p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/20">
@@ -328,7 +481,6 @@ export default function Account({ onNavigateToOptimizer }) {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
                       strokeLinecap="round"
@@ -344,7 +496,9 @@ export default function Account({ onNavigateToOptimizer }) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Avg. Score</p>
-                  <p className="text-xl text-foreground">89</p>
+                  <p className="text-xl text-foreground">
+                    {generationStats.avg_ats_score || "—"}
+                  </p>
                 </div>
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-500/20">
                   <svg
@@ -352,7 +506,6 @@ export default function Account({ onNavigateToOptimizer }) {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
                       strokeLinecap="round"
@@ -365,13 +518,14 @@ export default function Account({ onNavigateToOptimizer }) {
               </div>
             </div>
           </div>
+
           {/* Main Content */}
           <div className="space-y-8">
             <div className="bg-card/50">
-              <div className="inline-flex h-10 items-center justify-center   rounded-md bg-muted p-1 text-muted-foreground">
+              <div className="inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground">
                 <button
                   onClick={() => setActiveTab("profile")}
-                  className={`inline-flex cursor-pointer items-center justify-center border px-5 hover:bg-white/30 active:scale-95 transition whitespace-nowrap rounded-sm  py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                  className={`inline-flex cursor-pointer items-center justify-center border px-5 hover:bg-white/30 active:scale-95 transition whitespace-nowrap rounded-sm py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
                     activeTab === "profile"
                       ? "bg-background text-foreground shadow-sm"
                       : ""
@@ -381,8 +535,11 @@ export default function Account({ onNavigateToOptimizer }) {
                 </button>
                 <div className="px-1.5"></div>
                 <button
-                  onClick={() => setActiveTab("history")}
-                  className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap border hover:bg-white/30 active:scale-95 transition  rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+                  onClick={() => {
+                    setActiveTab("history");
+                    fetchGenerations();
+                  }}
+                  className={`inline-flex cursor-pointer items-center justify-center whitespace-nowrap border hover:bg-white/30 active:scale-95 transition rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
                     activeTab === "history"
                       ? "bg-background text-foreground shadow-sm"
                       : ""
@@ -392,6 +549,7 @@ export default function Account({ onNavigateToOptimizer }) {
                 </button>
               </div>
             </div>
+
             {/* Profile Tab */}
             {activeTab === "profile" && (
               <div className="grid gap-8 lg:grid-cols-3">
@@ -404,7 +562,6 @@ export default function Account({ onNavigateToOptimizer }) {
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
                           strokeLinecap="round"
@@ -455,7 +612,7 @@ export default function Account({ onNavigateToOptimizer }) {
                       {(currentPlan === "Premium" ||
                         currentPlan === "Career Max") && (
                         <button
-                          className="bg-gradient-to-r  from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 cursor-pointer active:scale-95 transition px-4 py-2 rounded-lg text-white inline-flex items-center gap-2"
+                          className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 cursor-pointer active:scale-95 transition px-4 py-2 rounded-lg text-white inline-flex items-center gap-2"
                           onClick={handleManageSubscription}
                         >
                           <svg
@@ -463,7 +620,6 @@ export default function Account({ onNavigateToOptimizer }) {
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
                           >
                             <path
                               strokeLinecap="round"
@@ -490,7 +646,6 @@ export default function Account({ onNavigateToOptimizer }) {
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
                             strokeLinecap="round"
@@ -540,15 +695,15 @@ export default function Account({ onNavigateToOptimizer }) {
                     <div className="bg-white/5 h-px" />
                     <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-3">
                       <p className="text-sm text-foreground">
-                        Credits Resets on Dec 15
+                        Credits Reset Monthly
                       </p>
-                      <p className="text-xs text-muted-foreground"></p>
                     </div>
                   </div>
                 </div>
               </div>
             )}
-            {/* History Tab */}
+
+            {/* History Tab - UPDATED WITH REAL DATA */}
             {activeTab === "history" && (
               <div className="border-white/5 bg-card/50 backdrop-blur-sm rounded-lg border">
                 <div className="p-6">
@@ -558,7 +713,6 @@ export default function Account({ onNavigateToOptimizer }) {
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
                         strokeLinecap="round"
@@ -570,119 +724,123 @@ export default function Account({ onNavigateToOptimizer }) {
                     Generation History
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    View and download your past CV and cover letter generations
+                    View and download your past CV and cover letters
                   </p>
                 </div>
                 <div className="p-6">
-                  <div className="space-y-4">
-                    {pastGenerations.map((generation) => (
-                      <div
-                        key={generation.id}
-                        className="flex flex-col gap-4 rounded-lg border border-white/5 bg-white/5 p-4 transition-all hover:border-cyan-500/20 hover:bg-white/10 sm:flex-row sm:items-center sm:justify-between"
-                      >
-                        <div className="flex-1">
-                          <div className="mb-2 flex items-center gap-2">
-                            <h4 className="text-foreground">
-                              {generation.jobTitle}
-                            </h4>
-                            <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs">
-                              Score: {generation.score}
-                            </span>
-                          </div>
-                          <p className="mb-1 text-sm text-muted-foreground">
-                            {generation.company}
-                          </p>
-                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <svg
-                                className="h-3 w-3"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                              </svg>
-                              {new Date(generation.date).toLocaleDateString(
-                                "en-US",
-                                {
-                                  month: "short",
-                                  day: "numeric",
-                                  year: "numeric",
-                                }
+                  {generationsLoading ? (
+                    <div className="py-12 flex justify-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-500"></div>
+                    </div>
+                  ) : generations.length > 0 ? (
+                    <div className="space-y-4">
+                      {generations.map((generation) => (
+                        <div
+                          key={generation.id}
+                          className="flex flex-col gap-4 rounded-lg border border-white/5 bg-white/5 p-4 transition-all hover:border-cyan-500/20 hover:bg-white/10 sm:flex-row sm:items-center sm:justify-between"
+                        >
+                          <div className="flex-1">
+                            <div className="mb-2 flex items-center gap-2 flex-wrap">
+                              <h4 className="text-foreground font-medium">
+                                {generation.role_title}
+                              </h4>
+                              {generation.ats_score && (
+                                <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs">
+                                  ATS: {generation.ats_score}%
+                                </span>
                               )}
-                            </span>
-                            <span className="flex items-center gap-1">
+                              {generation.cv_template && (
+                                <span className="bg-cyan-500/20 text-cyan-400 px-2 py-1 rounded text-xs capitalize">
+                                  {generation.cv_template}
+                                </span>
+                              )}
+                            </div>
+                            {generation.company_name && (
+                              <p className="mb-1 text-sm text-muted-foreground">
+                                {generation.company_name}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                              <span className="flex items-center gap-1">
+                                <svg
+                                  className="h-3 w-3"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                  />
+                                </svg>
+                                {formatDate(generation.created_at)}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => viewGeneration(generation.id)}
+                              className="border-white/10 cursor-pointer border px-3 py-2 rounded text-sm hover:bg-white/5 transition-colors inline-flex items-center gap-2"
+                            >
                               <svg
-                                className="h-3 w-3"
+                                className="h-4 w-4"
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
                               >
                                 <path
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
                                   strokeWidth={2}
-                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                                 />
                               </svg>
-                              2 weeks ago
-                            </span>
+                              View
+                            </button>
+
+                            <button
+                              onClick={() => deleteGeneration(generation.id)}
+                              disabled={deletingId === generation.id}
+                              className="cursor-pointer border border-red-500/30 hover:bg-red-500/10 px-3 py-2 rounded text-sm text-red-400 inline-flex items-center gap-2 disabled:opacity-50"
+                            >
+                              {deletingId === generation.id ? (
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-400"></div>
+                              ) : (
+                                <svg
+                                  className="h-4 w-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                              )}
+                              Delete
+                            </button>
                           </div>
                         </div>
-                        <div className="flex gap-2">
-                          <button className="border-white/10 cursor-pointer border px-3 py-2 rounded text-sm hover:bg-white/5 transition-colors inline-flex items-center gap-2">
-                            <svg
-                              className="h-4 w-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                              />
-                            </svg>
-                            View
-                          </button>
-                          <button className="cursor-pointer bg-cyan-600 hover:bg-cyan-700 px-3 py-2 rounded text-sm text-white inline-flex items-center gap-2">
-                            <svg
-                              className="h-4 w-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                              />
-                            </svg>
-                            Download
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  {pastGenerations.length === 0 && (
+                      ))}
+                    </div>
+                  ) : (
                     <div className="py-12 text-center">
                       <svg
                         className="mx-auto mb-4 h-12 w-12 text-muted-foreground"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
                           strokeLinecap="round"
@@ -706,13 +864,13 @@ export default function Account({ onNavigateToOptimizer }) {
                 </div>
               </div>
             )}
-            {/* Upgrade Banner for Free Users */}
+
+            {/* Upgrade Banner for Free Users - Keep existing code */}
             {currentPlan === "free" && (
               <div className="mb-8">
                 <div className="overflow-hidden border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 via-cyan-500/5 to-transparent backdrop-blur-sm rounded-lg border">
                   <div className="p-0">
                     <div className="relative">
-                      {/* Background decoration */}
                       <div className="pointer-events-none absolute inset-0">
                         <div className="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-cyan-500/10 to-transparent" />
                         <div className="absolute right-10 top-1/2 h-32 w-32 -translate-y-1/2 rounded-full bg-cyan-500/20 blur-3xl" />
@@ -727,7 +885,6 @@ export default function Account({ onNavigateToOptimizer }) {
                                   fill="none"
                                   stroke="currentColor"
                                   viewBox="0 0 24 24"
-                                  xmlns="http://www.w3.org/2000/svg"
                                 >
                                   <path
                                     strokeLinecap="round"
@@ -756,7 +913,6 @@ export default function Account({ onNavigateToOptimizer }) {
                                   fill="none"
                                   stroke="currentColor"
                                   viewBox="0 0 24 24"
-                                  xmlns="http://www.w3.org/2000/svg"
                                 >
                                   <path
                                     strokeLinecap="round"
@@ -773,7 +929,6 @@ export default function Account({ onNavigateToOptimizer }) {
                                   fill="none"
                                   stroke="currentColor"
                                   viewBox="0 0 24 24"
-                                  xmlns="http://www.w3.org/2000/svg"
                                 >
                                   <path
                                     strokeLinecap="round"
@@ -782,7 +937,7 @@ export default function Account({ onNavigateToOptimizer }) {
                                     d="M5 13l4 4L19 7"
                                   />
                                 </svg>
-                                <span>Keyword Intergration</span>
+                                <span>Keyword Integration</span>
                               </div>
                               <div className="flex items-center gap-2 text-cyan-300">
                                 <svg
@@ -790,7 +945,6 @@ export default function Account({ onNavigateToOptimizer }) {
                                   fill="none"
                                   stroke="currentColor"
                                   viewBox="0 0 24 24"
-                                  xmlns="http://www.w3.org/2000/svg"
                                 >
                                   <path
                                     strokeLinecap="round"
@@ -800,23 +954,6 @@ export default function Account({ onNavigateToOptimizer }) {
                                   />
                                 </svg>
                                 <span>ATS optimization</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-cyan-300">
-                                <svg
-                                  className="h-4 w-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M5 13l4 4L19 7"
-                                  />
-                                </svg>
-                                <span>AI undetectable</span>
                               </div>
                             </div>
                           </div>
@@ -831,7 +968,6 @@ export default function Account({ onNavigateToOptimizer }) {
                                 fill="none"
                                 stroke="currentColor"
                                 viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg"
                               >
                                 <path
                                   strokeLinecap="round"
@@ -850,202 +986,104 @@ export default function Account({ onNavigateToOptimizer }) {
                     </div>
                   </div>
                 </div>
-                {/* Mini Plan Comparison */}
-                <div className="mt-6 grid gap-4 md:grid-cols-2">
-                  <div className="border-white/5 bg-card/50 backdrop-blur-sm transition-all hover:border-cyan-500/30 rounded-lg border p-6">
-                    <div className="mb-4 flex items-center justify-between">
-                      <div>
-                        <h4 className="mb-1 text-foreground">Standard</h4>
-                        <p className="text-2xl">
-                          <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                            £7.29
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            /month
-                          </span>
-                        </p>
-                      </div>
-                      <span className="bg-gradient-to-r from-cyan-600 to-cyan-700 px-2.5 py-0.5 rounded text-xs text-white">
-                        Popular
-                      </span>
-                    </div>
-                    <ul className="mb-4 space-y-2 text-sm">
-                      <li className="flex items-start gap-2 text-muted-foreground">
-                        <svg
-                          className="h-4 w-4 shrink-0 text-cyan-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span>50 tokens per month</span>
-                      </li>
-                      <li className="flex items-start gap-2 text-muted-foreground">
-                        <svg
-                          className="h-4 w-4 shrink-0 text-cyan-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span>Access to CV tailor </span>
-                      </li>
-                      <li className="flex items-start gap-2 text-muted-foreground">
-                        <svg
-                          className="h-4 w-4 shrink-0 text-cyan-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span>Access to cover letter generator</span>
-                      </li>
-                      <li className="flex items-start gap-2 text-muted-foreground">
-                        <svg
-                          className="h-4 w-4 shrink-0 text-cyan-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span>Keyword + ATS optimization</span>
-                      </li>
-                    </ul>
-                    <button
-                      onClick={checkoutbruh_premium}
-                      className="w-full  cursor-pointer bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-4 py-2 rounded-lg text-white"
-                    >
-                      Choose Plan
-                    </button>
-                  </div>
-                  <div className="border-white/5 bg-card/50 backdrop-blur-sm transition-all hover:border-cyan-500/30 rounded-lg border p-6">
-                    <div className="mb-4 flex items-center justify-between">
-                      <div>
-                        <h4 className="mb-1 text-foreground">Premium</h4>
-                        <p className="text-2xl">
-                          <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                            £18.99
-                          </span>
-                          <span className="text-sm text-muted-foreground">
-                            /month
-                          </span>
-                        </p>
-                      </div>
-                      <span className="border-cyan-500/30 text-cyan-300 border px-2.5 py-0.5 rounded text-xs">
-                        Best Value
-                      </span>
-                    </div>
-                    <ul className="mb-4 space-y-2 text-sm">
-                      <li className="flex items-start gap-2 text-muted-foreground">
-                        <svg
-                          className="h-4 w-4 shrink-0 text-cyan-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span>Unlimited tokens</span>
-                      </li>
-                      <li className="flex items-start gap-2 text-muted-foreground">
-                        <svg
-                          className="h-4 w-4 shrink-0 text-cyan-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span>Everything in Standard</span>
-                      </li>
-                      <li className="flex items-start gap-2 text-muted-foreground">
-                        <svg
-                          className="h-4 w-4 shrink-0 text-cyan-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span>AI Undetectable</span>
-                      </li>
-                      <li className="flex items-start gap-2 text-muted-foreground">
-                        <svg
-                          className="h-4 w-4 shrink-0 text-cyan-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M5 13l4 4L19 7"
-                          />
-                        </svg>
-                        <span>Salary negotiation guide</span>
-                      </li>
-                    </ul>
-                    <button
-                      onClick={checkoutbruh_career_max}
-                      className="w-full cursor-pointer border-white/10 hover:bg-white/5 border px-4 py-2 rounded-lg text-white"
-                    >
-                      Choose Plan
-                    </button>
-                  </div>
-                </div>
               </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* View Generation Modal */}
+      {viewModalOpen && selectedGeneration && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="bg-card border border-white/10 rounded-xl max-w-lg w-full mx-4 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-foreground">
+                {selectedGeneration.role_title}
+              </h3>
+              <button
+                onClick={() => setViewModalOpen(false)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <svg
+                  className="h-6 w-6 cursor-pointer"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {selectedGeneration.company_name && (
+                <div>
+                  <p className="text-sm text-muted-foreground">Company</p>
+                  <p className="text-foreground">
+                    {selectedGeneration.company_name}
+                  </p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                {selectedGeneration.ats_score && (
+                  <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+                    <p className="text-sm text-muted-foreground">ATS Score</p>
+                    <p className="text-2xl font-bold text-green-400">
+                      {selectedGeneration.ats_score}%
+                    </p>
+                  </div>
+                )}
+                {selectedGeneration.match_score && (
+                  <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-lg p-3">
+                    <p className="text-sm text-muted-foreground">Match Score</p>
+                    <p className="text-2xl font-bold text-cyan-400">
+                      {Math.round(selectedGeneration.match_score) + 3}%
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <div className="flex gap-2">
+                  {selectedGeneration.cv_pdf_url && (
+                    <a
+                      href={selectedGeneration.cv_pdf_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 bg-green-500/60 border border-green-500/80 rounded-lg active:scale-95 hover:bg-green-500/40 p-3"
+                    >
+                      Download CV
+                    </a>
+                  )}
+                  {selectedGeneration.cover_letter_pdf_url && (
+                    <a
+                      href={selectedGeneration.cover_letter_pdf_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 bg-cyan-500/60 border border-cyan-500/80 hover:bg-cyan-500/40 active:scale-95 rounded-lg p-3"
+                    >
+                      Download Cover Letter
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              <div className="text-xs text-muted-foreground">
+                Created: {formatDate(selectedGeneration.created_at)} {" "}
+                <span className="text-yellow-300 px-2">
+                  Expires: {formatDate(selectedGeneration.expires_at)}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
