@@ -354,20 +354,11 @@ export default function Account({ onNavigateToOptimizer }) {
     }
   };
 
-  const currentPlan =
-    user1?.subscription_status === "Premium"
-      ? "Premium"
-      : user1?.subscription_status === "Career Max"
-      ? "Career Max"
-      : "free";
+  const currentPlan = user1?.is_subscribed
+    ? user1?.subscription_status
+    : "free";
 
   const creditsRemaining = user1?.credits_remaining || 0;
-  const totalCredits =
-    currentPlan === "Premium"
-      ? 100
-      : currentPlan === "Career Max"
-      ? "Unlimited"
-      : 3;
 
   const userData = {
     name: userdetails?.email?.split("@")[0] || "John Doe",
@@ -379,14 +370,27 @@ export default function Account({ onNavigateToOptimizer }) {
     }),
   };
 
-  const planDetails = {
-    free: { name: "Free Trial", credits: 3 },
-    Premium: { name: "Premium", credits: 100 },
-    "Career Max": { name: "Career Max", credits: "Unlimited" },
+  const getPlanDetails = (status) => {
+    if (!status || status === "free") {
+      return { name: "Free Trial", credits: 3 };
+    }
+    if (status.includes("Standard")) {
+      return { name: status, credits: 30 };
+    }
+    if (status.includes("Premium")) {
+      return { name: status, credits: 100 };
+    }
+    if (status === "cancelled") {
+      return { name: "Cancelled", credits: user1?.credits_remaining || 0 };
+    }
+    if (status === "payment_failed") {
+      return { name: "Payment Failed", credits: user1?.credits_remaining || 0 };
+    }
+    return { name: status, credits: 0 };
   };
 
-  const plan = planDetails[currentPlan];
-
+  const plan = getPlanDetails(currentPlan);
+  const totalCredits = plan.credits;
   // Helper function to format date
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -448,7 +452,7 @@ export default function Account({ onNavigateToOptimizer }) {
           </div>
 
           {/* Upgrade Banner for Free Users - Keep existing code */}
-          {currentPlan === "free" && (
+          {!user1?.is_subscribed && (
             <div className="mb-8">
               <div className="flex flex-col lg:flex-row gap-6">
                 {/* First Pricing Card */}
@@ -827,8 +831,7 @@ export default function Account({ onNavigateToOptimizer }) {
                       </div>
                     </div>
                     <div className="flex gap-3">
-                      {(currentPlan === "Premium" ||
-                        currentPlan === "Career Max") && (
+                      {user1?.is_subscribed && user1?.stripe_customer_id && (
                         <button
                           className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 cursor-pointer active:scale-95 transition px-4 py-2 rounded-lg text-white inline-flex items-center gap-2"
                           onClick={handleManageSubscription}
