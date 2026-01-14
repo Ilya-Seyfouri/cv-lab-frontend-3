@@ -9,7 +9,7 @@ const plans = [
     price: "£0",
     description: "Test the core tools with no commitment.",
     features: [
-      "5 free tokens",
+      "2 free tokens",
       "Access to CV tailoring",
       "Access to Cover Letter Generator",
       "Keyword Intergration",
@@ -19,10 +19,10 @@ const plans = [
   },
   {
     name: "Standard",
-    price: "£7.29",
+    price: "£8.27",
     description: "For active job hunters.",
     features: [
-      "100 tokens / month",
+      "30 tokens / month",
       "Access to CV tailoring",
       "Access to Cover Letter Generator",
       "Keyword Intergration",
@@ -32,10 +32,10 @@ const plans = [
   },
   {
     name: "Premium",
-    price: "£18.99",
+    price: "£15.39",
     description: "For professionals who want every advantage.",
     features: [
-      "Unlimited tokens",
+      "100 tokens / month",
       "Access to CV tailor",
       "Access to Cover Letter Generator",
       "Keyword Intergration",
