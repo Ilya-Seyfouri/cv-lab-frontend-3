@@ -23,6 +23,18 @@ export default function CVTemplateDropdown({ selectedCV, onSelect }) {
       icon: "💰",
       description: "Tailored for financial services & consulting",
     },
+    {
+      id: "law",
+      label: "Law",
+      icon: "🧑‍⚖️",
+      description: "Tailored for Law",
+    },
+    {
+      id: "medical",
+      label: "Medical Sciences",
+      icon: "🏥",
+      description: "Tailored for Medical Sciences",
+    },
   ];
 
   const selectedTemplate = templates.find((t) => t.id === selectedCV);
