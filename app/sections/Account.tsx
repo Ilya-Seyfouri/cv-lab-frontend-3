@@ -62,7 +62,7 @@ export default function Account({ onNavigateToOptimizer }) {
         return;
       }
 
-    window.open(data.url, "_blank", "noopener,noreferrer");
+      window.open(data.url, "_blank", "noopener,noreferrer");
     } catch (error) {
       console.error("Checkout error:", error);
     }
@@ -167,8 +167,6 @@ export default function Account({ onNavigateToOptimizer }) {
       console.log(error);
     }
   };
-
-  
 
   // NEW: Fetch generations from API
   const fetchGenerations = async () => {
@@ -359,6 +357,12 @@ export default function Account({ onNavigateToOptimizer }) {
     : "free";
 
   const creditsRemaining = user1?.credits_remaining || 0;
+  const totalCredits =
+    currentPlan === "Premium"
+      ? 100
+      : currentPlan === "Career Max"
+      ? "Unlimited"
+      : 3;
 
   const userData = {
     name: userdetails?.email?.split("@")[0] || "John Doe",
@@ -377,7 +381,6 @@ export default function Account({ onNavigateToOptimizer }) {
     if (status.includes("Standard")) {
       return { name: status, credits: 30 };
     }
-    // r
     if (status.includes("Premium")) {
       return { name: status, credits: 100 };
     }
@@ -391,7 +394,7 @@ export default function Account({ onNavigateToOptimizer }) {
   };
 
   const plan = getPlanDetails(currentPlan);
-  const totalCredits = plan.credits;
+
   // Helper function to format date
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -409,8 +412,6 @@ export default function Account({ onNavigateToOptimizer }) {
       year: "numeric",
     });
   };
-
-
 
   // Helper function to get time ago
 
