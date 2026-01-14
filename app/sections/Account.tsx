@@ -827,7 +827,7 @@ export default function Account({ onNavigateToOptimizer }) {
                       </div>
                     </div>
                     <div className="flex gap-3">
-                      {user1?.is_subscribed && user1?.stripe_customer_id && (
+                      {user1?.is_subscribed && (
                         <button
                           className="bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 cursor-pointer active:scale-95 transition px-4 py-2 rounded-lg text-white inline-flex items-center gap-2"
                           onClick={handleManageSubscription}
