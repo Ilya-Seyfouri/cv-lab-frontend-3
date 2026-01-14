@@ -62,7 +62,7 @@ export default function Account({ onNavigateToOptimizer }) {
         return;
       }
 
-      window.location.href = data.url;
+    window.open(data.url, "_blank", "noopener,noreferrer");
     } catch (error) {
       console.error("Checkout error:", error);
     }
