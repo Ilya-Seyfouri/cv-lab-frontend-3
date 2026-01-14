@@ -232,17 +232,15 @@ async function handleSubscriptionUpdated(subscription) {
       `Subscription updated to ${config.name} for customer ${customerId}`
     );
   } else {
-    // Subscription no longer active - downgrade to free
-    const { error } = await supabase
-      .from("profiles")
-      .update({
-        is_subscribed: false,
-        subscription_status: "free",
-        credits_remaining: 3,
-        credits_last_reset: new Date().toISOString(),
-        credits_reset_date: null,
-      })
-      .eq("stripe_customer_id", customerId);
+  // Subscription no longer active - keep credits, stop resets
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      is_subscribed: false,
+      subscription_status: "cancelled",
+      credits_reset_date: null,
+    })
+    .eq("stripe_customer_id", customerId);;
 
     if (error) {
       console.error("Error downgrading subscription:", error);
@@ -260,13 +258,12 @@ async function handleSubscriptionDeleted(subscription) {
 
   const customerId = subscription.customer;
 
+  // Keep existing credits, just stop the reset cycle
   const { error } = await supabase
     .from("profiles")
     .update({
       is_subscribed: false,
-      subscription_status: "free",
-      credits_remaining: 3,
-      credits_last_reset: new Date().toISOString(),
+      subscription_status: "cancelled",
       credits_reset_date: null,
     })
     .eq("stripe_customer_id", customerId);
@@ -277,7 +274,7 @@ async function handleSubscriptionDeleted(subscription) {
   }
 
   console.log(
-    `Subscription canceled for customer ${customerId}, reverted to free`
+    `Subscription canceled for customer ${customerId}. Credits preserved, no future resets.`
   );
 }
 
@@ -328,12 +325,12 @@ async function handleInvoicePaymentFailed(invoice) {
 
   const customerId = invoice.customer;
 
+  // Keep credits, just mark payment as failed
   const { error } = await supabase
     .from("profiles")
     .update({
       is_subscribed: false,
       subscription_status: "payment_failed",
-      credits_remaining: 3,
       credits_reset_date: null,
     })
     .eq("stripe_customer_id", customerId);
