@@ -357,12 +357,6 @@ export default function Account({ onNavigateToOptimizer }) {
     : "free";
 
   const creditsRemaining = user1?.credits_remaining || 0;
-  const totalCredits =
-    currentPlan === "Premium"
-      ? 100
-      : currentPlan === "Career Max"
-      ? "Unlimited"
-      : 3;
 
   const userData = {
     name: userdetails?.email?.split("@")[0] || "John Doe",
@@ -394,7 +388,7 @@ export default function Account({ onNavigateToOptimizer }) {
   };
 
   const plan = getPlanDetails(currentPlan);
-
+  const totalCredits = plan.credits;
   // Helper function to format date
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
