@@ -4,6 +4,7 @@ import { createClient } from "../lib/supabase/client";
 import { useGeneration } from "../contexts/GenerationContext";
 import CV from "./CV";
 import CoverLetter from "./CoverLetter";
+import CVTemplateDropdown from "./CVTemplateDropdown";
 import generic from "../../images/generic.png";
 import finance from "../../images/finance.png";
 import tech from "../../images/tech.png";
@@ -28,12 +29,12 @@ const improvements = [
   {
     title: "Improved Content Structure",
     description:
-      "Reorganised sections for a clearer, more logical flow that’s easier for recruiters to scan.",
+      "Reorganised sections for a clearer, more logical flow that's easier for recruiters to scan.",
   },
   {
     title: "Elevated Professional Summary",
     description:
-      "Tailored the summary to mirror the job’s core requirements and value proposition.",
+      "Tailored the summary to mirror the job's core requirements and value proposition.",
   },
   {
     title: "Boosted Keyword Density",
@@ -67,7 +68,7 @@ export default function Home() {
   const supabase = createClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImage, setModalImage] = useState(null);
-  const [selectedCV, setSelectedCV] = useState("generic");
+  const [selectedCV, setSelectedCV] = useState(null);
 
   useEffect(() => {
     getUser();
@@ -604,7 +605,7 @@ export default function Home() {
   const resetForm = () => {
     resetGenerationState();
   };
-  const canOptimize = cvFile && jobDescription.length >= 50;
+  const canOptimize = cvFile && jobDescription.length >= 50 && selectedCV;
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -807,50 +808,16 @@ export default function Home() {
                 {!jobDescription && "Paste a Job Description."}
               </p>
             )}
-            <div className="flex flex-col">
-              <div className="flex flex-row pt-10 justify-between gap-20">
-                <div className="px-2 text-center flex-1">
-                  <div
-                    className={`border rounded-xl px-4 py-1 inline-block active:scale-95 cursor-pointer transition-colors ${
-                      selectedCV === "tech"
-                        ? "bg-cyan-400 border-2 border-cyan-600 text-white"
-                        : "border-cyan-400 border-2 hover:bg-white/50"
-                    }`}
-                    onClick={() => setSelectedCV("tech")}
-                  >
-                    💻 Tech
-                  </div>
-                </div>
 
-                <div className="px-2 text-center flex-1">
-                  <div
-                    className={`border rounded-xl px-4 py-1 inline-block active:scale-95 cursor-pointer transition-colors ${
-                      selectedCV === "finance"
-                        ? "bg-cyan-400 border-2 border-cyan-600 text-white"
-                        : "border-cyan-400 border-2 hover:bg-white/50"
-                    }`}
-                    onClick={() => setSelectedCV("finance")}
-                  >
-                    💰 Finance
-                  </div>
-                </div>
-
-                <div className="px-2 text-center flex-1">
-                  <div
-                    className={`rounded-xl active:scale-95 px-4 py-1 inline-block cursor-pointer transition-colors ${
-                      selectedCV === "generic"
-                        ? "bg-cyan-400 border-2 border-cyan-600 text-white"
-                        : "border-cyan-400 border-2 hover:bg-white/50"
-                    }`}
-                    onClick={() => setSelectedCV("generic")}
-                  >
-                    ✍️ Generic
-                  </div>
-                </div>
-              </div>
+            {/* 🎯 DROPDOWN PLACED HERE - REPLACING OLD BUTTONS */}
+            <div className="pt-10 pb-6">
+              <CVTemplateDropdown 
+                selectedCV={selectedCV} 
+                onSelect={selectCV} 
+              />
             </div>
 
-            <div className=" pt-15 flex justify-center">
+            <div className=" pt-5 flex justify-center">
               <button
                 disabled={
                   !canOptimize ||
@@ -869,6 +836,8 @@ export default function Home() {
             <div className="flex justify-center items-center pt-10 text-md text-red-400">
               {error1}
             </div>
+            <div className="pt-30">
+              </div>
           </div>
         ) : (
           <ResultsView

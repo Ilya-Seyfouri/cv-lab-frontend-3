@@ -1,6 +1,6 @@
 "use client";
 import { createClient } from "../lib/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import CVLOGO from "../../images/logo.png";
@@ -16,6 +16,21 @@ export default function Auth() {
   const [error1, setError1] = useState("");
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(true); // Add loading state
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkUser = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        router.replace("/dashboard"); // Use replace instead of push
+      }
+      setLoading(false);
+    };
+    checkUser();
+  }, [router, supabase]);
 
   const handleEmail = (e) => setEmail(e.target.value);
   const handlePass = (e) => setPassword(e.target.value);
@@ -43,7 +58,7 @@ export default function Auth() {
       setMessage("");
       setError1(error.message);
     } else {
-      router.push("/dashboard");
+      router.replace("/dashboard"); // Use replace instead of push
     }
   }
 
@@ -59,13 +74,20 @@ export default function Auth() {
     }
   }
 
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <section className="min-h-screen bg-[#020617] flex items-center justify-center">
+        <div className="text-white">Loading...</div>
+      </section>
+    );
+  }
   return (
     <section className="min-h-screen bg-[#020617] flex items-center justify-center px-4 relative overflow-hidden">
       {/* Background blobs like your inspiration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-cyan-500/15 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-500/15 rounded-full blur-3xl" />
-        
       </div>
 
       <div className="w-full max-w-md relative z-10">
@@ -117,8 +139,7 @@ export default function Auth() {
           {/* Divider */}
           <div className="relative mb-6">
             <div className="border-t border-white/15" />
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-3 text-xs text-white/40">
-            </span>
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-3 text-xs text-white/40"></span>
           </div>
 
           {/* Email + password fields (your login) */}

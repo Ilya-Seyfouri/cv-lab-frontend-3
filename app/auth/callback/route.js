@@ -11,7 +11,6 @@ export async function GET(request) {
   if (code) {
     const supabase = createClient();
 
-    // Exchange code for session
     console.log("Exchanging code for session...");
     const { data, error: authError } =
       await supabase.auth.exchangeCodeForSession(code);
@@ -33,7 +32,6 @@ export async function GET(request) {
     if (user) {
       console.log("User authenticated, checking for profile...");
 
-      // Check if profile exists
       const { data: existingProfile, error: profileError } = await supabase
         .from("profiles")
         .select("*")
@@ -44,7 +42,6 @@ export async function GET(request) {
       console.log("- Existing profile:", existingProfile);
       console.log("- Profile error:", profileError);
 
-      // If no profile exists, create one
       if (!existingProfile) {
         console.log("No profile found, creating new profile...");
 
@@ -66,7 +63,6 @@ export async function GET(request) {
 
         if (insertError) {
           console.error("PROFILE INSERT ERROR:", insertError);
-          // Still redirect but with error param
           return NextResponse.redirect(
             `${process.env.NEXT_PUBLIC_HOST_NAME}/dashboard?error=profile_create_failed`
           );
@@ -82,8 +78,10 @@ export async function GET(request) {
   }
 
   console.log("=== AUTH CALLBACK END - Redirecting to dashboard ===");
-  // Redirect to dashboard after successful auth
+
+  // Use permanent redirect to avoid adding to history
   return NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_HOST_NAME}/dashboard`
+    `${process.env.NEXT_PUBLIC_HOST_NAME}/dashboard`,
+    { status: 303 } // 303 tells browser to replace history entry
   );
 }

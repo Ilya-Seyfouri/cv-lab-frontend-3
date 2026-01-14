@@ -10,6 +10,7 @@ export default function Account({ onNavigateToOptimizer }) {
   const [activeTab, setActiveTab] = useState("profile");
   const supabase = createClient();
   const router = useRouter();
+  const [isAnnual, setIsAnnual] = useState(false);
 
   // NEW: State for generations
   const [generations, setGenerations] = useState([]);
@@ -298,7 +299,6 @@ export default function Account({ onNavigateToOptimizer }) {
 
   // NEW: Delete a generation
   const deleteGeneration = async (generationId) => {
-
     setDeletingId(generationId);
     try {
       const {
@@ -407,8 +407,220 @@ export default function Account({ onNavigateToOptimizer }) {
     <div className="min-h-screen py-5">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-7xl">
+          <div className="flex justify-center pb-10">
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <span
+                className={`text-sm font-medium transition-colors ${
+                  !isAnnual ? "text-foreground" : "text-muted-foreground"
+                }`}
+              >
+                Monthly
+              </span>
+
+              <button
+                onClick={() => setIsAnnual(!isAnnual)}
+                className="relative inline-flex h-8 w-14 items-center rounded-full bg-cyan-500/20 border border-cyan-500/30 transition-colors hover:bg-cyan-500/30 "
+              >
+                <span
+                  className={`inline-block h-6 w-6 transform rounded-full bg-gradient-to-br from-cyan-500 to-cyan-700 shadow-lg transition-transform ${
+                    isAnnual ? "translate-x-7" : "translate-x-1"
+                  }`}
+                />
+              </button>
+
+              <span
+                className={`text-sm font-medium transition-colors ${
+                  isAnnual ? "text-foreground" : "text-muted-foreground"
+                }`}
+              >
+                6 Months
+                <span className="ml-1.5 text-xs bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded">
+                  Save 20%
+                </span>
+              </span>
+            </div>
+          </div>
+
+          {/* Upgrade Banner for Free Users - Keep existing code */}
+          {currentPlan === "free" && (
+            <div className="mb-8">
+              <div className="flex flex-col lg:flex-row gap-6">
+                {/* First Pricing Card */}
+                <div className="flex-1 overflow-hidden border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 via-cyan-500/5 to-transparent backdrop-blur-sm rounded-lg border">
+                  <div className="p-0">
+                    <div className="relative">
+                      <div className="pointer-events-none absolute inset-0">
+                        <div className="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-cyan-500/10 to-transparent" />
+                        <div className="absolute right-10 top-1/2 h-32 w-32 -translate-y-1/2 rounded-full bg-cyan-500/20 blur-3xl" />
+                      </div>
+                      <div className="relative p-6">
+                        <div className="flex flex-col gap-4">
+                          <div>
+                            <div className="mb-3 flex items-center gap-2">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-700">
+                                <svg
+                                  className="h-4 w-4 text-white"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                                  />
+                                </svg>
+                              </div>
+                              <span className="bg-cyan-500/20 text-cyan-300 px-2.5 py-0.5 rounded text-sm">
+                                Standard
+                              </span>
+                            </div>
+                            {isAnnual ? (
+                              <h3 className="mb-3 text-2xl text-foreground">
+                                £40
+                              </h3>
+                            ) : (
+                              <h3 className="mb-3 text-2xl text-foreground">
+                                £8.27/mo
+                              </h3>
+                            )}
+
+                            <div className="flex flex-col gap-2 text-sm mb-4">
+                              <div className="flex items-center gap-2 text-cyan-300">
+                                <svg
+                                  className="h-4 w-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                                <span>30 tokens / month</span>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={checkoutbruh_premium}
+                              className="w-full gap-2 cursor-pointer bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-6 py-3 rounded-lg text-white font-semibold inline-flex items-center justify-center"
+                            >
+                              Upgrade to Standard
+                              <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 5l7 7-7 7"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Second Pricing Card */}
+                <div className="flex-1 overflow-hidden border-orange-500/30 bg-gradient-to-br from-orange-500/10 via-orange-500/5 to-transparent backdrop-blur-sm rounded-lg border">
+                  <div className="p-0">
+                    <div className="relative">
+                      <div className="pointer-events-none absolute inset-0">
+                        <div className="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-orange-500/10 to-transparent" />
+                        <div className="absolute right-10 top-1/2 h-32 w-32 -translate-y-1/2 rounded-full bg-orange-500/20 blur-3xl" />
+                      </div>
+                      <div className="relative p-6">
+                        <div className="flex flex-col gap-4">
+                          <div>
+                            <div className="mb-3 flex items-center gap-2">
+                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-orange-500 to-orange-700">
+                                <svg
+                                  className="h-4 w-4 text-white"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                                  />
+                                </svg>
+                              </div>
+                              <span className="bg-orange-500/20 text-orange-300 px-2.5 py-0.5 rounded text-sm">
+                                Premium
+                              </span>
+                            </div>
+                            {isAnnual ? (
+                              <h3 className="mb-3 text-2xl text-foreground">
+                                £80
+                              </h3>
+                            ) : (
+                              <h3 className="mb-3 text-2xl text-foreground">
+                                £15.39/mo
+                              </h3>
+                            )}
+
+                            <div className="flex flex-col gap-2 text-sm mb-4 pb-2">
+                              <div className="flex items-center gap-2 text-orange-300">
+                                <svg
+                                  className="h-4 w-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                                <span>100 tokens / month</span>
+                              </div>
+                            </div>
+
+                            <button
+                              onClick={checkoutbruh_premium}
+                              className="w-full gap-2 cursor-pointer bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 px-6 py-3 rounded-lg text-white font-semibold inline-flex items-center justify-center"
+                            >
+                              Upgrade to Premium
+                              <svg
+                                className="h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 5l7 7-7 7"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           {/* Header */}
-          <div className="mb-8">
+          <div className="mb-8 pt-20">
             <h1 className="mb-2 bg-gradient-to-b from-white to-white/60 bg-clip-text text-4xl text-transparent">
               Account Dashboard
             </h1>
@@ -695,8 +907,15 @@ export default function Account({ onNavigateToOptimizer }) {
                     <div className="bg-white/5 h-px" />
                     <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-3">
                       <p className="text-sm text-foreground">
-                        Credits Reset Monthly
+                        Credits Reset on:
                       </p>
+                    </div>
+                    <div className="py-2"></div>
+                    <div className="border-red-500/20 bg-red-500/5 backdrop-blur-sm rounded-lg border p-6">
+                      <div>Urgent for more credits?</div>
+                      <div className="pt-5">
+                        <button className="bg-red-600 px-4 py-2 rounded-xl"> Buy 15 credits for 5£</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -864,130 +1083,6 @@ export default function Account({ onNavigateToOptimizer }) {
                 </div>
               </div>
             )}
-
-            {/* Upgrade Banner for Free Users - Keep existing code */}
-            {currentPlan === "free" && (
-              <div className="mb-8">
-                <div className="overflow-hidden border-cyan-500/30 bg-gradient-to-br from-cyan-500/10 via-cyan-500/5 to-transparent backdrop-blur-sm rounded-lg border">
-                  <div className="p-0">
-                    <div className="relative">
-                      <div className="pointer-events-none absolute inset-0">
-                        <div className="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-cyan-500/10 to-transparent" />
-                        <div className="absolute right-10 top-1/2 h-32 w-32 -translate-y-1/2 rounded-full bg-cyan-500/20 blur-3xl" />
-                      </div>
-                      <div className="relative p-8">
-                        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                          <div className="flex-1">
-                            <div className="mb-3 flex items-center gap-2">
-                              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-500 to-cyan-700">
-                                <svg
-                                  className="h-4 w-4 text-white"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                                  />
-                                </svg>
-                              </div>
-                              <span className="bg-cyan-500/20 text-cyan-300 px-2.5 py-0.5 rounded text-sm">
-                                Free Trial Active
-                              </span>
-                            </div>
-                            <h3 className="mb-2 text-2xl text-foreground">
-                              Unlock Your Full Potential
-                            </h3>
-                            <p className="mb-4 max-w-2xl text-muted-foreground">
-                              You have {creditsRemaining} of {totalCredits} free
-                              credits remaining. Upgrade now to get unlimited
-                              access to all premium features.
-                            </p>
-                            <div className="flex flex-wrap gap-4 text-sm">
-                              <div className="flex items-center gap-2 text-cyan-300">
-                                <svg
-                                  className="h-4 w-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M5 13l4 4L19 7"
-                                  />
-                                </svg>
-                                <span>50 tokens / month</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-cyan-300">
-                                <svg
-                                  className="h-4 w-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M5 13l4 4L19 7"
-                                  />
-                                </svg>
-                                <span>Keyword Integration</span>
-                              </div>
-                              <div className="flex items-center gap-2 text-cyan-300">
-                                <svg
-                                  className="h-4 w-4"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M5 13l4 4L19 7"
-                                  />
-                                </svg>
-                                <span>ATS optimization</span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="flex shrink-0 flex-col gap-3">
-                            <button
-                              onClick={checkoutbruh_premium}
-                              className="gap-2 cursor-pointer bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-6 py-3 rounded-lg text-white font-semibold inline-flex items-center justify-center"
-                            >
-                              Upgrade to Standard
-                              <svg
-                                className="h-4 w-4"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M9 5l7 7-7 7"
-                                />
-                              </svg>
-                            </button>
-                            <p className="text-center text-xs text-muted-foreground">
-                              Starting at £7/month
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -1075,7 +1170,7 @@ export default function Account({ onNavigateToOptimizer }) {
               </div>
 
               <div className="text-xs text-muted-foreground">
-                Created: {formatDate(selectedGeneration.created_at)} {" "}
+                Created: {formatDate(selectedGeneration.created_at)}{" "}
                 <span className="text-yellow-300 px-2">
                   Expires: {formatDate(selectedGeneration.expires_at)}
                 </span>

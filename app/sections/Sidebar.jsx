@@ -40,7 +40,7 @@ export default function Sidebar({ selectedTab, onSelect }) {
                   className="w-auto cursor-pointer"
                   height={40}
                   onClick={() => {
-                    router.push("/auth");
+                    router.push("/");
                   }}
                 />
               </div>
