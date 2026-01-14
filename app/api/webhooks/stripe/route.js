@@ -13,10 +13,49 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// Add these price IDs at the top
-const PREMIUM_PRICE_ID = "price_1SUSl4GTsfq9NWHAdMHCbsz5";
-const CAREER_MAX_PRICE_ID = "price_1SUSqmGTsfq9NWHAs88j0NDn";
+// Price ID configuration
+const PRICE_CONFIG = {
+  // Monthly plans
+  price_1SpUeoGTsfq9NWHAFOXcEXHh: {
+    name: "Monthly Standard",
+    tokens: 30,
+    type: "subscription",
+    intervalMonths: 1,
+  },
+  price_1SpUfaGTsfq9NWHAtr59tPFE: {
+    name: "Monthly Premium",
+    tokens: 100,
+    type: "subscription",
+    intervalMonths: 1,
+  },
+  // 6-month plans (tokens still reset monthly)
+  price_1SpUggGTsfq9NWHA0exdHuEp: {
+    name: "6-Month Standard",
+    tokens: 30,
+    type: "subscription",
+    intervalMonths: 6,
+  },
+  price_1SpUgBGTsfq9NWHAhYdxJKRu: {
+    name: "6-Month Premium",
+    tokens: 100,
+    type: "subscription",
+    intervalMonths: 6,
+  },
+  // One-time token pack
+  price_1SpUhsGTsfq9NWHAodt5avHo: {
+    name: "15 Token Pack",
+    tokens: 15,
+    type: "one_time",
+  },
+};
 
+// Helper: Calculate next reset date (1 month from now)
+function getNextResetDate() {
+  const now = new Date();
+  const nextReset = new Date(now);
+  nextReset.setMonth(nextReset.getMonth() + 1);
+  return nextReset.toISOString();
+}
 
 export async function POST(req) {
   const body = await req.text();
@@ -72,8 +111,9 @@ export async function POST(req) {
 
 async function handleCheckoutSessionCompleted(session) {
   console.log("Checkout session completed:", session.id);
+  console.log("Session mode:", session.mode);
 
-  const userId = session.metadata.userId;
+  const userId = session.metadata?.userId;
   const customerId = session.customer;
 
   if (!userId) {
@@ -81,36 +121,81 @@ async function handleCheckoutSessionCompleted(session) {
     return;
   }
 
-  // Get the price ID to determine which plan
-  const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
-  const priceId = lineItems.data[0]?.price?.id;
+  // Handle ONE-TIME payments (token packs)
+  if (session.mode === "payment") {
+    const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+    const priceId = lineItems.data[0]?.price?.id;
+    const config = PRICE_CONFIG[priceId];
 
-  // Set subscription details based on plan
-  let subscription_status = "Premium";
-  let credits_remaining = 100;
+    if (config?.type === "one_time") {
+      // Get current credits and ADD to them
+      const { data: profile, error: fetchError } = await supabase
+        .from("profiles")
+        .select("credits_remaining")
+        .eq("id", userId)
+        .single();
 
-  if (priceId === CAREER_MAX_PRICE_ID) {
-    subscription_status = "Career Max";
-    credits_remaining = 999999;
+      if (fetchError) {
+        console.error("Error fetching profile:", fetchError);
+        throw fetchError;
+      }
+
+      const newCredits = (profile.credits_remaining || 0) + config.tokens;
+
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          credits_remaining: newCredits,
+          stripe_customer_id: customerId,
+        })
+        .eq("id", userId);
+
+      if (error) {
+        console.error("Error updating credits:", error);
+        throw error;
+      }
+
+      console.log(
+        `Added ${config.tokens} tokens to user ${userId}. New total: ${newCredits}`
+      );
+      return;
+    }
   }
 
-  const { error } = await supabase
-    .from("profiles")
-    .update({
-      stripe_customer_id: customerId,
-      is_subscribed: true,
-      subscription_status: subscription_status,
-      credits_remaining: credits_remaining,
-      credits_last_reset: new Date().toISOString(),
-    })
-    .eq("id", userId);
+  // Handle SUBSCRIPTION payments
+  if (session.mode === "subscription") {
+    const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+    const priceId = lineItems.data[0]?.price?.id;
+    const config = PRICE_CONFIG[priceId];
 
-  if (error) {
-    console.error("Error updating profile:", error);
-    throw error;
+    if (!config) {
+      console.error("Unknown price ID:", priceId);
+      return;
+    }
+
+    const nextResetDate = getNextResetDate();
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        stripe_customer_id: customerId,
+        is_subscribed: true,
+        subscription_status: config.name,
+        credits_remaining: config.tokens,
+        credits_last_reset: new Date().toISOString(),
+        credits_reset_date: nextResetDate,
+      })
+      .eq("id", userId);
+
+    if (error) {
+      console.error("Error updating profile:", error);
+      throw error;
+    }
+
+    console.log(
+      `User ${userId} subscribed to ${config.name} with ${config.tokens} tokens. Next reset: ${nextResetDate}`
+    );
   }
-
-  console.log(`User ${userId} upgraded to ${subscription_status}`);
 }
 
 async function handleSubscriptionUpdated(subscription) {
@@ -119,37 +204,54 @@ async function handleSubscriptionUpdated(subscription) {
   const customerId = subscription.customer;
   const status = subscription.status;
   const priceId = subscription.items.data[0]?.price?.id;
+  const config = PRICE_CONFIG[priceId];
 
-  // If subscription is active or trialing, they're Pro. Otherwise, Free.
-  const isPro = ["active", "trialing"].includes(status);
+  // If subscription is active or trialing, they're subscribed
+  const isActive = ["active", "trialing"].includes(status);
 
-  // Determine plan type
-  let subscription_status = "free";
-  let credits_remaining = 3;
+  if (isActive && config) {
+    const nextResetDate = getNextResetDate();
 
-  if (isPro) {
-    if (priceId === CAREER_MAX_PRICE_ID) {
-      subscription_status = "Career Max";
-      credits_remaining = 999999;
-    } else {
-      subscription_status = "Premium";
-      credits_remaining = 100;
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        is_subscribed: true,
+        subscription_status: config.name,
+        credits_remaining: config.tokens,
+        credits_last_reset: new Date().toISOString(),
+        credits_reset_date: nextResetDate,
+      })
+      .eq("stripe_customer_id", customerId);
+
+    if (error) {
+      console.error("Error updating subscription:", error);
+      throw error;
     }
-  }
 
-  const { error } = await supabase
-    .from("profiles")
-    .update({
-      is_subscribed: isPro,
-      subscription_status: subscription_status,
-      credits_remaining: credits_remaining,
-      credits_last_reset: new Date().toISOString(),
-    })
-    .eq("stripe_customer_id", customerId);
+    console.log(
+      `Subscription updated to ${config.name} for customer ${customerId}`
+    );
+  } else {
+    // Subscription no longer active - downgrade to free
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        is_subscribed: false,
+        subscription_status: "free",
+        credits_remaining: 3,
+        credits_last_reset: new Date().toISOString(),
+        credits_reset_date: null,
+      })
+      .eq("stripe_customer_id", customerId);
 
-  if (error) {
-    console.error("Error updating subscription:", error);
-    throw error;
+    if (error) {
+      console.error("Error downgrading subscription:", error);
+      throw error;
+    }
+
+    console.log(
+      `Subscription inactive for customer ${customerId}, reverted to free`
+    );
   }
 }
 
@@ -165,6 +267,7 @@ async function handleSubscriptionDeleted(subscription) {
       subscription_status: "free",
       credits_remaining: 3,
       credits_last_reset: new Date().toISOString(),
+      credits_reset_date: null,
     })
     .eq("stripe_customer_id", customerId);
 
@@ -174,14 +277,15 @@ async function handleSubscriptionDeleted(subscription) {
   }
 
   console.log(
-    `Subscription canceled for customer ${customerId}, reverted to Free`
+    `Subscription canceled for customer ${customerId}, reverted to free`
   );
 }
 
 async function handleInvoicePaymentSucceeded(invoice) {
   console.log("Invoice payment succeeded:", invoice.id);
+  console.log("Billing reason:", invoice.billing_reason);
 
-  // Only reset on monthly renewals
+  // Reset credits on subscription renewal (not initial purchase)
   if (invoice.billing_reason === "subscription_cycle") {
     const customerId = invoice.customer;
     const subscriptionId = invoice.subscription;
@@ -190,17 +294,21 @@ async function handleInvoicePaymentSucceeded(invoice) {
 
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
     const priceId = subscription.items.data[0]?.price?.id;
+    const config = PRICE_CONFIG[priceId];
 
-    let credits_remaining = 100;
-    if (priceId === CAREER_MAX_PRICE_ID) {
-      credits_remaining = 999999;
+    if (!config) {
+      console.error("Unknown price ID on renewal:", priceId);
+      return;
     }
+
+    const nextResetDate = getNextResetDate();
 
     const { error } = await supabase
       .from("profiles")
       .update({
-        credits_remaining: credits_remaining,
+        credits_remaining: config.tokens,
         credits_last_reset: new Date().toISOString(),
+        credits_reset_date: nextResetDate,
       })
       .eq("stripe_customer_id", customerId);
 
@@ -210,7 +318,7 @@ async function handleInvoicePaymentSucceeded(invoice) {
     }
 
     console.log(
-      `Credits reset for customer ${customerId} to ${credits_remaining}`
+      `Credits reset to ${config.tokens} for customer ${customerId}. Next reset: ${nextResetDate}`
     );
   }
 }
@@ -224,8 +332,9 @@ async function handleInvoicePaymentFailed(invoice) {
     .from("profiles")
     .update({
       is_subscribed: false,
-      subscription_status: "free",
+      subscription_status: "payment_failed",
       credits_remaining: 3,
+      credits_reset_date: null,
     })
     .eq("stripe_customer_id", customerId);
 
@@ -233,4 +342,6 @@ async function handleInvoicePaymentFailed(invoice) {
     console.error("Error updating failed payment:", error);
     throw error;
   }
+
+  console.log(`Payment failed for customer ${customerId}, subscription paused`);
 }

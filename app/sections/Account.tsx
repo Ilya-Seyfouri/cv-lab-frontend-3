@@ -25,73 +25,66 @@ export default function Account({ onNavigateToOptimizer }) {
   const [downloadingId, setDownloadingId] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
 
-  const premium_priceID = "price_1SUSl4GTsfq9NWHAdMHCbsz5";
-  const career_max = "price_1SUSqmGTsfq9NWHAs88j0NDn";
+  // Price IDs - ALL YOUR PLANS
+  const PRICE_IDS = {
+    monthlyStandard: "price_1SpUeoGTsfq9NWHAFOXcEXHh",
+    monthlyPremium: "price_1SpUfaGTsfq9NWHAtr59tPFE",
+    sixMonthStandard: "price_1SpUggGTsfq9NWHA0exdHuEp",
+    sixMonthPremium: "price_1SpUgBGTsfq9NWHAhYdxJKRu",
+    tokenPack15: "price_1SpUhsGTsfq9NWHAodt5avHo",
+  };
 
-  const checkoutbruh_premium = async () => {
-    if (!user1) {
+  // Generic checkout function
+  const handleCheckout = async (priceID) => {
+    if (!userdetails) {
       console.error("No user found");
       return;
     }
 
-    const selectedPriceID = premium_priceID;
     try {
       const response = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          priceID: selectedPriceID,
-          email: user1.email,
-          userId: user1.id,
+          priceID: priceID,
+          email: userdetails.email,
+          userId: userdetails.id,
         }),
       });
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       const data = await response.json();
       if (data.error) {
         console.error("Error:", data.error);
         return;
       }
+
       window.location.href = data.url;
     } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
+      console.error("Checkout error:", error);
     }
   };
 
-  const checkoutbruh_career_max = async () => {
-    if (!user1) {
-      console.error("No user found");
-      return;
-    }
+  // Checkout handlers for each plan type
+  const checkoutStandard = () => {
+    const priceId = isAnnual
+      ? PRICE_IDS.sixMonthStandard
+      : PRICE_IDS.monthlyStandard;
+    handleCheckout(priceId);
+  };
 
-    const selectedPriceID = career_max;
-    try {
-      const response = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          priceID: selectedPriceID,
-          email: user1.email,
-          userId: user1.id,
-        }),
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      if (data.error) {
-        console.error("Error:", data.error);
-        return;
-      }
-      window.location.href = data.url;
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
-    }
+  const checkoutPremium = () => {
+    const priceId = isAnnual
+      ? PRICE_IDS.sixMonthPremium
+      : PRICE_IDS.monthlyPremium;
+    handleCheckout(priceId);
+  };
+
+  const buyTokenPack = () => {
+    handleCheckout(PRICE_IDS.tokenPack15);
   };
 
   useEffect(() => {
@@ -174,6 +167,8 @@ export default function Account({ onNavigateToOptimizer }) {
       console.log(error);
     }
   };
+
+  
 
   // NEW: Fetch generations from API
   const fetchGenerations = async () => {
@@ -401,6 +396,17 @@ export default function Account({ onNavigateToOptimizer }) {
     });
   };
 
+  const formatResetDate = (dateString) => {
+    if (!dateString) return null;
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
+
+
   // Helper function to get time ago
 
   return (
@@ -506,7 +512,7 @@ export default function Account({ onNavigateToOptimizer }) {
                             </div>
 
                             <button
-                              onClick={checkoutbruh_premium}
+                              onClick={checkoutStandard}
                               className="w-full gap-2 cursor-pointer bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 px-6 py-3 rounded-lg text-white font-semibold inline-flex items-center justify-center"
                             >
                               Upgrade to Standard
@@ -592,7 +598,7 @@ export default function Account({ onNavigateToOptimizer }) {
                             </div>
 
                             <button
-                              onClick={checkoutbruh_premium}
+                              onClick={checkoutPremium}
                               className="w-full gap-2 cursor-pointer bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 px-6 py-3 rounded-lg text-white font-semibold inline-flex items-center justify-center"
                             >
                               Upgrade to Premium
@@ -906,15 +912,33 @@ export default function Account({ onNavigateToOptimizer }) {
                     </div>
                     <div className="bg-white/5 h-px" />
                     <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-3">
-                      <p className="text-sm text-foreground">
-                        Credits Reset on:
-                      </p>
+                      {user1?.credits_reset_date ? (
+                        <>
+                          <p className="text-sm text-muted-foreground">
+                            Credits reset on:
+                          </p>
+                          <p className="text-foreground font-medium">
+                            {formatResetDate(user1.credits_reset_date)}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-muted-foreground">
+                          {currentPlan === "free"
+                            ? "Subscribe to get monthly credits"
+                            : "Credits reset date will appear after your first billing cycle"}
+                        </p>
+                      )}
                     </div>
                     <div className="py-2"></div>
                     <div className="border-red-500/20 bg-red-500/5 backdrop-blur-sm rounded-lg border p-6">
                       <div>Urgent for more credits?</div>
                       <div className="pt-5">
-                        <button className="bg-red-600 px-4 py-2 rounded-xl"> Buy 15 credits for 5£</button>
+                        <button
+                          onClick={buyTokenPack}
+                          className="bg-red-600 px-4 py-2 rounded-xl hover:bg-red-700 transition cursor-pointer active:scale-95"
+                        >
+                          Buy 15 credits for £5
+                        </button>
                       </div>
                     </div>
                   </div>
