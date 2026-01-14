@@ -45,17 +45,18 @@ export async function GET(request) {
       if (!existingProfile) {
         console.log("No profile found, creating new profile...");
 
-        const { data: newProfile, error: insertError } = await supabase
-          .from("profiles")
-          .insert({
-            id: user.id,
-            credits_remaining: 3,
-            subscription_status: "free",
-            is_subscribed: false,
-            created_at: new Date().toISOString(),
-            credits_last_reset: new Date().toISOString(),
-          })
-          .select();
+       const { data: newProfile, error: insertError } = await supabase
+         .from("profiles")
+         .insert({
+           id: user.id,
+           email: user.email,
+           credits_remaining: 3,
+           subscription_status: "free",
+           is_subscribed: false,
+           created_at: new Date().toISOString(),
+           credits_last_reset: new Date().toISOString(),
+         })
+         .select();
 
         console.log("Profile creation result:");
         console.log("- New profile:", newProfile);
