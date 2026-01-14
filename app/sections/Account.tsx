@@ -377,6 +377,7 @@ export default function Account({ onNavigateToOptimizer }) {
     if (status.includes("Standard")) {
       return { name: status, credits: 30 };
     }
+    // r
     if (status.includes("Premium")) {
       return { name: status, credits: 100 };
     }
