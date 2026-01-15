@@ -382,8 +382,11 @@ export default function Home() {
         updateGenerationState({
           generatedCV: cvData.cv,
           cvProgress: 100,
+          processingStep: "complete", // Show results immediately
+          isCompilingAll: false,
         });
         finalCvPdfData = await compileCVToPDF(cvData.cv);
+        clearInterval(progressTimer); // Clear the progress timer here
       }
 
       // ✅ STEP 2: Generate Cover Letter
@@ -471,12 +474,7 @@ export default function Home() {
       }
 
       await fetchUserCredits();
-      clearInterval(progressTimer);
-      updateGenerationState({
-        cvProgress: 100,
-        processingStep: "complete",
-        isCompilingAll: false,
-      });
+     
     } catch (error) {
       console.error("Error:", error);
       clearInterval(progressTimer);
