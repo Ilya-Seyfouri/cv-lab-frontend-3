@@ -248,20 +248,18 @@ export default function Home() {
       });
     }
   };
-  const startOptimizeProgress = (updateGenerationState, maxPercent = 75) => {
-    let current = 0;
-    const timer = setInterval(() => {
-      current += 1;
-      if (current >= maxPercent) {
-        current = maxPercent;
-        clearInterval(timer); // stop at 85%
-      }
-      // Use whatever field your progress bar reads from
-      updateGenerationState({ cvProgress: current });
-    }, 1300); // 1% per second
-    return timer; // so we can clear it when we're done
-  };
-
+ const startOptimizeProgress = (updateGenerationState) => {
+   let current = 0;
+   const timer = setInterval(() => {
+     current += 1;
+     if (current >= 95) {
+       current = 95; // Cap at 95%, wait for completion
+       clearInterval(timer);
+     }
+     updateGenerationState({ cvProgress: current });
+   }, 1000); // 1% per second, 95 seconds to reach 95%
+   return timer;
+ };
   // NEW: Function to save generation to database
   const saveGenerationToDatabase = async (
     roleTitle,
@@ -382,7 +380,6 @@ export default function Home() {
        clearInterval(progressTimer); // Stop the timer BEFORE setting 100%
        updateGenerationState({
          generatedCV: cvData.cv,
-         cvProgress: 100,
        });
        finalCvPdfData = await compileCVToPDF(cvData.cv);
      }
