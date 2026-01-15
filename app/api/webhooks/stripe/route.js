@@ -13,7 +13,6 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-// Price ID configuration
 const PRICE_CONFIG = {
   // Monthly plans
   price_1SpUeoGTsfq9NWHAFOXcEXHh: {
@@ -108,7 +107,6 @@ export async function POST(req) {
     );
   }
 }
-
 async function handleCheckoutSessionCompleted(session) {
   console.log("Checkout session completed:", session.id);
   console.log("Session mode:", session.mode);
@@ -131,7 +129,7 @@ async function handleCheckoutSessionCompleted(session) {
       // Get current credits and ADD to them
       const { data: profile, error: fetchError } = await supabase
         .from("profiles")
-        .select("credits_remaining")
+        .select("credits_remaining, stripe_customer_id")
         .eq("id", userId)
         .single();
 
@@ -142,12 +140,19 @@ async function handleCheckoutSessionCompleted(session) {
 
       const newCredits = (profile.credits_remaining || 0) + config.tokens;
 
+      // Only update stripe_customer_id if we have one AND user doesn't already have one
+      const updateData = {
+        credits_remaining: newCredits,
+      };
+
+      // Only set customer ID if it exists and user doesn't have one
+      if (customerId && !profile.stripe_customer_id) {
+        updateData.stripe_customer_id = customerId;
+      }
+
       const { error } = await supabase
         .from("profiles")
-        .update({
-          credits_remaining: newCredits,
-          stripe_customer_id: customerId,
-        })
+        .update(updateData)
         .eq("id", userId);
 
       if (error) {
@@ -161,7 +166,6 @@ async function handleCheckoutSessionCompleted(session) {
       return;
     }
   }
-
   // Handle SUBSCRIPTION payments
   if (session.mode === "subscription") {
     const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
@@ -173,6 +177,23 @@ async function handleCheckoutSessionCompleted(session) {
       return;
     }
 
+    // Get current credits to compare
+    const { data: profile, error: fetchError } = await supabase
+      .from("profiles")
+      .select("credits_remaining")
+      .eq("id", userId)
+      .single();
+
+    if (fetchError) {
+      console.error("Error fetching profile:", fetchError);
+      throw fetchError;
+    }
+
+    const currentCredits = profile.credits_remaining || 0;
+    // If current credits > plan amount, keep them. Otherwise set to plan amount.
+    const newCredits =
+      currentCredits > config.tokens ? currentCredits : config.tokens;
+
     const nextResetDate = getNextResetDate();
 
     const { error } = await supabase
@@ -181,7 +202,7 @@ async function handleCheckoutSessionCompleted(session) {
         stripe_customer_id: customerId,
         is_subscribed: true,
         subscription_status: config.name,
-        credits_remaining: config.tokens,
+        credits_remaining: newCredits,
         credits_last_reset: new Date().toISOString(),
         credits_reset_date: nextResetDate,
       })
@@ -197,29 +218,56 @@ async function handleCheckoutSessionCompleted(session) {
     );
   }
 }
-
 async function handleSubscriptionUpdated(subscription) {
-  console.log("Subscription updated:", subscription.id);
+  console.log("=== SUBSCRIPTION UPDATED ===");
+  console.log("Subscription ID:", subscription.id);
+  console.log("Status:", subscription.status);
+  console.log("Cancel at period end:", subscription.cancel_at_period_end);
+  console.log("Canceled at:", subscription.canceled_at);
 
   const customerId = subscription.customer;
   const status = subscription.status;
   const priceId = subscription.items.data[0]?.price?.id;
   const config = PRICE_CONFIG[priceId];
 
-  // If subscription is active or trialing, they're subscribed
+  // Check if subscription is cancelled in ANY way
+  const isCancelled =
+    subscription.cancel_at_period_end === true ||
+    status === "canceled" ||
+    subscription.canceled_at !== null;
+
+  if (isCancelled) {
+    console.log("Subscription is cancelled - updating database");
+
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        is_subscribed: false,
+        subscription_status: "cancelled",
+        credits_reset_date: null,
+      })
+      .eq("stripe_customer_id", customerId);
+
+    if (error) {
+      console.error("Error cancelling subscription:", error);
+      throw error;
+    }
+
+    console.log(
+      `Subscription cancelled for customer ${customerId}. Credits preserved.`
+    );
+    return;
+  }
+
+  // Not cancelled - check if active
   const isActive = ["active", "trialing"].includes(status);
 
   if (isActive && config) {
-    const nextResetDate = getNextResetDate();
-
     const { error } = await supabase
       .from("profiles")
       .update({
         is_subscribed: true,
         subscription_status: config.name,
-        credits_remaining: config.tokens,
-        credits_last_reset: new Date().toISOString(),
-        credits_reset_date: nextResetDate,
       })
       .eq("stripe_customer_id", customerId);
 
@@ -232,27 +280,23 @@ async function handleSubscriptionUpdated(subscription) {
       `Subscription updated to ${config.name} for customer ${customerId}`
     );
   } else {
-  // Subscription no longer active - keep credits, stop resets
-  const { error } = await supabase
-    .from("profiles")
-    .update({
-      is_subscribed: false,
-      subscription_status: "cancelled",
-      credits_reset_date: null,
-    })
-    .eq("stripe_customer_id", customerId);;
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        is_subscribed: false,
+        subscription_status: "cancelled",
+        credits_reset_date: null,
+      })
+      .eq("stripe_customer_id", customerId);
 
     if (error) {
       console.error("Error downgrading subscription:", error);
       throw error;
     }
 
-    console.log(
-      `Subscription inactive for customer ${customerId}, reverted to free`
-    );
+    console.log(`Subscription inactive for customer ${customerId}`);
   }
 }
-
 async function handleSubscriptionDeleted(subscription) {
   console.log("Subscription deleted:", subscription.id);
 
