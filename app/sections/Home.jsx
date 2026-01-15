@@ -378,13 +378,14 @@ export default function Home() {
         return;
       }
 
-      if (cvData && cvData.cv) {
-        updateGenerationState({
-          generatedCV: cvData.cv,
-          cvProgress: 100,
-        });
-        finalCvPdfData = await compileCVToPDF(cvData.cv);
-      }
+     if (cvData && cvData.cv) {
+       clearInterval(progressTimer); // Stop the timer BEFORE setting 100%
+       updateGenerationState({
+         generatedCV: cvData.cv,
+         cvProgress: 100,
+       });
+       finalCvPdfData = await compileCVToPDF(cvData.cv);
+     }
 
       // ✅ STEP 2: Generate Cover Letter
       updateGenerationState({
@@ -473,7 +474,6 @@ export default function Home() {
       await fetchUserCredits();
       clearInterval(progressTimer);
       updateGenerationState({
-        cvProgress: 100,
         processingStep: "complete",
         isCompilingAll: false,
       });
