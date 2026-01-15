@@ -257,7 +257,7 @@ export default function Home() {
        clearInterval(timer);
      }
      updateGenerationState({ cvProgress: current });
-   }, 1000); // 1% per second, 95 seconds to reach 95%
+   }, 1500); // 1% per second, 95 seconds to reach 95%
    return timer;
  };
   // NEW: Function to save generation to database
@@ -377,7 +377,6 @@ export default function Home() {
       }
 
      if (cvData && cvData.cv) {
-       clearInterval(progressTimer); // Stop the timer BEFORE setting 100%
        updateGenerationState({
          generatedCV: cvData.cv,
        });
