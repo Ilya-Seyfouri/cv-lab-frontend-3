@@ -26,19 +26,14 @@ export default function Account({ onNavigateToOptimizer }) {
   const [deletingId, setDeletingId] = useState(null);
 
   // Price IDs - ALL YOUR PLANS
-  
- 
- const PRICE_IDS = {
-   monthlyStandard: "price_1SpUeoGTsfq9NWHAFOXcEXHh",
-   monthlyPremium: "price_1SpUfaGTsfq9NWHAtr59tPFE",
-   sixMonthStandard: "price_1SpUggGTsfq9NWHA0exdHuEp",
-   sixMonthPremium: "price_1SpUgBGTsfq9NWHAhYdxJKRu",
-   tokenPack15: "price_1SpUhsGTsfq9NWHAodt5avHo",
- };
 
-
-
-
+  const PRICE_IDS = {
+    monthlyStandard: "price_1SpUeoGTsfq9NWHAFOXcEXHh",
+    monthlyPremium: "price_1SpUfaGTsfq9NWHAtr59tPFE",
+    sixMonthStandard: "price_1SpUggGTsfq9NWHA0exdHuEp",
+    sixMonthPremium: "price_1SpUgBGTsfq9NWHAhYdxJKRu",
+    tokenPack15: "price_1SpUhsGTsfq9NWHAodt5avHo",
+  };
 
   // Generic checkout function
   const handleCheckout = async (priceID) => {
@@ -351,7 +346,7 @@ export default function Account({ onNavigateToOptimizer }) {
       });
       const data = await response.json();
       if (data.url) {
-        window.location.href = data.url;
+        window.open(data.url, "_blank");
       }
     } catch (error) {
       console.error("Error:", error);
