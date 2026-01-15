@@ -614,7 +614,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <div className="container mx-auto px-4">
-        {processingStep !== "complete" ? (
+        {!generatedCV ? (
           <div className="mx-auto max-w-5xl">
             {/* Header */}
             <div className="mb-12 text-center">
