@@ -446,9 +446,7 @@ export default function Account({ onNavigateToOptimizer }) {
                   }`}
                 >
                   6 Months
-                  <span className="ml-1.5 text-xs bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded">
-                    Save 20%
-                  </span>
+                  
                 </span>
               </div>
             </div>
@@ -477,13 +475,13 @@ export default function Account({ onNavigateToOptimizer }) {
             if (isStandardUser) {
               return (
                 <div className="mb-8">
-                  <div className="flex flex-col lg:flex-row gap-6 max-w-md mx-auto">
+                  <div className="flex flex-col lg:flex-row gap-6 w-7xl mx-auto">
                     {/* Premium Upgrade Card */}
                     <div className="flex-1 overflow-hidden border-orange-500/30 bg-gradient-to-br from-orange-500/10 via-orange-500/5 to-transparent backdrop-blur-sm rounded-lg border">
                       <div className="p-0">
                         <div className="relative">
                           <div className="pointer-events-none absolute inset-0">
-                            <div className="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-orange-500/10 to-transparent" />
+                            <div className="absolute right-0 top-0 h-full w-bg-gradient-to-l from-orange-500/10 to-transparent" />
                             <div className="absolute right-10 top-1/2 h-32 w-32 -translate-y-1/2 rounded-full bg-orange-500/20 blur-3xl" />
                           </div>
                           <div className="relative p-6">
@@ -511,7 +509,7 @@ export default function Account({ onNavigateToOptimizer }) {
                                 </div>
                                 {isAnnual ? (
                                   <h3 className="mb-3 text-2xl text-foreground">
-                                    £80
+                                    £80 save20%
                                   </h3>
                                 ) : (
                                   <h3 className="mb-3 text-2xl text-foreground">
