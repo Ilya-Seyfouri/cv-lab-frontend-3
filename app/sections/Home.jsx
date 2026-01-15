@@ -811,17 +811,16 @@ export default function Home() {
 
             {/* 🎯 DROPDOWN PLACED HERE - REPLACING OLD BUTTONS */}
             <div className="pt-10 pb-6">
-              <CVTemplateDropdown 
-                selectedCV={selectedCV} 
-                onSelect={selectCV} 
-              />
+              <CVTemplateDropdown selectedCV={selectedCV} onSelect={selectCV} />
             </div>
 
             <div className=" pt-5 flex justify-center">
               <button
                 disabled={
                   !canOptimize ||
-                  (processingStep !== "idle" && processingStep !== "complete")
+                  (processingStep !== "idle" &&
+                    processingStep !== "complete") ||
+                  (user1?.credits_remaining || 0) === 0
                 }
                 onClick={handleOptimize}
                 type="button"
@@ -836,8 +835,7 @@ export default function Home() {
             <div className="flex justify-center items-center pt-10 text-md text-red-400">
               {error1}
             </div>
-            <div className="pt-30">
-              </div>
+            <div className="pt-30"></div>
           </div>
         ) : (
           <ResultsView
