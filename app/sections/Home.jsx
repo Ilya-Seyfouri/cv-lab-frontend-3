@@ -831,7 +831,7 @@ export default function Home() {
             <div className="flex justify-center items-center pt-10 text-md text-red-400">
               {error1}
             </div>
-            <div className="pt-30"></div>
+            <div className="pt-60"></div>
           </div>
         ) : (
           <ResultsView

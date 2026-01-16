@@ -419,7 +419,7 @@ export default function Account({ onNavigateToOptimizer }) {
             user1?.is_subscribed &&
             user1?.subscription_status?.includes("Premium")
           ) && (
-            <div className="flex justify-center pb-10">
+            <div className="flex justify-center ">
               <div className="flex items-center justify-center gap-3 mb-6">
                 <span
                   className={`text-sm font-medium transition-colors ${
@@ -446,7 +446,6 @@ export default function Account({ onNavigateToOptimizer }) {
                   }`}
                 >
                   6 Months
-                  
                 </span>
               </div>
             </div>
@@ -532,7 +531,7 @@ export default function Account({ onNavigateToOptimizer }) {
                                         d="M5 13l4 4L19 7"
                                       />
                                     </svg>
-                                    <span>100 tokens / month</span>
+                                    <span>100 Generations / month</span>
                                   </div>
                                 </div>
 
@@ -627,7 +626,74 @@ export default function Account({ onNavigateToOptimizer }) {
                                         d="M5 13l4 4L19 7"
                                       />
                                     </svg>
-                                    <span>30 tokens / month</span>
+                                    <span>30 Generations / month</span>
+                                  </div>
+
+                                  <div className="flex items-center gap-2 text-cyan-300">
+                                    <svg
+                                      className="h-4 w-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                    <span>Access to CV tailoring</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-cyan-300">
+                                    <svg
+                                      className="h-4 w-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                    <span>
+                                      Access to Cover Letter Generator
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-cyan-300">
+                                    <svg
+                                      className="h-4 w-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                    <span>CV Analysis</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-cyan-300">
+                                    <svg
+                                      className="h-4 w-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                    <span>ATS optimization</span>
                                   </div>
                                 </div>
 
@@ -713,7 +779,73 @@ export default function Account({ onNavigateToOptimizer }) {
                                         d="M5 13l4 4L19 7"
                                       />
                                     </svg>
-                                    <span>100 tokens / month</span>
+                                    <span>100 Generations / month</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-orange-300">
+                                    <svg
+                                      className="h-4 w-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                    <span>Access to CV tailoring</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-orange-300">
+                                    <svg
+                                      className="h-4 w-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                    <span>
+                                      Access to Cover Letter Generator
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-orange-300">
+                                    <svg
+                                      className="h-4 w-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                    <span>Keyword Integration</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 text-orange-300">
+                                    <svg
+                                      className="h-4 w-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M5 13l4 4L19 7"
+                                      />
+                                    </svg>
+                                    <span>ATS optimization</span>
                                   </div>
                                 </div>
 
@@ -1033,39 +1165,63 @@ export default function Account({ onNavigateToOptimizer }) {
                         />
                       </div>
                     </div>
-                    <div className="bg-white/5 h-px" />
-                    <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-3">
-                      {user1?.credits_reset_date ? (
-                        <>
-                          <p className="text-sm text-muted-foreground">
-                            Credits reset on:
-                          </p>
-                          <p className="text-foreground font-medium">
-                            {formatResetDate(user1.credits_reset_date)}
-                          </p>
-                        </>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">
-                          {currentPlan === "free"
-                            ? "Subscribe to get monthly credits"
-                            : "Credits reset date will appear after your first billing cycle"}
-                        </p>
-                      )}
-                    </div>
-                    <div className="py-2"></div>
-                    <div className="border-red-500/20 bg-red-500/5 backdrop-blur-sm rounded-lg border p-6">
-                      <div>Urgent for more credits?</div>
-                      <div className="pt-5">
-                        <button
-                          onClick={buyTokenPack}
-                          className="bg-red-600 px-4 py-2 rounded-xl hover:bg-red-700 transition cursor-pointer active:scale-95"
-                        >
-                          Buy 15 credits for £5
-                        </button>
+                    <div className="space-y-3">
+                      {/* Buy Tokens Card */}
+                      <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-3">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.08),transparent_50%)]" />
+
+                        <div className="relative space-y-3">
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-2 animate-pulse rounded-full bg-orange-500" />
+                            <span className="text-sm font-medium tracking-wide text-zinc-400">
+                              Running Low?
+                            </span>
+                          </div>
+
+                          <button
+                            onClick={buyTokenPack}
+                            className="group relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-orange-600 to-orange-700 px-5 py-2.5 font-semibold text-white shadow-lg shadow-orange-500/20 transition-all duration-200 hover:shadow-orange-500/30 hover:brightness-110 active:scale-[0.98]"
+                          >
+                            <span className="relative z-10 flex items-center justify-center gap-2 text-sm">
+                              <span>Buy 15 Generations for £5</span>
+                              
+                            </span>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                          </button>
+                        </div>
+                      </div>
+                      {/* Credits Reset Card */}
+                      <div className="rounded-lg border border-cyan-500/20 bg-cyan-500/5 p-3">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.08),transparent_50%)]" />
+
+                        <div className="relative space-y-3">
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-2 rounded-full bg-cyan-500 shadow-sm shadow-cyan-500/50" />
+                            <span className="text-sm font-medium tracking-wide text-zinc-400">
+                              {user1?.credits_reset_date
+                                ? "Credits reset on"
+                                : currentPlan === "free"
+                                ? "No active subscription"
+                                : "Billing cycle pending"}
+                            </span>
+                          </div>
+
+                          <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-cyan-600 to-cyan-700 px-5 py-2.5 font-semibold text-white shadow-lg shadow-cyan-500/20">
+                            <span className="relative z-10 flex items-center justify-center text-sm">
+                              {user1?.credits_reset_date
+                                ? formatResetDate(user1.credits_reset_date)
+                                : currentPlan === "free"
+                                ? "Subscribe to get monthly credits"
+                                : "Reset date appears after first cycle"}
+                            </span>
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
+                
               </div>
             )}
 

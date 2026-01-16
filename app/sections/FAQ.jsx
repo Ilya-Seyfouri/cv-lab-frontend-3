@@ -46,9 +46,11 @@ export default function FAQ() {
         <div className="container">
           <div className="pt-30 lg:pt-15 pb-30 lg:pb-30 flex flex-col justify-center items-center px-4 lg:px-0">
             <div className="text-center">
-              <h2 className="text-4xl lg:text-6xl">We've got the answers</h2>
+              <h2 className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text font-semibold text-transparent text-4xl lg:text-6xl leading-normal pb-1">
+                We've got the answers
+              </h2>
             </div>
-            <div className="pt-4 lg:pt-8 text-center">
+            <div className="pt-1 text-center">
               <p className="text-lg lg:text-2xl text-white/50 px-4 lg:pb-5">
                 Discover everything you need to know about CV Lab.
               </p>
