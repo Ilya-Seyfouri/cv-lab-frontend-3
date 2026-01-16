@@ -507,8 +507,14 @@ export default function Account({ onNavigateToOptimizer }) {
                                   </span>
                                 </div>
                                 {isAnnual ? (
-                                  <h3 className="mb-3 text-2xl text-foreground">
-                                    £80 save20%
+                                  <h3 className="mb-3 text-2xl text-foreground flex justify-between items-center">
+                                    <div>
+                                      <span className="line-through decoration-muted-foreground/50 text-muted-foreground text-xl">
+                                        92.34
+                                      </span>{" "}
+                                      £69.22
+                                    </div>
+                                    <span className="text-green-600">-25%</span>
                                   </h3>
                                 ) : (
                                   <h3 className="mb-3 text-2xl text-foreground">
@@ -602,8 +608,18 @@ export default function Account({ onNavigateToOptimizer }) {
                                   </span>
                                 </div>
                                 {isAnnual ? (
-                                  <h3 className="mb-3 text-2xl text-foreground">
-                                    £40
+                                  <h3 className="mb-3 text-2xl text-foreground flex justify-between items-center">
+                                    <div>
+                                      <span className="line-through decoration-muted-foreground/50 text-muted-foreground text-xl">
+                                        49.99
+                                      </span>{" "}
+                                      £37.22
+                                    </div>
+                                    <div className="border border-cyan-500/30 bg-green-cyan/10 backdrop-blur-sm px-2 py-1 rounded">
+                                      <span className="text-green-400 font-semibold">
+                                        -25%
+                                      </span>
+                                    </div>
                                   </h3>
                                 ) : (
                                   <h3 className="mb-3 text-2xl text-foreground">
@@ -755,8 +771,14 @@ export default function Account({ onNavigateToOptimizer }) {
                                   </span>
                                 </div>
                                 {isAnnual ? (
-                                  <h3 className="mb-3 text-2xl text-foreground">
-                                    £80
+                                  <h3 className="mb-3 text-2xl text-foreground flex justify-between items-center">
+                                    <div>
+                                      <span className="line-through decoration-muted-foreground/50 text-muted-foreground text-xl">
+                                        92.34
+                                      </span>{" "}
+                                      £69.22
+                                    </div>
+                                    <span className="text-green-600">-25%</span>
                                   </h3>
                                 ) : (
                                   <h3 className="mb-3 text-2xl text-foreground">
@@ -1165,7 +1187,7 @@ export default function Account({ onNavigateToOptimizer }) {
                         />
                       </div>
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-3 pt-5">
                       {/* Buy Tokens Card */}
                       <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-3">
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(239,68,68,0.08),transparent_50%)]" />
@@ -1180,48 +1202,49 @@ export default function Account({ onNavigateToOptimizer }) {
 
                           <button
                             onClick={buyTokenPack}
-                            className="group relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-orange-600 to-orange-700 px-5 py-2.5 font-semibold text-white shadow-lg shadow-orange-500/20 transition-all duration-200 hover:shadow-orange-500/30 hover:brightness-110 active:scale-[0.98]"
+                            className="w-full border border-orange-500/30 bg-orange-500/10 backdrop-blur-sm hover:bg-orange-500/20 hover:border-orange-500/40 active:scale-[0.98] transition-all px-4 py-2.5 rounded-lg text-white text-sm font-semibold shadow-sm"
                           >
-                            <span className="relative z-10 flex items-center justify-center gap-2 text-sm">
-                              <span>Buy 15 Generations for £5</span>
-                              
-                            </span>
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                            Buy 15 Generations for £5
                           </button>
                         </div>
                       </div>
-                      {/* Credits Reset Card */}
-                      <div className="rounded-lg border border-cyan-500/20 bg-cyan-500/5 p-3">
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(34,197,94,0.08),transparent_50%)]" />
+                      <div className="pt-1"></div>
 
-                        <div className="relative space-y-3">
-                          <div className="flex items-center gap-2">
-                            <div className="h-2 w-2 rounded-full bg-cyan-500 shadow-sm shadow-cyan-500/50" />
-                            <span className="text-sm font-medium tracking-wide text-zinc-400">
-                              {user1?.credits_reset_date
-                                ? "Credits reset on"
-                                : currentPlan === "free"
-                                ? "No active subscription"
-                                : "Billing cycle pending"}
-                            </span>
-                          </div>
-
-                          <div className="relative w-full overflow-hidden rounded-xl bg-gradient-to-r from-cyan-600 to-cyan-700 px-5 py-2.5 font-semibold text-white shadow-lg shadow-cyan-500/20">
-                            <span className="relative z-10 flex items-center justify-center text-sm">
-                              {user1?.credits_reset_date
-                                ? formatResetDate(user1.credits_reset_date)
-                                : currentPlan === "free"
-                                ? "Subscribe to get monthly credits"
-                                : "Reset date appears after first cycle"}
-                            </span>
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                      {/* Credits Reset Card - Only for subscribed users */}
+                      {user1?.is_subscribed && user1?.credits_reset_date && (
+                        <div className="rounded-lg border  border-cyan-500/20 bg-cyan-500/5 p-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-cyan-500/20">
+                                <svg
+                                  className="h-5 w-5 text-cyan-400"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                  />
+                                </svg>
+                              </div>
+                              <div>
+                                <p className="text-sm font-medium text-muted-foreground">
+                                  Credits Reset
+                                </p>
+                                <p className="text-lg font-semibold text-foreground">
+                                  {formatResetDate(user1.credits_reset_date)}
+                                </p>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
-                
               </div>
             )}
 

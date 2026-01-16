@@ -3,13 +3,15 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import button from "../../public/BUTTON_1.png";
 import tick from "../../public/tick.png";
+import { useState } from "react";
 const plans = [
   {
     name: "Free Trial",
     price: "£0",
+    annualPrice: "£0",
     description: "Test the core tools with no commitment.",
     features: [
-      "2 free tokens",
+      "2 Free Generations",
       "Access to CV tailoring",
       "Access to Cover Letter Generator",
       "Keyword Intergration",
@@ -20,9 +22,11 @@ const plans = [
   {
     name: "Standard",
     price: "£8.27",
+    annualPrice: "£6.20",
+
     description: "For active job hunters.",
     features: [
-      "30 tokens / month",
+      "30 Generations / month",
       "Access to CV tailoring",
       "Access to Cover Letter Generator",
       "Keyword Intergration",
@@ -33,12 +37,13 @@ const plans = [
   {
     name: "Premium",
     price: "£15.39",
+    annualPrice: "£11.54",
     description: "For professionals who want every advantage.",
     features: [
-      "100 tokens / month",
+      "100 Generations / month",
       "Access to CV tailor",
       "Access to Cover Letter Generator",
-      "Keyword Intergration",
+      "CV Analysis",
       "ATS optimization",
     ],
     popular: false,
@@ -46,6 +51,8 @@ const plans = [
 ];
 export default function Pricing2() {
   const router = useRouter();
+  const [isAnnual, setIsAnnual] = useState(false);
+
   return (
     <section className="relative  md:py-10  scroll-mt-28" id="pricing">
       <div className="container mx-auto max-w-6xl px-4">
@@ -57,8 +64,8 @@ export default function Pricing2() {
             Choose Your Plan
           </h2>
           <p className="text-base md:text-lg text-white/60">
-            Choose the perfect plan for your job search.
-            Upgrade anytime for more optimisations and cover letters.
+            Choose the perfect plan for your job search. Upgrade anytime for
+            more optimisations and cover letters.
           </p>
         </div>
         <div className="grid gap-8 lg:pt-10 lg:grid-cols-3">
@@ -88,7 +95,7 @@ export default function Pricing2() {
                   </p>
                   <div className="mt-5 flex items-baseline gap-2">
                     <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-4xl font-semibold text-transparent">
-                      {plan.price}
+                      {isAnnual ? plan.annualPrice : plan.price}
                     </span>
                     <span className="text-sm text-white/50">/month</span>
                   </div>
@@ -97,8 +104,8 @@ export default function Pricing2() {
                   <ul className="space-y-3">
                     {plan.features.map((feature, i) => {
                       const isRed =
-                        feature.includes("100 tokens") ||
-                        feature.includes("Unlimited tokens");
+                        feature.includes("100 Generations") ||
+                        feature.includes("30 Generations");
                       return (
                         <li key={i} className="flex items-start gap-3">
                           <Image
@@ -144,6 +151,38 @@ export default function Pricing2() {
           ))}
         </div>
       </div>
+
+      <div className="flex justify-center pt-10 ">
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <span
+            className={`text-sm font-medium transition-colors ${
+              !isAnnual ? "text-foreground" : "text-muted-foreground"
+            }`}
+          >
+            Monthly
+          </span>
+
+          <button
+            onClick={() => setIsAnnual(!isAnnual)}
+            className="relative inline-flex h-8 w-14 items-center rounded-full bg-cyan-500/20 border border-cyan-500/30 transition-colors hover:bg-cyan-500/30"
+          >
+            <span
+              className={`inline-block h-6 w-6 transform rounded-full bg-gradient-to-br from-cyan-500 to-cyan-700 shadow-lg transition-transform ${
+                isAnnual ? "translate-x-7" : "translate-x-1"
+              }`}
+            />
+          </button>
+
+          <span
+            className={`text-sm font-medium transition-colors ${
+              isAnnual ? "text-foreground" : "text-muted-foreground"
+            }`}
+          >
+            6 Months
+          </span>
+        </div>
+      </div>
+
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-500/10 blur-3xl" />
       </div>
