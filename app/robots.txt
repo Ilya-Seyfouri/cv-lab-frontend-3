@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /auth
+Disallow: /dashboard
+
+
+Sitemap: https://cvlab.ltd/sitemap.xml

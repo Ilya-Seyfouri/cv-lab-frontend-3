@@ -1202,7 +1202,7 @@ export default function Account({ onNavigateToOptimizer }) {
 
                           <button
                             onClick={buyTokenPack}
-                            className="w-full border border-orange-500/30 bg-orange-500/10 backdrop-blur-sm hover:bg-orange-500/20 hover:border-orange-500/40 active:scale-[0.98] transition-all px-4 py-2.5 rounded-lg text-white text-sm font-semibold shadow-sm"
+                            className="w-full border cursor-pointer border-orange-500/30 bg-orange-500/10 backdrop-blur-sm hover:bg-orange-500/20 hover:border-orange-500/40 active:scale-[0.98] transition-all px-4 py-2.5 rounded-lg text-white text-sm font-semibold shadow-sm"
                           >
                             Buy 15 Generations for £5
                           </button>
