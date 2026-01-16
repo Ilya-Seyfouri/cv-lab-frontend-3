@@ -13,17 +13,9 @@ export const metadata = {
   description:
     "Create ATS-friendly CVs and professional cover letters tailored to any job description in seconds.",
   other: {
-    "google-site-verification": (
-      <meta
-        name="google-site-verification"
-        content="QP8HEgTBsXlbFlXtMDa1cJUSIKl88k_viEwHrktNBLU"
-      />
-    ),
+    "google-site-verification": "QP8HEgTBsXlbFlXtMDa1cJUSIKl88k_viEwHrktNBLU",
   },
 };
-    
-
-
 
 export default function RootLayout({ children }) {
   return (
